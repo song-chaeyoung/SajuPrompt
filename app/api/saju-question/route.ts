@@ -1,4 +1,5 @@
 import { buildSajuPrompt } from "@/shared/lib/openai/build-saju-prompt";
+import { hasCoreRequiredFields } from "@/shared/lib/saju-question-form/validation";
 import type {
   AnalysisMode,
   BirthProfile,
@@ -87,18 +88,6 @@ function parseForm(value: unknown): SajuQuestionFormData | null {
     partner: value.partner,
     goal: value.goal,
   };
-}
-
-function hasCoreRequiredFields(form: SajuQuestionFormData): boolean {
-  if (!form.me.birthDate || !form.goal.situation || !form.goal.purpose) {
-    return false;
-  }
-
-  if (form.mode === "compatibility" && !form.partner.birthDate) {
-    return false;
-  }
-
-  return true;
 }
 
 function extractQuestionContent(content: unknown): string {

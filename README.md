@@ -93,14 +93,34 @@ widgets/
   saju-question-planner/ui/saju-question-planner.tsx
 
 features/
-  saju-question-form/model/saju-question-form.store.ts
+  saju-question-form/
+    config/
+      goal-options.ts
+      mode-options.ts
+      step-labels.ts
+    model/
+      saju-question-form.store.ts
+      use-saju-question-planner.ts
+    ui/
+      goal-fields.tsx
+      mode-step.tsx
+      question-planner-actions.tsx
+      question-planner-step-header.tsx
+      result-step.tsx
+      saju-step.tsx
 
 entities/
-  saju-profile/model/default-profile.ts
+  saju-profile/
+    config/birth-profile-options.ts
+    model/default-profile.ts
+    ui/profile-fields.tsx
 
 shared/
   config/form-steps.ts
   types/saju-question-form.ts
+  lib/saju-question-form/
+    birth-date-time.ts
+    validation.ts
   lib/openai/get-openai-client.ts
 ```
 
