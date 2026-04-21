@@ -6,7 +6,7 @@ export type Gender = "male" | "female" | "other" | "unknown";
 
 export type PromptStyle = "balanced" | "direct" | "empathetic";
 
-export type FormStep = "mode" | "saju" | "goal" | "style" | "review";
+export type FormStep = "mode" | "saju";
 
 export interface BirthProfile {
   name: string;
@@ -22,6 +22,12 @@ export interface GoalInfo {
   purpose: string;
   style: PromptStyle;
   customRequest: string;
+  requiredSections: string;
+  responseFormat: string;
+  analysisPurpose: string;
+  interpretationTone: string;
+  prohibitDefinitiveClaims: boolean;
+  useSimpleLanguage: boolean;
 }
 
 export interface SajuQuestionFormData {

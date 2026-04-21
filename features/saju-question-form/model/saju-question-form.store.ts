@@ -13,6 +13,7 @@ interface SajuQuestionFormStore {
   form: SajuQuestionFormData;
   currentStepIndex: number;
   setMode: (mode: AnalysisMode) => void;
+  selectModeAndAdvance: (mode: AnalysisMode) => void;
   updateMe: (patch: Partial<BirthProfile>) => void;
   updatePartner: (patch: Partial<BirthProfile>) => void;
   updateGoal: (patch: Partial<GoalInfo>) => void;
@@ -24,13 +25,28 @@ interface SajuQuestionFormStore {
 
 const createInitialForm = (): SajuQuestionFormData => ({
   mode: "self",
-  me: createDefaultBirthProfile("Me"),
-  partner: createDefaultBirthProfile("Partner"),
+  me: createDefaultBirthProfile("나"),
+  partner: createDefaultBirthProfile("상대방"),
   goal: {
     situation: "",
     purpose: "",
     style: "balanced",
     customRequest: "",
+    requiredSections: [
+      "대상 사주 정보 요약",
+      "현재 상황 요약",
+      "질문 목적 요약",
+      "질문문 본문",
+      "추가 확인 질문(선택)",
+    ].join("\n"),
+    responseFormat:
+      "항목 제목을 유지한 구조화된 텍스트 형식으로만 응답한다. JSON, 마크다운 테이블, 코드블록은 사용하지 않는다.",
+    analysisPurpose:
+      "사용자가 다른 AI에 붙여 넣어 사주 해석을 요청할 수 있도록, 질문문 초안을 설계하는 것이 유일한 목적이다.",
+    interpretationTone:
+      "명확하고 차분한 조언형 톤을 유지한다. 자극적 표현이나 공포 유도 표현은 금지한다.",
+    prohibitDefinitiveClaims: true,
+    useSimpleLanguage: true,
   },
 });
 
@@ -44,6 +60,15 @@ export const useSajuQuestionFormStore = create<SajuQuestionFormStore>(
           ...state.form,
           mode,
         },
+      }));
+    },
+    selectModeAndAdvance: (mode) => {
+      set((state) => ({
+        form: {
+          ...state.form,
+          mode,
+        },
+        currentStepIndex: Math.min(state.currentStepIndex + 1, LAST_STEP_INDEX),
       }));
     },
     updateMe: (patch) => {
