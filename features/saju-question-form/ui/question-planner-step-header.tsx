@@ -11,11 +11,11 @@ export function QuestionPlannerStepHeader({
   currentStep,
 }: QuestionPlannerStepHeaderProps) {
   return (
-    <div className="space-y-1">
-      <p className="text-xs font-semibold tracking-wide text-zinc-500">
+    <div className="space-y-2">
+      <p className="type-caption font-semibold text-muted-foreground">
         단계 {currentStepIndex + 1} / {FORM_STEPS.length}
       </p>
-      <h2 className="text-lg font-semibold text-zinc-900">
+      <h2 className="type-title-md font-semibold text-foreground">
         {STEP_LABELS[currentStep]}
       </h2>
     </div>

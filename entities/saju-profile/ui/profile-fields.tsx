@@ -65,11 +65,11 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
   };
 
   return (
-    <section className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4">
-      <h3 className="text-base font-semibold text-zinc-900">{title}</h3>
+    <section className="space-y-5 rounded-2xl border border-border bg-background p-4 md:p-5">
+      <h3 className="type-title-sm font-semibold text-foreground">{title}</h3>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="space-y-1">
+      <div className="grid gap-4 sm:grid-cols-2 md:gap-x-5 md:gap-y-4">
+        <div className="space-y-2">
           <Label htmlFor={`${fieldIdPrefix}-name`}>이름</Label>
           <Input
             id={`${fieldIdPrefix}-name`}
@@ -79,7 +79,7 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
           />
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-2">
           <Label>성별</Label>
           <Select
             value={profile.gender}
@@ -100,9 +100,9 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
           </Select>
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-2 sm:col-span-2">
           <Label>생년월일</Label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid gap-2 min-[380px]:grid-cols-3">
             <Select
               value={birthYear || undefined}
               onValueChange={(value) =>
@@ -165,9 +165,9 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
           </div>
         </div>
 
-        <div className="space-y-1">
+        <div className="space-y-2 sm:col-span-2">
           <Label>출생 시간</Label>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid gap-2 min-[380px]:grid-cols-2">
             <Select
               value={birthHour || undefined}
               onValueChange={(value) =>
@@ -209,7 +209,7 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-4 text-sm text-zinc-700">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl bg-muted/45 px-3 py-2.5 type-body-sm text-muted-foreground">
         <label className="flex items-center gap-2">
           <input
             type="radio"

@@ -20,7 +20,7 @@ export function SajuStep({
   onUpdateGoal,
 }: SajuStepProps) {
   return (
-    <>
+    <div className="space-y-6 md:space-y-7">
       <ProfileFields title="내 정보" profile={form.me} onChange={onUpdateMe} />
 
       {form.mode === "compatibility" ? (
@@ -32,6 +32,6 @@ export function SajuStep({
       ) : null}
 
       <GoalFields goal={form.goal} onChange={onUpdateGoal} />
-    </>
+    </div>
   );
 }

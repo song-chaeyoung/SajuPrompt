@@ -8,19 +8,19 @@ interface ResultStepProps {
 
 export function ResultStep({ generatedQuestion, copyFeedback }: ResultStepProps) {
   return (
-    <section className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4">
-      <h3 className="text-base font-semibold text-zinc-900">생성된 질문문</h3>
+    <section className="space-y-4 rounded-2xl border border-border bg-background p-4 md:p-5">
+      <h3 className="type-title-sm font-semibold text-foreground">생성된 질문문</h3>
       <Textarea
         value={generatedQuestion}
         readOnly
-        className="min-h-64 leading-relaxed"
+        className="min-h-56 leading-relaxed sm:min-h-64"
         placeholder="질문문을 생성하면 여기에 표시됩니다."
       />
 
       {copyFeedback ? (
         <p
-          className={`text-sm ${
-            copyFeedback.type === "success" ? "text-emerald-700" : "text-red-600"
+          className={`type-body-sm ${
+            copyFeedback.type === "success" ? "text-success" : "text-destructive"
           }`}
         >
           {copyFeedback.message}

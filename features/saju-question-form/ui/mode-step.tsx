@@ -29,10 +29,14 @@ function ModeButton({
       type="button"
       variant={isActive ? "default" : "outline"}
       onClick={() => onSelect(value)}
-      className="h-auto w-full items-start px-4 py-3 text-left"
+      className="h-auto min-h-20 w-full items-start justify-start gap-2 px-4 py-3.5 text-left sm:min-h-24"
     >
-      <span className="text-sm font-semibold">{label}</span>
-      <span className={`text-xs ${isActive ? "text-zinc-100" : "text-zinc-500"}`}>
+      <span className="type-body font-semibold">{label}</span>
+      <span
+        className={`type-body-sm leading-snug ${
+          isActive ? "text-accent-foreground/75" : "text-muted-foreground"
+        }`}
+      >
         {description}
       </span>
     </Button>
@@ -41,7 +45,7 @@ function ModeButton({
 
 export function ModeStep({ activeMode, onSelect }: ModeStepProps) {
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2">
       {MODE_OPTIONS.map((option) => (
         <ModeButton
           key={option.value}

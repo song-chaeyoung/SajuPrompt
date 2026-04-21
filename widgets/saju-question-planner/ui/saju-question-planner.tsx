@@ -28,7 +28,7 @@ export function SajuQuestionPlanner() {
   } = useSajuQuestionPlanner();
 
   return (
-    <section className="space-y-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+    <section className="space-y-6">
       <QuestionPlannerStepHeader
         currentStepIndex={currentStepIndex}
         currentStep={currentStep}
@@ -55,7 +55,7 @@ export function SajuQuestionPlanner() {
       ) : null}
 
       {generationError ? (
-        <p className="text-sm text-red-600">{generationError}</p>
+        <p className="type-body-sm text-destructive">{generationError}</p>
       ) : null}
 
       <QuestionPlannerActions
