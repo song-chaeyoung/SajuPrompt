@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,16 +12,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useSajuQuestionFormStore } from "@/features/saju-question-form/model/saju-question-form.store";
 import { FORM_STEPS } from "@/shared/config/form-steps";
 import type {
   AnalysisMode,
   BirthProfile,
   PromptStyle,
+  SajuQuestionFormData,
 } from "@/shared/types/saju-question-form";
 
 const YEAR_START = 1900;
 const CURRENT_YEAR = new Date().getFullYear();
+const RESULT_STEP_INDEX = FORM_STEPS.indexOf("result");
+const SAJU_STEP_INDEX = FORM_STEPS.indexOf("saju");
 
 const YEAR_OPTIONS = Array.from(
   { length: CURRENT_YEAR - YEAR_START + 1 },
@@ -43,6 +47,7 @@ const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, index) =>
 const STEP_LABELS: Record<(typeof FORM_STEPS)[number], string> = {
   mode: "분석 모드",
   saju: "사주 정보",
+  result: "결과 확인",
 };
 
 const STYLE_OPTIONS: { value: PromptStyle; label: string }[] = [
@@ -81,6 +86,16 @@ const GENDER_OPTIONS: { value: BirthProfile["gender"]; label: string }[] = [
   { value: "other", label: "기타" },
 ];
 
+type GenerationResponse = {
+  question?: string;
+  message?: string;
+};
+
+type CopyFeedback = {
+  type: "success" | "error";
+  message: string;
+};
+
 function parseBirthDateParts(date: string) {
   const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
 
@@ -107,6 +122,18 @@ function getMaxDay(year: string, month: string) {
   }
 
   return new Date(Number(year), Number(month), 0).getDate();
+}
+
+function hasCoreRequiredFields(form: SajuQuestionFormData): boolean {
+  if (!form.me.birthDate || !form.goal.situation || !form.goal.purpose) {
+    return false;
+  }
+
+  if (form.mode === "compatibility" && !form.partner.birthDate) {
+    return false;
+  }
+
+  return true;
 }
 
 function ProfileFields({
@@ -370,20 +397,123 @@ export function SajuQuestionPlanner() {
   const {
     form,
     currentStepIndex,
+    generatedQuestion,
+    generationStatus,
+    generationError,
     selectModeAndAdvance,
     updateMe,
     updatePartner,
     updateGoal,
-    nextStep,
+    setStep,
+    startGeneration,
+    setGenerationSuccess,
+    setGenerationError,
+    clearGeneration,
     prevStep,
     reset,
   } = useSajuQuestionFormStore();
+  const [copyFeedback, setCopyFeedback] = useState<CopyFeedback | null>(null);
 
   const currentStep = FORM_STEPS[currentStepIndex];
+  const isGenerating = generationStatus === "loading";
 
   const handleModeSelect = (mode: AnalysisMode) => {
     selectModeAndAdvance(mode);
   };
+
+  const handleGenerateQuestion = useCallback(async () => {
+    if (!hasCoreRequiredFields(form)) {
+      setGenerationError("생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요.");
+      return;
+    }
+
+    startGeneration();
+
+    try {
+      const response = await fetch("/api/saju-question", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ form }),
+      });
+
+      const body = (await response.json().catch(() => null)) as
+        | GenerationResponse
+        | null;
+
+      if (!response.ok) {
+        throw new Error(body?.message ?? "질문문 생성 중 오류가 발생했습니다.");
+      }
+
+      const question = body?.question?.trim();
+
+      if (!question) {
+        throw new Error("생성된 질문문이 비어 있습니다. 다시 시도해 주세요.");
+      }
+
+      setGenerationSuccess(question);
+      setCopyFeedback(null);
+      setStep(RESULT_STEP_INDEX);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "질문문 생성 중 오류가 발생했습니다.";
+
+      setGenerationError(message);
+    }
+  }, [
+    form,
+    setGenerationError,
+    setGenerationSuccess,
+    setStep,
+    startGeneration,
+  ]);
+
+  const handleCopyQuestion = useCallback(async () => {
+    if (!generatedQuestion) {
+      setCopyFeedback({
+        type: "error",
+        message: "복사할 질문문이 없습니다.",
+      });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(generatedQuestion);
+      setCopyFeedback({
+        type: "success",
+        message: "질문문이 클립보드에 복사되었습니다.",
+      });
+    } catch {
+      setCopyFeedback({
+        type: "error",
+        message: "복사에 실패했습니다. 브라우저 권한을 확인해 주세요.",
+      });
+    }
+  }, [generatedQuestion]);
+
+  const handleResetToStart = useCallback(() => {
+    reset();
+    clearGeneration();
+    setStep(0);
+    setCopyFeedback(null);
+  }, [clearGeneration, reset, setStep]);
+
+  useEffect(() => {
+    if (!copyFeedback) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setCopyFeedback(null);
+    }, 2200);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [copyFeedback]);
 
   return (
     <section className="space-y-5 rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
@@ -413,7 +543,9 @@ export function SajuQuestionPlanner() {
             onSelect={handleModeSelect}
           />
         </div>
-      ) : (
+      ) : null}
+
+      {currentStep === "saju" ? (
         <>
           <ProfileFields title="내 정보" profile={form.me} onChange={updateMe} />
 
@@ -509,18 +641,76 @@ export function SajuQuestionPlanner() {
             </div>
           </section>
         </>
-      )}
+      ) : null}
+
+      {currentStep === "result" ? (
+        <section className="space-y-3 rounded-xl border border-zinc-200 bg-white p-4">
+          <h3 className="text-base font-semibold text-zinc-900">생성된 질문문</h3>
+          <Textarea
+            value={generatedQuestion}
+            readOnly
+            className="min-h-64 leading-relaxed"
+            placeholder="질문문을 생성하면 이곳에 표시됩니다."
+          />
+
+          {copyFeedback ? (
+            <p
+              className={`text-sm ${
+                copyFeedback.type === "success" ? "text-emerald-700" : "text-red-600"
+              }`}
+            >
+              {copyFeedback.message}
+            </p>
+          ) : null}
+        </section>
+      ) : null}
+
+      {generationError ? (
+        <p className="text-sm text-red-600">{generationError}</p>
+      ) : null}
 
       <div className="flex flex-wrap items-center gap-2">
-        <Button type="button" variant="outline" onClick={prevStep}>
-          이전
-        </Button>
-        <Button type="button" onClick={nextStep}>
-          다음
-        </Button>
-        <Button type="button" variant="outline" onClick={reset}>
-          초기화
-        </Button>
+        {currentStep !== "result" ? (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={prevStep}
+            disabled={currentStepIndex === 0 || isGenerating}
+          >
+            이전
+          </Button>
+        ) : (
+          <Button type="button" variant="outline" onClick={handleCopyQuestion}>
+            복사하기
+          </Button>
+        )}
+
+        {currentStep === "mode" ? (
+          <Button type="button" onClick={() => setStep(SAJU_STEP_INDEX)}>
+            다음
+          </Button>
+        ) : null}
+
+        {currentStep === "saju" ? (
+          <Button type="button" onClick={handleGenerateQuestion} disabled={isGenerating}>
+            {isGenerating ? "질문문 생성 중..." : "질문문 생성"}
+          </Button>
+        ) : null}
+
+        {currentStep === "result" ? (
+          <>
+            <Button type="button" onClick={handleGenerateQuestion} disabled={isGenerating}>
+              {isGenerating ? "다시 생성 중..." : "다시 생성"}
+            </Button>
+            <Button type="button" variant="outline" onClick={handleResetToStart}>
+              처음부터 다시 하기
+            </Button>
+          </>
+        ) : (
+          <Button type="button" variant="outline" onClick={handleResetToStart}>
+            초기화
+          </Button>
+        )}
       </div>
     </section>
   );
