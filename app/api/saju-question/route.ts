@@ -1,4 +1,8 @@
 import { buildSajuPrompt } from "@/shared/lib/openai/build-saju-prompt";
+import {
+  getDefaultOpenAIModel,
+  getOpenAIClient,
+} from "@/shared/lib/openai/get-openai-client";
 import { hasCoreRequiredFields } from "@/shared/lib/saju-question-form/validation";
 import type {
   AnalysisMode,
@@ -6,25 +10,13 @@ import type {
   GoalInfo,
   SajuQuestionFormData,
 } from "@/shared/types/saju-question-form";
+import OpenAI from "openai";
+
+export const runtime = "nodejs";
 
 interface GenerateQuestionRequestBody {
   form?: unknown;
-}
-
-interface OpenAIErrorPayload {
-  error?: {
-    message?: string;
-  };
-}
-
-interface OpenAICompletionChoice {
-  message?: {
-    content?: unknown;
-  };
-}
-
-interface OpenAICompletionsPayload {
-  choices?: OpenAICompletionChoice[];
+  stream?: unknown;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -90,6 +82,10 @@ function parseForm(value: unknown): SajuQuestionFormData | null {
   };
 }
 
+function isStreamEnabled(value: unknown): boolean {
+  return value === true;
+}
+
 function extractQuestionContent(content: unknown): string {
   if (typeof content === "string") {
     return content.trim();
@@ -114,12 +110,12 @@ function extractQuestionContent(content: unknown): string {
   return textParts.join("\n").trim();
 }
 
-function extractQuestionFromPayload(payload: unknown): string {
-  if (!isRecord(payload) || !Array.isArray(payload.choices)) {
+function extractQuestionFromCompletion(completion: unknown): string {
+  if (!isRecord(completion) || !Array.isArray(completion.choices)) {
     return "";
   }
 
-  const firstChoice = payload.choices[0];
+  const firstChoice = completion.choices[0];
 
   if (!isRecord(firstChoice) || !isRecord(firstChoice.message)) {
     return "";
@@ -128,16 +124,45 @@ function extractQuestionFromPayload(payload: unknown): string {
   return extractQuestionContent(firstChoice.message.content);
 }
 
-function getOpenAIConfig() {
-  const apiKey = process.env.OPENAI_API_KEY;
+function extractDeltaContent(chunk: unknown): string {
+  if (!isRecord(chunk) || !Array.isArray(chunk.choices)) {
+    return "";
+  }
 
-  if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not configured.");
+  const firstChoice = chunk.choices[0];
+
+  if (!isRecord(firstChoice) || !isRecord(firstChoice.delta)) {
+    return "";
+  }
+
+  return extractQuestionContent(firstChoice.delta.content);
+}
+
+function toSSEEvent(data: unknown): string {
+  return `data: ${JSON.stringify(data)}\n\n`;
+}
+
+function mapOpenAIError(error: unknown): { status: number; message: string } {
+  if (error instanceof OpenAI.APIError) {
+    const status = error.status ?? 500;
+
+    if (status >= 400 && status < 500) {
+      return {
+        status,
+        message:
+          error.message || "요청값을 확인해 주세요. 질문문 생성 요청이 유효하지 않습니다.",
+      };
+    }
+
+    return {
+      status,
+      message: error.message || "질문문 생성 중 OpenAI 서버 오류가 발생했습니다.",
+    };
   }
 
   return {
-    apiKey,
-    model: process.env.OPENAI_MODEL ?? "gpt-4.1-mini",
+    status: 500,
+    message: "질문문 생성 중 서버 오류가 발생했습니다.",
   };
 }
 
@@ -177,45 +202,84 @@ export async function POST(request: Request) {
   }
 
   const { systemPrompt, userPrompt } = buildSajuPrompt(form);
+  const streamEnabled = isStreamEnabled(parsedBody.stream);
 
   try {
-    const { apiKey, model } = getOpenAIConfig();
-    const openAIResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+    const client = getOpenAIClient();
+    const model = getDefaultOpenAIModel();
+    const messages = [
+      {
+        role: "system" as const,
+        content: systemPrompt,
       },
-      body: JSON.stringify({
+      {
+        role: "user" as const,
+        content: userPrompt,
+      },
+    ];
+
+    if (streamEnabled) {
+      const stream = await client.chat.completions.create({
         model,
-        messages: [
-          {
-            role: "system",
-            content: systemPrompt,
-          },
-          {
-            role: "user",
-            content: userPrompt,
-          },
-        ],
-      }),
-    });
-    const payload = (await openAIResponse
-      .json()
-      .catch(() => null)) as OpenAICompletionsPayload | OpenAIErrorPayload | null;
+        messages,
+        stream: true,
+      });
+      const encoder = new TextEncoder();
+      let fullQuestion = "";
 
-    if (!openAIResponse.ok) {
-      const message =
-        isRecord(payload) &&
-        isRecord(payload.error) &&
-        typeof payload.error.message === "string"
-          ? payload.error.message
-          : "질문문 생성 중 서버 오류가 발생했습니다.";
+      const readableStream = new ReadableStream<Uint8Array>({
+        async start(controller) {
+          try {
+            controller.enqueue(encoder.encode(toSSEEvent({ type: "start" })));
 
-      return Response.json({ message }, { status: 500 });
+            for await (const chunk of stream) {
+              const delta = extractDeltaContent(chunk);
+
+              if (!delta) {
+                continue;
+              }
+
+              fullQuestion += delta;
+              controller.enqueue(
+                encoder.encode(toSSEEvent({ type: "delta", content: delta })),
+              );
+            }
+
+            const question = fullQuestion.trim();
+
+            if (!question) {
+              throw new Error("생성된 질문문이 비어 있습니다. 다시 시도해 주세요.");
+            }
+
+            controller.enqueue(
+              encoder.encode(toSSEEvent({ type: "done", question })),
+            );
+          } catch (error) {
+            const { message } = mapOpenAIError(error);
+            controller.enqueue(
+              encoder.encode(toSSEEvent({ type: "error", message })),
+            );
+          } finally {
+            controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+            controller.close();
+          }
+        },
+      });
+
+      return new Response(readableStream, {
+        headers: {
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          Connection: "keep-alive",
+        },
+      });
     }
 
-    const question = extractQuestionFromPayload(payload);
+    const completion = await client.chat.completions.create({
+      model,
+      messages,
+    });
+    const question = extractQuestionFromCompletion(completion);
 
     if (!question) {
       return Response.json(
@@ -227,10 +291,8 @@ export async function POST(request: Request) {
     return Response.json({ question });
   } catch (error) {
     console.error("[saju-question] generation failed", error);
+    const { status, message } = mapOpenAIError(error);
 
-    return Response.json(
-      { message: "질문문 생성 중 서버 오류가 발생했습니다." },
-      { status: 500 },
-    );
+    return Response.json({ message }, { status });
   }
 }

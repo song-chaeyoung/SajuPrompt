@@ -13,6 +13,14 @@ export interface SajuPromptGuardrails {
   useSimpleLanguage: boolean;
 }
 
+export interface SajuQuestionExpansionGuide {
+  minimumQuestionCount: number;
+  includeFollowUpQuestion: boolean;
+  includeActionTip: boolean;
+  timeHorizonInstruction: string;
+  focusInstruction: string;
+}
+
 export const SAJU_PROMPT_GUARDRAILS: SajuPromptGuardrails = {
   requiredSections: [
     "대상 사주 정보 요약",
@@ -31,10 +39,21 @@ export const SAJU_PROMPT_GUARDRAILS: SajuPromptGuardrails = {
   useSimpleLanguage: true,
 };
 
+export const SAJU_QUESTION_EXPANSION_GUIDE: SajuQuestionExpansionGuide = {
+  minimumQuestionCount: 5,
+  includeFollowUpQuestion: true,
+  includeActionTip: true,
+  timeHorizonInstruction:
+    "질문 목적과 연결되는 시간 축(최근 3개월, 올해, 다음 분기 등)을 질문문에 최소 1회 포함한다.",
+  focusInstruction:
+    "사용자의 현재 고민과 질문 목적을 중심으로, 사주 해석 결과가 행동 판단으로 이어질 수 있는 질문을 우선한다.",
+};
+
 interface BuiltSajuPrompt {
   systemPrompt: string;
   userPrompt: string;
   guardrails: SajuPromptGuardrails;
+  expansionGuide: SajuQuestionExpansionGuide;
 }
 
 function resolveGuardrails(): SajuPromptGuardrails {
@@ -45,6 +64,18 @@ function resolveGuardrails(): SajuPromptGuardrails {
     interpretationTone: SAJU_PROMPT_GUARDRAILS.interpretationTone,
     prohibitDefinitiveClaims: SAJU_PROMPT_GUARDRAILS.prohibitDefinitiveClaims,
     useSimpleLanguage: SAJU_PROMPT_GUARDRAILS.useSimpleLanguage,
+  };
+}
+
+function resolveExpansionGuide(): SajuQuestionExpansionGuide {
+  return {
+    minimumQuestionCount: SAJU_QUESTION_EXPANSION_GUIDE.minimumQuestionCount,
+    includeFollowUpQuestion:
+      SAJU_QUESTION_EXPANSION_GUIDE.includeFollowUpQuestion,
+    includeActionTip: SAJU_QUESTION_EXPANSION_GUIDE.includeActionTip,
+    timeHorizonInstruction:
+      SAJU_QUESTION_EXPANSION_GUIDE.timeHorizonInstruction,
+    focusInstruction: SAJU_QUESTION_EXPANSION_GUIDE.focusInstruction,
   };
 }
 
@@ -94,6 +125,7 @@ function formatProfile(label: string, profile: BirthProfile): string {
 export function buildSajuPrompt(form: SajuQuestionFormData): BuiltSajuPrompt {
   const isCompatibilityMode = form.mode === "compatibility";
   const guardrails = resolveGuardrails();
+  const expansionGuide = resolveExpansionGuide();
 
   const systemPrompt = [
     "당신은 사주 해석 질문문 설계 어시스턴트입니다.",
@@ -112,6 +144,7 @@ export function buildSajuPrompt(form: SajuQuestionFormData): BuiltSajuPrompt {
         ? "전문용어를 풀어 쓰고 중학생도 이해 가능한 문장 사용"
         : "없음"
     }`,
+    `7) 질문 확장 고정: 질문문 본문에 최소 ${expansionGuide.minimumQuestionCount}개의 구체 질문을 넣고, 시간 축과 실행 힌트를 포함한다.`,
   ].join("\n");
 
   const userPrompt = [
@@ -123,6 +156,13 @@ export function buildSajuPrompt(form: SajuQuestionFormData): BuiltSajuPrompt {
     `해석 스타일: ${toStyleLabel(form.goal.style)}`,
     `추가 요청사항: ${form.goal.customRequest || "없음"}`,
     "",
+    "[질문 자동 확장 지침]",
+    `- 최소 질문 개수: ${expansionGuide.minimumQuestionCount}개`,
+    `- 후속 확인 질문 포함: ${expansionGuide.includeFollowUpQuestion ? "예" : "아니오"}`,
+    `- 실행 조언 힌트 포함: ${expansionGuide.includeActionTip ? "예" : "아니오"}`,
+    `- 시간 축 지침: ${expansionGuide.timeHorizonInstruction}`,
+    `- 초점 지침: ${expansionGuide.focusInstruction}`,
+    "",
     "위 정보를 바탕으로, 가드레일을 지키는 질문문 초안을 작성하세요.",
   ]
     .filter(Boolean)
@@ -132,5 +172,6 @@ export function buildSajuPrompt(form: SajuQuestionFormData): BuiltSajuPrompt {
     systemPrompt,
     userPrompt,
     guardrails,
+    expansionGuide,
   };
 }
