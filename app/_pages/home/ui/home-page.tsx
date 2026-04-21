@@ -9,7 +9,7 @@ export function HomePage() {
           사주 질문 입력 초안
         </h1>
         <p className="text-sm text-zinc-600">
-          분석 모드, 사주 정보, 질문 의도와 스타일을 전역 스토어에서 관리합니다.
+          분석 모드와 사주 정보를 선택하면, 원하는 스타일의 질문문 초안을 빠르게 만들 수 있습니다.
         </p>
       </header>
       <SajuQuestionPlanner />

@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useSajuQuestionFormStore } from "@/features/saju-question-form/model/saju-question-form.store";
 import { FORM_STEPS } from "@/shared/config/form-steps";
 import type {
@@ -50,6 +49,29 @@ const STYLE_OPTIONS: { value: PromptStyle; label: string }[] = [
   { value: "balanced", label: "균형형" },
   { value: "direct", label: "직설형" },
   { value: "empathetic", label: "공감형" },
+];
+
+const SITUATION_OPTIONS = [
+  "이직/진로를 고민 중이에요",
+  "연애/관계 방향이 궁금해요",
+  "재물/소비 흐름을 점검하고 싶어요",
+  "올해 운세 흐름을 알고 싶어요",
+  "대인관계 스트레스가 있어요",
+];
+
+const PURPOSE_OPTIONS = [
+  "전체 성향과 강점을 알고 싶어요",
+  "연애운 중심으로 보고 싶어요",
+  "직업/재물운 중심으로 보고 싶어요",
+  "올해 주의할 시기를 알고 싶어요",
+  "실천 가능한 조언을 받고 싶어요",
+];
+
+const CUSTOM_REQUEST_OPTIONS = [
+  "핵심만 짧고 명확하게",
+  "현실 조언을 더 구체적으로",
+  "감정선과 관계 해석 중심으로",
+  "긍정/주의 포인트를 균형 있게",
 ];
 
 const GENDER_OPTIONS: { value: BirthProfile["gender"]; label: string }[] = [
@@ -409,25 +431,41 @@ export function SajuQuestionPlanner() {
             </h3>
 
             <div className="space-y-1">
-              <Label htmlFor="goal-situation">현재 상황</Label>
-              <Textarea
-                id="goal-situation"
-                className="min-h-20"
-                value={form.goal.situation}
-                onChange={(event) => updateGoal({ situation: event.target.value })}
-                placeholder="예: 올해 이직을 고민하고 있어요."
-              />
+              <Label>현재 상황</Label>
+              <Select
+                value={form.goal.situation || undefined}
+                onValueChange={(value) => updateGoal({ situation: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="현재 상황을 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SITUATION_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="goal-purpose">질문 목적</Label>
-              <Textarea
-                id="goal-purpose"
-                className="min-h-20"
-                value={form.goal.purpose}
-                onChange={(event) => updateGoal({ purpose: event.target.value })}
-                placeholder="예: 연애운과 커리어운 중 어디에 집중할지 알고 싶어요."
-              />
+              <Label>질문 목적</Label>
+              <Select
+                value={form.goal.purpose || undefined}
+                onValueChange={(value) => updateGoal({ purpose: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="질문 목적을 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PURPOSE_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1">
@@ -452,96 +490,23 @@ export function SajuQuestionPlanner() {
             </div>
 
             <div className="space-y-1">
-              <Label htmlFor="goal-custom-request">추가 요청사항</Label>
-              <Textarea
-                id="goal-custom-request"
-                className="min-h-24"
-                value={form.goal.customRequest}
-                onChange={(event) =>
-                  updateGoal({ customRequest: event.target.value })
-                }
-                placeholder="예: 모호한 표현은 줄이고 실천 가능한 조언 위주로 작성해 주세요."
-              />
+              <Label>추가 요청사항</Label>
+              <Select
+                value={form.goal.customRequest || undefined}
+                onValueChange={(value) => updateGoal({ customRequest: value })}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="추가 요청사항을 선택하세요" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CUSTOM_REQUEST_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-
-            <section className="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-              <h4 className="text-sm font-semibold text-zinc-900">
-                프롬프트 제약 설정
-              </h4>
-
-              <div className="space-y-1">
-                <Label htmlFor="goal-required-sections">필수 포함 항목 고정</Label>
-                <Textarea
-                  id="goal-required-sections"
-                  className="min-h-24"
-                  value={form.goal.requiredSections}
-                  onChange={(event) =>
-                    updateGoal({ requiredSections: event.target.value })
-                  }
-                  placeholder={"예:\n대상 사주 정보 요약\n현재 상황 요약\n질문 목적 요약"}
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="goal-response-format">응답 형식 고정</Label>
-                <Textarea
-                  id="goal-response-format"
-                  className="min-h-16"
-                  value={form.goal.responseFormat}
-                  onChange={(event) =>
-                    updateGoal({ responseFormat: event.target.value })
-                  }
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="goal-analysis-purpose">분석 목적 고정</Label>
-                <Textarea
-                  id="goal-analysis-purpose"
-                  className="min-h-16"
-                  value={form.goal.analysisPurpose}
-                  onChange={(event) =>
-                    updateGoal({ analysisPurpose: event.target.value })
-                  }
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label htmlFor="goal-interpretation-tone">해석 톤 고정</Label>
-                <Textarea
-                  id="goal-interpretation-tone"
-                  className="min-h-16"
-                  value={form.goal.interpretationTone}
-                  onChange={(event) =>
-                    updateGoal({ interpretationTone: event.target.value })
-                  }
-                />
-              </div>
-
-              <label className="flex items-center gap-2 text-sm text-zinc-700">
-                <input
-                  type="checkbox"
-                  checked={form.goal.prohibitDefinitiveClaims}
-                  onChange={(event) =>
-                    updateGoal({
-                      prohibitDefinitiveClaims: event.target.checked,
-                    })
-                  }
-                />
-                <span>단정 금지 여부 고정</span>
-              </label>
-
-              <label className="flex items-center gap-2 text-sm text-zinc-700">
-                <input
-                  type="checkbox"
-                  checked={form.goal.useSimpleLanguage}
-                  onChange={(event) =>
-                    updateGoal({ useSimpleLanguage: event.target.checked })
-                  }
-                />
-                <span>쉬운 설명 여부 고정</span>
-              </label>
-            </section>
           </section>
         </>
       )}

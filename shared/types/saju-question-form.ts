@@ -22,12 +22,6 @@ export interface GoalInfo {
   purpose: string;
   style: PromptStyle;
   customRequest: string;
-  requiredSections: string;
-  responseFormat: string;
-  analysisPurpose: string;
-  interpretationTone: string;
-  prohibitDefinitiveClaims: boolean;
-  useSimpleLanguage: boolean;
 }
 
 export interface SajuQuestionFormData {

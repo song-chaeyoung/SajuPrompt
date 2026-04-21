@@ -37,31 +37,14 @@ interface BuiltSajuPrompt {
   guardrails: SajuPromptGuardrails;
 }
 
-function normalizeRequiredSections(rawSections: string): string[] {
-  const sections = rawSections
-    .split(/\r?\n|,/)
-    .map((section) => section.trim())
-    .filter(Boolean);
-
-  if (sections.length === 0) {
-    return [...SAJU_PROMPT_GUARDRAILS.requiredSections];
-  }
-
-  return sections;
-}
-
-function resolveGuardrails(form: SajuQuestionFormData): SajuPromptGuardrails {
+function resolveGuardrails(): SajuPromptGuardrails {
   return {
-    requiredSections: normalizeRequiredSections(form.goal.requiredSections),
-    responseFormat:
-      form.goal.responseFormat.trim() || SAJU_PROMPT_GUARDRAILS.responseFormat,
-    analysisPurpose:
-      form.goal.analysisPurpose.trim() || SAJU_PROMPT_GUARDRAILS.analysisPurpose,
-    interpretationTone:
-      form.goal.interpretationTone.trim() ||
-      SAJU_PROMPT_GUARDRAILS.interpretationTone,
-    prohibitDefinitiveClaims: form.goal.prohibitDefinitiveClaims,
-    useSimpleLanguage: form.goal.useSimpleLanguage,
+    requiredSections: [...SAJU_PROMPT_GUARDRAILS.requiredSections],
+    responseFormat: SAJU_PROMPT_GUARDRAILS.responseFormat,
+    analysisPurpose: SAJU_PROMPT_GUARDRAILS.analysisPurpose,
+    interpretationTone: SAJU_PROMPT_GUARDRAILS.interpretationTone,
+    prohibitDefinitiveClaims: SAJU_PROMPT_GUARDRAILS.prohibitDefinitiveClaims,
+    useSimpleLanguage: SAJU_PROMPT_GUARDRAILS.useSimpleLanguage,
   };
 }
 
@@ -110,7 +93,7 @@ function formatProfile(label: string, profile: BirthProfile): string {
 
 export function buildSajuPrompt(form: SajuQuestionFormData): BuiltSajuPrompt {
   const isCompatibilityMode = form.mode === "compatibility";
-  const guardrails = resolveGuardrails(form);
+  const guardrails = resolveGuardrails();
 
   const systemPrompt = [
     "당신은 사주 해석 질문문 설계 어시스턴트입니다.",
