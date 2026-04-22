@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 
 export function SajuQuestionIntro() {

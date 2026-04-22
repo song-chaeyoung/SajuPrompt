@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { SajuQuestionFields } from "@/features/fill-saju-question/ui/saju-question-fields";
 import { usePlanSajuQuestion } from "@/features/plan-saju-question/model/use-plan-saju-question";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";

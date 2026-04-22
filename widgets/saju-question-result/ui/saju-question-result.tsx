@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import { CardSequenceLoader } from "@/components/ui/card-sequence-loader";
+import { Button } from "@/shared/ui/button";
+import { CardSequenceLoader } from "@/shared/ui/card-sequence-loader";
 import { usePlanSajuQuestion } from "@/features/plan-saju-question/model/use-plan-saju-question";
 import { GeneratedQuestionPreview } from "@/features/view-generated-question/ui/generated-question-preview";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/shared/lib/utils";
+import { Textarea } from "@/shared/ui/textarea";
 import type { CopyFeedback } from "@/features/plan-saju-question/model/use-plan-saju-question";
 
 interface GeneratedQuestionPreviewProps {

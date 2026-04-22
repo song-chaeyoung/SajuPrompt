@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/shared/ui/input";
+import { Label } from "@/shared/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/ui/select";
 import {
   GENDER_OPTIONS,
   HOUR_OPTIONS,
@@ -21,7 +21,7 @@ import {
   parseBirthDateParts,
   parseBirthTimeParts,
 } from "@/shared/lib/saju-question-form/birth-date-time";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import type { BirthProfile } from "@/shared/types/saju-question-form";
 
 interface ProfileFieldsProps {

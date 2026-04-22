@@ -130,10 +130,21 @@ entities/
 shared/
   config/form-steps.ts
   types/saju-question-form.ts
-  lib/saju-question-form/
-    birth-date-time.ts
-    validation.ts
-  lib/openai/get-openai-client.ts
+  ui/
+    button.tsx
+    card-sequence-loader.tsx
+    dialog.tsx
+    input.tsx
+    label.tsx
+    popover.tsx
+    select.tsx
+    textarea.tsx
+  lib/
+    utils.ts
+    saju-question-form/
+      birth-date-time.ts
+      validation.ts
+    openai/get-openai-client.ts
 ```
 
 ## 품질 점검
