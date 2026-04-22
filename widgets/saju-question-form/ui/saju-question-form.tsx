@@ -45,6 +45,7 @@ export function SajuQuestionForm() {
   const desktopPrimaryAction = (
     <Button
       type="button"
+      size="lg"
       onClick={handleGenerate}
       disabled={isTransitioningToResult}
       className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
@@ -56,6 +57,7 @@ export function SajuQuestionForm() {
   const mobilePrimaryAction = (
     <Button
       type="button"
+      size="lg"
       onClick={handleGenerate}
       disabled={isTransitioningToResult}
       className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"

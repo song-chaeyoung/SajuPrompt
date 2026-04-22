@@ -109,6 +109,7 @@ export function SajuQuestionResult() {
   const desktopPrimaryAction = (
     <Button
       type="button"
+      size="lg"
       onClick={handleCopyQuestion}
       className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
     >
@@ -119,6 +120,7 @@ export function SajuQuestionResult() {
   const mobilePrimaryAction = (
     <Button
       type="button"
+      size="lg"
       onClick={handleCopyQuestion}
       className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
     >

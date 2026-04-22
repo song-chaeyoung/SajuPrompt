@@ -84,7 +84,7 @@ export function SajuQuestionStepShell({
                   ) : null}
 
                   {desktopPrimaryAction ? (
-                    <div className="w-full sm:w-auto sm:min-w-[13rem]">
+                    <div className="w-full sm:w-auto sm:min-w-[15rem]">
                       {desktopPrimaryAction}
                     </div>
                   ) : null}
