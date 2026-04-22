@@ -1,3 +1,13 @@
+import { useState } from "react";
+
+import {
+  CUSTOM_REQUEST_OPTIONS,
+  PURPOSE_OPTIONS,
+  SITUATION_OPTIONS,
+  STYLE_OPTIONS,
+} from "@/features/fill-saju-question/config/goal-options";
+import type { GoalInfo, PromptStyle } from "@/shared/types/saju-question-form";
+import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import {
   Select,
@@ -6,20 +16,111 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import {
-  CUSTOM_REQUEST_OPTIONS,
-  PURPOSE_OPTIONS,
-  SITUATION_OPTIONS,
-  STYLE_OPTIONS,
-} from "@/features/fill-saju-question/config/goal-options";
-import type { GoalInfo, PromptStyle } from "@/shared/types/saju-question-form";
+
+const CUSTOM_OPTION_VALUE = "__custom__";
+
+type CustomizableGoalField = "situation" | "purpose" | "customRequest";
+
+type CustomModeState = Record<CustomizableGoalField, boolean>;
 
 interface GoalFieldsProps {
   goal: GoalInfo;
   onChange: (patch: Partial<GoalInfo>) => void;
 }
 
+interface CustomSelectFieldProps {
+  label: string;
+  selectPlaceholder: string;
+  inputPlaceholder: string;
+  value: string;
+  options: readonly string[];
+  isCustomMode: boolean;
+  onValueChange: (value: string) => void;
+  onCustomModeChange: (next: boolean) => void;
+}
+
+function isCustomOptionValue(value: string, options: readonly string[]) {
+  return value.trim().length > 0 && !options.includes(value);
+}
+
+function createInitialCustomModes(goal: GoalInfo): CustomModeState {
+  return {
+    situation: isCustomOptionValue(goal.situation, SITUATION_OPTIONS),
+    purpose: isCustomOptionValue(goal.purpose, PURPOSE_OPTIONS),
+    customRequest: isCustomOptionValue(
+      goal.customRequest,
+      CUSTOM_REQUEST_OPTIONS,
+    ),
+  };
+}
+
+function CustomSelectField({
+  label,
+  selectPlaceholder,
+  inputPlaceholder,
+  value,
+  options,
+  isCustomMode,
+  onValueChange,
+  onCustomModeChange,
+}: CustomSelectFieldProps) {
+  const handleSelectChange = (nextValue: string) => {
+    if (nextValue === CUSTOM_OPTION_VALUE) {
+      onCustomModeChange(true);
+
+      if (!isCustomMode) {
+        onValueChange("");
+      }
+
+      return;
+    }
+
+    onCustomModeChange(false);
+    onValueChange(nextValue);
+  };
+
+  return (
+    <div className="space-y-2.5">
+      <Label>{label}</Label>
+      <Select
+        value={isCustomMode ? CUSTOM_OPTION_VALUE : value || undefined}
+        onValueChange={handleSelectChange}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder={selectPlaceholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option} value={option}>
+              {option}
+            </SelectItem>
+          ))}
+          <SelectItem value={CUSTOM_OPTION_VALUE}>직접 작성하기</SelectItem>
+        </SelectContent>
+      </Select>
+
+      {isCustomMode ? (
+        <Input
+          value={value}
+          onChange={(event) => onValueChange(event.target.value)}
+          placeholder={inputPlaceholder}
+        />
+      ) : null}
+    </div>
+  );
+}
+
 export function GoalFields({ goal, onChange }: GoalFieldsProps) {
+  const [customModes, setCustomModes] = useState<CustomModeState>(() =>
+    createInitialCustomModes(goal),
+  );
+
+  const setCustomMode = (field: CustomizableGoalField, next: boolean) => {
+    setCustomModes((current) =>
+      current[field] === next ? current : { ...current, [field]: next },
+    );
+  };
+
   return (
     <section className="space-y-6 rounded-[1.75rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_95%,var(--card)_5%)] p-4 md:p-6">
       <div className="space-y-2">
@@ -31,50 +132,34 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
             질문 목적과 해석 스타일
           </h3>
           <p className="type-body-sm max-w-[36rem] text-muted-foreground">
-            현재 상황부터 차례로 고르면 AI에 전달할 질문 흐름을 더 자연스럽게
-            정리할 수 있습니다.
+            현재 상황부터 차분히 고르면 AI에 바로 붙여 넣을 질문 흐름을 더
+            자연스럽게 정리할 수 있습니다.
           </p>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 md:gap-x-5 md:gap-y-5">
-        <div className="space-y-2.5">
-          <Label>현재 상황</Label>
-          <Select
-            value={goal.situation || undefined}
-            onValueChange={(value) => onChange({ situation: value })}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="현재 상황을 선택해 주세요" />
-            </SelectTrigger>
-            <SelectContent>
-              {SITUATION_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <CustomSelectField
+          label="현재 상황"
+          selectPlaceholder="현재 상황을 선택해 주세요"
+          inputPlaceholder="현재 상황을 직접 입력해 주세요"
+          value={goal.situation}
+          options={SITUATION_OPTIONS}
+          isCustomMode={customModes.situation}
+          onValueChange={(value) => onChange({ situation: value })}
+          onCustomModeChange={(next) => setCustomMode("situation", next)}
+        />
 
-        <div className="space-y-2.5">
-          <Label>질문 목적</Label>
-          <Select
-            value={goal.purpose || undefined}
-            onValueChange={(value) => onChange({ purpose: value })}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="질문 목적을 선택해 주세요" />
-            </SelectTrigger>
-            <SelectContent>
-              {PURPOSE_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <CustomSelectField
+          label="질문 목적"
+          selectPlaceholder="질문 목적을 선택해 주세요"
+          inputPlaceholder="질문 목적을 직접 입력해 주세요"
+          value={goal.purpose}
+          options={PURPOSE_OPTIONS}
+          isCustomMode={customModes.purpose}
+          onValueChange={(value) => onChange({ purpose: value })}
+          onCustomModeChange={(next) => setCustomMode("purpose", next)}
+        />
 
         <div className="space-y-2.5">
           <Label>해석 스타일</Label>
@@ -95,24 +180,16 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
           </Select>
         </div>
 
-        <div className="space-y-2.5">
-          <Label>추가 요청사항</Label>
-          <Select
-            value={goal.customRequest || undefined}
-            onValueChange={(value) => onChange({ customRequest: value })}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="추가 요청사항을 선택해 주세요" />
-            </SelectTrigger>
-            <SelectContent>
-              {CUSTOM_REQUEST_OPTIONS.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <CustomSelectField
+          label="추가 요청사항"
+          selectPlaceholder="추가 요청사항을 선택해 주세요"
+          inputPlaceholder="추가 요청사항을 직접 입력해 주세요"
+          value={goal.customRequest}
+          options={CUSTOM_REQUEST_OPTIONS}
+          isCustomMode={customModes.customRequest}
+          onValueChange={(value) => onChange({ customRequest: value })}
+          onCustomModeChange={(next) => setCustomMode("customRequest", next)}
+        />
       </div>
     </section>
   );
