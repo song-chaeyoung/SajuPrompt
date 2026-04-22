@@ -1,5 +1,5 @@
-import { HomePage } from "@/app/_pages/home/ui/home-page";
+import { IntroPage } from "@/app/_pages/intro/ui/intro-page";
 
 export default function Home() {
-  return <HomePage />;
+  return <IntroPage />;
 }

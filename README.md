@@ -87,27 +87,39 @@ shared/lib/openai/get-openai-client.ts
 
 ```txt
 app/
-  _pages/home/ui/home-page.tsx
+  _pages/
+    intro/ui/intro-page.tsx
+    mode/ui/mode-page.tsx
+    saju/ui/saju-page.tsx
+    result/ui/result-page.tsx
 
 widgets/
-  saju-question-planner/ui/saju-question-planner.tsx
+  saju-question-intro/
+    ui/saju-question-intro.tsx
+  saju-question-mode/
+    ui/saju-question-mode.tsx
+  saju-question-form/
+    ui/saju-question-form.tsx
+  saju-question-result/
+    ui/saju-question-result.tsx
+  saju-question-step-shell/
+    ui/saju-question-step-shell.tsx
 
 features/
-  saju-question-form/
-    config/
-      goal-options.ts
-      mode-options.ts
-      step-labels.ts
+  plan-saju-question/
     model/
-      saju-question-form.store.ts
-      use-saju-question-planner.ts
+      saju-question-planner.store.ts
+      use-plan-saju-question.ts
+  select-analysis-mode/
+    config/mode-options.ts
+    ui/analysis-mode-selector.tsx
+  fill-saju-question/
+    config/goal-options.ts
     ui/
       goal-fields.tsx
-      mode-step.tsx
-      question-planner-actions.tsx
-      question-planner-step-header.tsx
-      result-step.tsx
-      saju-step.tsx
+      saju-question-fields.tsx
+  view-generated-question/
+    ui/generated-question-preview.tsx
 
 entities/
   saju-profile/
