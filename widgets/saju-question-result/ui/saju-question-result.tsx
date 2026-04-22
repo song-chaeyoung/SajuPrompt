@@ -21,7 +21,6 @@ export function SajuQuestionResult() {
     generationStatus,
     generationError,
     isWaitingForResult,
-    copyFeedback,
     handleGenerateQuestion,
     handleCopyQuestion,
     handleResetPlanner,
@@ -160,10 +159,7 @@ export function SajuQuestionResult() {
       mobilePrimaryAction={mobilePrimaryAction}
       secondaryActions={secondaryActions}
     >
-      <GeneratedQuestionPreview
-        generatedQuestion={generatedQuestion}
-        copyFeedback={copyFeedback}
-      />
+      <GeneratedQuestionPreview generatedQuestion={generatedQuestion} />
     </SajuQuestionStepShell>
   );
 }

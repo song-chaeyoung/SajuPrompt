@@ -4,38 +4,18 @@ import { useSyncExternalStore } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
 
 import {
-  THEME_DARK_CLASS,
   THEME_STORAGE_KEY,
   type ThemePreference,
 } from "@/features/toggle-theme/config/theme";
+import {
+  applyTheme,
+  getAppliedTheme,
+  subscribeToThemeChange,
+} from "@/features/toggle-theme/lib/theme-store";
 import { Button } from "@/shared/ui/button";
 
-const THEME_CHANGE_EVENT = "saju-theme-change";
-
-function getAppliedTheme(): ThemePreference {
-  return document.documentElement.classList.contains(THEME_DARK_CLASS)
-    ? "dark"
-    : "light";
-}
-
-function applyTheme(theme: ThemePreference) {
-  document.documentElement.classList.toggle(
-    THEME_DARK_CLASS,
-    theme === "dark",
-  );
-  window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
-}
-
-function subscribeToThemeChange(onStoreChange: () => void) {
-  window.addEventListener(THEME_CHANGE_EVENT, onStoreChange);
-
-  return () => {
-    window.removeEventListener(THEME_CHANGE_EVENT, onStoreChange);
-  };
-}
-
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(
+  const theme = useSyncExternalStore<ThemePreference>(
     subscribeToThemeChange,
     getAppliedTheme,
     () => "light",
@@ -53,9 +33,8 @@ export function ThemeToggle() {
     }
   };
 
-  const buttonTitle = theme === "dark"
-    ? "라이트 모드로 전환"
-    : "다크 모드로 전환";
+  const buttonTitle =
+    theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환";
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-40">

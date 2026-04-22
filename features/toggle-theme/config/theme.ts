@@ -3,6 +3,7 @@ export type ThemePreference = "light" | "dark";
 export const THEME_STORAGE_KEY = "saju-theme";
 export const THEME_DARK_CLASS = "dark";
 export const THEME_MEDIA_QUERY = "(prefers-color-scheme: dark)";
+export const THEME_CHANGE_EVENT = "saju-theme-change";
 
 export function isThemePreference(
   value: string | null,

@@ -238,6 +238,153 @@
     line-height: 1.2;
     letter-spacing: -0.014em;
   }
+
+  .cn-toast {
+    position: relative;
+    overflow: hidden;
+    width: min(26.5rem, calc(100vw - 1.5rem));
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1rem 1rem 1rem;
+    background:
+      radial-gradient(
+        circle at 0% 0%,
+        color-mix(in oklch, var(--accent) 10%, transparent),
+        transparent 38%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--background) 72%, transparent),
+        transparent 58%
+      ),
+      color-mix(in oklch, var(--popover) 94%, var(--primary) 6%);
+    box-shadow:
+      0 22px 46px color-mix(in oklch, var(--primary) 11%, transparent),
+      0 4px 14px color-mix(in oklch, var(--foreground) 5%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--background) 82%, transparent);
+    color: var(--popover-foreground);
+  }
+
+  .cn-toast::before {
+    content: none;
+  }
+
+  .cn-toast::after {
+    content: none;
+  }
+
+  .cn-toast[data-type="success"] {
+    background:
+      radial-gradient(
+        circle at 0% 0%,
+        color-mix(in oklch, var(--success) 12%, transparent),
+        transparent 36%
+      ),
+      linear-gradient(
+        180deg,
+        color-mix(in oklch, var(--background) 74%, transparent),
+        transparent 58%
+      ),
+      color-mix(in oklch, var(--popover) 92%, var(--success) 8%);
+  }
+
+  .cn-toast[data-type="error"] {
+    background: color-mix(
+      in oklch,
+      var(--popover) 91%,
+      var(--destructive) 9%
+    );
+  }
+
+  .cn-toast__icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin-top: 0;
+    border-radius: 999px;
+    background: color-mix(in oklch, var(--primary) 12%, var(--background));
+    color: color-mix(in oklch, var(--foreground) 66%, var(--primary) 34%);
+    box-shadow:
+      0 10px 22px color-mix(in oklch, var(--primary) 10%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--background) 76%, transparent);
+  }
+
+  .cn-toast[data-type="success"] .cn-toast__icon {
+    background: color-mix(in oklch, var(--success) 16%, var(--background));
+    color: color-mix(in oklch, var(--success) 72%, var(--foreground) 28%);
+  }
+
+  .cn-toast[data-type="error"] .cn-toast__icon {
+    background: color-mix(in oklch, var(--destructive) 14%, var(--background));
+    color: color-mix(in oklch, var(--destructive) 74%, var(--foreground) 26%);
+    box-shadow:
+      0 10px 22px color-mix(in oklch, var(--destructive) 12%, transparent),
+      inset 0 1px 0 color-mix(in oklch, var(--background) 76%, transparent);
+  }
+
+  .cn-toast__content {
+    min-width: 0;
+    min-height: 2rem;
+    justify-content: center;
+    gap: 0;
+    padding-top: 0;
+  }
+
+  .cn-toast__title {
+    display: none;
+    font-size: 0.96875rem;
+    font-weight: 680;
+    line-height: 1.28;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+  }
+
+  .cn-toast__title::before {
+    content: none;
+  }
+
+  .cn-toast__description {
+    color: color-mix(in oklch, var(--popover-foreground) 88%, var(--primary) 12%);
+    font-size: 0.915rem;
+    font-weight: 620;
+    line-height: 1.42;
+    letter-spacing: -0.012em;
+    text-wrap: pretty;
+  }
+
+  .cn-toast__action,
+  .cn-toast__cancel {
+    border-radius: calc(var(--radius) * 0.9);
+    border: 1px solid color-mix(in oklch, var(--primary) 12%, var(--border));
+    padding-inline: 0.85rem;
+    padding-block: 0.45rem;
+    font-size: var(--font-size-caption);
+    font-weight: 600;
+  }
+
+  .cn-toast__action {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .cn-toast__cancel {
+    background: color-mix(in oklch, var(--background) 84%, var(--muted) 16%);
+    color: var(--foreground);
+  }
+
+  @media (max-width: 640px) {
+    .cn-toast {
+      gap: 0.75rem;
+      padding: 0.95rem 0.9rem 0.92rem;
+    }
+
+    .cn-toast__description {
+      font-size: 0.875rem;
+    }
+  }
 }
 
 @keyframes hero-fade-up {

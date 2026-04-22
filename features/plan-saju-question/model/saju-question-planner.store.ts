@@ -22,6 +22,7 @@ interface SajuQuestionPlannerStore {
   startGeneration: () => void;
   setGenerationSuccess: (question: string) => void;
   setGenerationError: (message: string) => void;
+  clearGenerationError: () => void;
   clearGeneration: () => void;
   reset: () => void;
 }
@@ -110,6 +111,13 @@ export const useSajuQuestionPlannerStore = create<SajuQuestionPlannerStore>(
         generationStatus: "error",
         generationError: message,
       });
+    },
+    clearGenerationError: () => {
+      set((state) => ({
+        generationStatus:
+          state.generationStatus === "error" ? "idle" : state.generationStatus,
+        generationError: null,
+      }));
     },
     clearGeneration: () => {
       set({

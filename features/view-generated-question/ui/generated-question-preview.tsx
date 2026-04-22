@@ -1,15 +1,11 @@
-import { cn } from "@/shared/lib/utils";
 import { Textarea } from "@/shared/ui/textarea";
-import type { CopyFeedback } from "@/features/plan-saju-question/model/use-plan-saju-question";
 
 interface GeneratedQuestionPreviewProps {
   generatedQuestion: string;
-  copyFeedback: CopyFeedback | null;
 }
 
 export function GeneratedQuestionPreview({
   generatedQuestion,
-  copyFeedback,
 }: GeneratedQuestionPreviewProps) {
   return (
     <section className="space-y-5 rounded-[1.75rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_95%,var(--card)_5%)] p-4 md:p-6">
@@ -30,19 +26,6 @@ export function GeneratedQuestionPreview({
         className="min-h-60 leading-relaxed sm:min-h-72"
         placeholder="질문문을 생성하면 여기에 표시됩니다."
       />
-
-      {copyFeedback ? (
-        <p
-          className={cn(
-            "inline-flex rounded-full px-3 py-1.5 type-body-sm font-medium",
-            copyFeedback.type === "success"
-              ? "bg-success/12 text-success"
-              : "bg-destructive/10 text-destructive",
-          )}
-        >
-          {copyFeedback.message}
-        </p>
-      ) : null}
     </section>
   );
 }
