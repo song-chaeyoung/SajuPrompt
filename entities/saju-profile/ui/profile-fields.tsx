@@ -223,7 +223,7 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
         </div>
       </div>
 
-      <div className="space-y-4 rounded-[1.5rem] border border-border/70 bg-[color-mix(in_oklch,var(--muted)_34%,var(--background)_66%)] p-4">
+      <div className="space-y-4 rounded-[1.5rem] bg-[color-mix(in_oklch,var(--muted)_34%,var(--background)_66%)] p-4">
         <div className="space-y-1.5">
           <p className="type-caption font-semibold tracking-[0.05em] text-muted-foreground">
             보조 정보

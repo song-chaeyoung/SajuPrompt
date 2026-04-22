@@ -109,23 +109,23 @@
 .dark {
   --background: oklch(0.2 0.03 281);
   --foreground: oklch(0.94 0.01 84);
-  --card: oklch(0.245 0.032 283);
+  --card: oklch(0.272 0.03 283);
   --card-foreground: oklch(0.94 0.01 84);
-  --popover: oklch(0.222 0.03 282);
+  --popover: oklch(0.248 0.03 282);
   --popover-foreground: oklch(0.94 0.01 84);
   --primary: oklch(0.618 0.102 282.4);
   --primary-foreground: oklch(0.968 0.008 80.2);
-  --secondary: oklch(0.31 0.03 284);
+  --secondary: oklch(0.35 0.032 284);
   --secondary-foreground: oklch(0.94 0.01 84);
-  --muted: oklch(0.29 0.022 286);
-  --muted-foreground: oklch(0.76 0.024 285);
+  --muted: oklch(0.325 0.024 286);
+  --muted-foreground: oklch(0.82 0.022 285);
   --accent: oklch(0.724 0.058 22.6);
   --accent-foreground: oklch(0.2 0.03 281);
   --destructive: oklch(0.704 0.191 22.216);
   --success: oklch(0.7 0.12 158);
   --success-foreground: oklch(0.2 0.03 281);
-  --border: oklch(0.36 0.025 286);
-  --input: oklch(0.3 0.03 286);
+  --border: oklch(0.43 0.026 286);
+  --input: oklch(0.35 0.03 286);
   --ring: color-mix(in oklch, var(--primary) 82%, var(--accent) 18%);
   --color-surface-muted: var(--muted);
   --color-text-muted: var(--muted-foreground);
@@ -138,6 +138,10 @@
   }
   html {
     @apply bg-background text-foreground font-sans;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
   }
   body {
     @apply bg-background text-foreground;

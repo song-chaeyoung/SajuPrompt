@@ -29,14 +29,14 @@ function ModeButton({
       type="button"
       variant={isActive ? "secondary" : "outline"}
       onClick={() => onSelect(value)}
-      className="h-auto min-h-[10rem] w-full flex-col items-start justify-start gap-3 rounded-[1.625rem] px-5 py-5 text-left whitespace-normal shadow-[0_16px_32px_color-mix(in_oklch,var(--foreground)_4%,transparent)] transition-transform hover:-translate-y-0.5 sm:min-h-[11rem]"
+      className="h-auto min-h-[10rem] w-full flex-col items-start justify-start gap-3 rounded-[1.625rem] px-5 py-5 text-left whitespace-normal shadow-[0_16px_32px_color-mix(in_oklch,var(--foreground)_4%,transparent)] dark:shadow-[0_18px_36px_color-mix(in_oklch,var(--foreground)_8%,transparent)] transition-transform hover:-translate-y-0.5 sm:min-h-[11rem]"
     >
       <span className="type-body w-full font-semibold leading-snug break-keep">
         {label}
       </span>
       <span
         className={`type-body-sm w-full break-keep leading-relaxed whitespace-normal ${
-          isActive ? "text-foreground/72" : "text-muted-foreground"
+          isActive ? "text-foreground/84" : "text-muted-foreground"
         }`}
       >
         {description}

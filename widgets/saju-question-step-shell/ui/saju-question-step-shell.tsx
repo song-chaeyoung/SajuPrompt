@@ -37,10 +37,10 @@ export function SajuQuestionStepShell({
             : undefined,
         )}
       >
-        <div className="mx-auto w-full max-w-3xl rounded-[2rem] border border-border/70 bg-[color-mix(in_oklch,var(--card)_94%,var(--background)_6%)] p-5 shadow-[0_24px_60px_color-mix(in_oklch,var(--primary)_8%,transparent)] sm:p-7">
+        <div className="mx-auto w-full max-w-3xl rounded-[2rem] border border-border/75 bg-[color-mix(in_oklch,var(--card)_95%,var(--background)_5%)] p-5 shadow-[0_24px_60px_color-mix(in_oklch,var(--primary)_8%,transparent)] dark:border-border/95 dark:bg-[color-mix(in_oklch,var(--card)_97%,var(--background)_3%)] sm:p-7">
           <div className="space-y-6 sm:space-y-7">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-[color-mix(in_oklch,var(--primary)_5%,var(--background)_95%)] px-3 py-1.5 text-[0.8125rem] font-semibold tracking-[0.04em] text-[color:color-mix(in_oklch,var(--foreground)_74%,var(--primary)_26%)]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-[color-mix(in_oklch,var(--primary)_7%,var(--background)_93%)] px-3 py-1.5 text-[0.8125rem] font-semibold tracking-[0.04em] text-[color:color-mix(in_oklch,var(--foreground)_82%,var(--primary)_18%)] dark:border-primary/28 dark:bg-[color-mix(in_oklch,var(--primary)_14%,var(--background)_86%)] dark:text-[color:color-mix(in_oklch,var(--foreground)_88%,var(--primary)_12%)]">
                 <span
                   aria-hidden
                   className="size-1.5 rounded-full bg-accent/80"
@@ -64,7 +64,7 @@ export function SajuQuestionStepShell({
             ) : null}
 
             {hasDesktopActionArea ? (
-              <div className="border-t border-border/70 pt-4 sm:pt-5">
+              <div className="border-t border-border/75 dark:border-border/95 pt-4 sm:pt-5">
                 {secondaryActions ? (
                   <div className="flex flex-wrap items-center justify-end gap-2 sm:hidden">
                     {secondaryActions}

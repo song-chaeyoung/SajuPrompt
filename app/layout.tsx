@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 
+import {
+  getThemeInitializationScript,
+} from "@/features/toggle-theme/config/theme";
+import { ThemeToggle } from "@/features/toggle-theme/ui/theme-toggle";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -40,8 +45,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeInitializationScript = getThemeInitializationScript();
+
   return (
-    <html lang="ko" className="h-full antialiased">
+    <html
+      lang="ko"
+      className="h-full antialiased"
+      suppressHydrationWarning
+    >
       <head>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
@@ -50,8 +61,14 @@ export default function RootLayout({
           crossOrigin="anonymous"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
         />
+        <script
+          dangerouslySetInnerHTML={{ __html: themeInitializationScript }}
+        />
       </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ThemeToggle />
+        {children}
+      </body>
     </html>
   );
 }
