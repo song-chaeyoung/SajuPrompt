@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -12,19 +11,6 @@
   --font-heading: var(--app-font-heading);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -52,24 +38,27 @@
 
 :root {
   --app-font-sans:
-    "Noto Sans KR",
+    -apple-system,
+    BlinkMacSystemFont,
     "Apple SD Gothic Neo",
-    "Malgun Gothic",
+    "Pretendard Variable",
+    Pretendard,
+    Roboto,
+    "Noto Sans KR",
     "Segoe UI",
+    "Malgun Gothic",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
     sans-serif;
-  --app-font-heading:
-    "Noto Serif KR",
-    "Apple Myungjo",
-    "Nanum Myeongjo",
-    "Times New Roman",
-    serif;
+  --app-font-heading: var(--app-font-sans);
   --app-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --font-size-caption: 0.8125rem;
   --font-size-body-sm: 0.9375rem;
   --font-size-body: 1rem;
   --font-size-title-sm: 1.25rem;
   --font-size-title-md: 1.5625rem;
-  --font-size-title-lg: 1.9531rem;
+  --font-size-title-lg: clamp(1.9531rem, 1.83rem + 0.53vw, 2.25rem);
   --line-height-tight: 1.24;
   --line-height-base: 1.62;
   --line-height-relaxed: 1.74;
@@ -82,14 +71,14 @@
   --space-2xl: 3rem;
   --space-3xl: 4rem;
   --space-4xl: 6rem;
-  --color-bg: oklch(0.977 0.007 80.721);
-  --color-surface: oklch(0.959 0.013 86.83);
-  --color-surface-strong: oklch(0.92 0.013 86.832);
-  --color-primary: oklch(0.332 0.114 280.834);
-  --color-accent: oklch(0.703 0.123 78.072);
-  --color-text: oklch(0.228 0.038 282.932);
-  --color-muted: oklch(0.591 0.049 284.818);
-  --color-border: oklch(0.821 0.019 89.379);
+  --color-bg: oklch(0.982 0.004 85);
+  --color-surface: oklch(0.972 0.006 85);
+  --color-surface-strong: oklch(0.947 0.01 85);
+  --color-primary: oklch(0.31 0.092 277);
+  --color-accent: oklch(0.78 0.045 92);
+  --color-text: oklch(0.245 0.028 279);
+  --color-muted: oklch(0.56 0.016 282);
+  --color-border: oklch(0.875 0.01 84);
   --color-success: oklch(0.629 0.132 158.212);
   --background: var(--color-bg);
   --foreground: var(--color-text);
@@ -109,22 +98,9 @@
   --success: var(--color-success);
   --success-foreground: var(--color-bg);
   --border: var(--color-border);
-  --input: color-mix(in oklch, var(--color-bg) 68%, var(--color-primary) 8%);
-  --ring: color-mix(in oklch, var(--color-primary) 68%, var(--color-accent) 32%);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --input: color-mix(in oklch, var(--color-bg) 76%, var(--color-primary) 5%);
+  --ring: color-mix(in oklch, var(--color-primary) 82%, var(--color-accent) 18%);
   --radius: 0.75rem;
-  --sidebar: var(--color-surface);
-  --sidebar-foreground: var(--color-text);
-  --sidebar-primary: var(--color-primary);
-  --sidebar-primary-foreground: var(--color-bg);
-  --sidebar-accent: var(--color-accent);
-  --sidebar-accent-foreground: var(--color-text);
-  --sidebar-border: var(--color-border);
-  --sidebar-ring: var(--ring);
 }
 
 .dark {
@@ -134,33 +110,20 @@
   --card-foreground: oklch(0.94 0.01 84);
   --popover: oklch(0.222 0.03 282);
   --popover-foreground: oklch(0.94 0.01 84);
-  --primary: oklch(0.78 0.09 79);
-  --primary-foreground: oklch(0.2 0.03 281);
+  --primary: oklch(0.618 0.102 282.4);
+  --primary-foreground: oklch(0.968 0.008 80.2);
   --secondary: oklch(0.31 0.03 284);
   --secondary-foreground: oklch(0.94 0.01 84);
   --muted: oklch(0.29 0.022 286);
   --muted-foreground: oklch(0.76 0.024 285);
-  --accent: oklch(0.71 0.11 78);
+  --accent: oklch(0.724 0.058 22.6);
   --accent-foreground: oklch(0.2 0.03 281);
   --destructive: oklch(0.704 0.191 22.216);
   --success: oklch(0.7 0.12 158);
   --success-foreground: oklch(0.2 0.03 281);
   --border: oklch(0.36 0.025 286);
   --input: oklch(0.3 0.03 286);
-  --ring: oklch(0.73 0.08 80);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.245 0.032 283);
-  --sidebar-foreground: oklch(0.94 0.01 84);
-  --sidebar-primary: oklch(0.71 0.11 78);
-  --sidebar-primary-foreground: oklch(0.2 0.03 281);
-  --sidebar-accent: oklch(0.31 0.03 284);
-  --sidebar-accent-foreground: oklch(0.94 0.01 84);
-  --sidebar-border: oklch(0.36 0.025 286);
-  --sidebar-ring: oklch(0.73 0.08 80);
+  --ring: color-mix(in oklch, var(--primary) 82%, var(--accent) 18%);
 }
 
 @layer base {
@@ -178,7 +141,7 @@
     background-image:
       radial-gradient(
         circle at 8% -12%,
-        color-mix(in oklch, var(--accent) 14%, transparent),
+        color-mix(in oklch, var(--accent) 8%, transparent),
         transparent 50%
       ),
       radial-gradient(

@@ -27,14 +27,14 @@ function ModeButton({
   return (
     <Button
       type="button"
-      variant={isActive ? "default" : "outline"}
+      variant={isActive ? "secondary" : "outline"}
       onClick={() => onSelect(value)}
       className="h-auto min-h-20 w-full items-start justify-start gap-2 px-4 py-3.5 text-left sm:min-h-24"
     >
       <span className="type-body font-semibold">{label}</span>
       <span
         className={`type-body-sm leading-snug ${
-          isActive ? "text-accent-foreground/75" : "text-muted-foreground"
+          isActive ? "text-foreground/72" : "text-muted-foreground"
         }`}
       >
         {description}

@@ -10,11 +10,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-accent text-accent-foreground shadow-[0_8px_20px_color-mix(in_oklch,var(--accent)_34%,transparent)] hover:bg-accent/90",
+          "bg-primary text-primary-foreground shadow-[0_10px_24px_color-mix(in_oklch,var(--primary)_28%,transparent)] hover:bg-primary/90",
         outline:
           "border-border bg-background text-foreground hover:bg-secondary hover:text-secondary-foreground aria-expanded:bg-secondary aria-expanded:text-secondary-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
-          "bg-primary text-primary-foreground hover:bg-primary/90 aria-expanded:bg-primary aria-expanded:text-primary-foreground",
+          "border-primary/20 bg-[color-mix(in_oklch,var(--primary)_5%,var(--background)_95%)] text-foreground shadow-[0_10px_24px_color-mix(in_oklch,var(--primary)_8%,transparent)] hover:bg-[color-mix(in_oklch,var(--primary)_7%,var(--background)_93%)] hover:border-primary/26 aria-expanded:bg-[color-mix(in_oklch,var(--primary)_7%,var(--background)_93%)] aria-expanded:border-primary/26 aria-expanded:text-foreground",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
         destructive:

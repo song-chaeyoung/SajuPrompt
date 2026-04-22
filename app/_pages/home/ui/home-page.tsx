@@ -7,7 +7,7 @@ export function HomePage() {
         <p className="type-caption font-semibold tracking-[0.02em] text-primary">
           AI 사주 질문 설계기
         </p>
-        <h1 className="type-title-lg max-w-[18ch] font-semibold text-foreground md:text-[2.25rem]">
+        <h1 className="type-title-lg max-w-[18ch] font-semibold text-foreground">
           사주 질문 입력 초안
         </h1>
         <p className="type-body max-w-[60ch] text-muted-foreground">
