@@ -14,23 +14,23 @@ export function SajuQuestionIntro() {
 
   return (
     <>
-      <section className="pb-32 pt-4 sm:pb-36 sm:pt-6">
-        <div className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/95 px-5 py-7 shadow-[0_20px_56px_color-mix(in_oklch,var(--primary)_7%,transparent)] sm:px-7 sm:py-8">
+      <section className="pb-[calc(9.5rem+env(safe-area-inset-bottom))] pt-2 sm:pb-20 sm:pt-6">
+        <div className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-[2rem] border border-border/70 bg-[color-mix(in_oklch,var(--card)_94%,var(--background)_6%)] px-5 py-7 shadow-[0_24px_60px_color-mix(in_oklch,var(--primary)_8%,transparent)] sm:px-8 sm:py-9">
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-auto right-[-4rem] top-[-5rem] h-40 w-40 rounded-full bg-primary/10 blur-3xl"
+            className="pointer-events-none absolute inset-x-auto right-[-4rem] top-[-5rem] h-44 w-44 rounded-full bg-primary/10 blur-3xl"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute bottom-[-4rem] left-[-3rem] h-36 w-36 rounded-full bg-accent/25 blur-3xl"
+            className="pointer-events-none absolute bottom-[-4rem] left-[-3rem] h-40 w-40 rounded-full bg-accent/20 blur-3xl"
           />
 
-          <div className="relative space-y-7">
-            <div className="space-y-3">
-              <p className="type-caption font-semibold tracking-[0.08em] text-primary">
+          <div className="relative space-y-8">
+            <div className="space-y-4">
+              <p className="type-caption font-semibold tracking-[0.08em] text-primary/85">
                 AI 사주 질문 설계기
               </p>
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 <h1 className="type-title-lg max-w-[16ch] font-semibold text-foreground sm:max-w-[15ch]">
                   시작하면 단계별 입력 화면만 보이도록 구성했습니다.
                 </h1>
@@ -41,9 +41,9 @@ export function SajuQuestionIntro() {
               </div>
             </div>
 
-            <ol className="grid gap-4 border-y border-border/70 py-4 sm:grid-cols-3 sm:gap-5">
-              <li className="space-y-1.5">
-                <p className="type-caption font-semibold tracking-[0.06em] text-primary">
+            <ol className="grid gap-4 border-t border-border/70 pt-4 sm:grid-cols-3 sm:gap-5 sm:pt-6">
+              <li className="space-y-2 border-b border-border/60 pb-4 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-5">
+                <p className="type-caption font-semibold tracking-[0.06em] text-primary/85">
                   STEP 1
                 </p>
                 <p className="type-body font-semibold text-foreground">
@@ -53,8 +53,8 @@ export function SajuQuestionIntro() {
                   내 사주 분석인지, 궁합 분석인지 먼저 고릅니다.
                 </p>
               </li>
-              <li className="space-y-1.5">
-                <p className="type-caption font-semibold tracking-[0.06em] text-primary">
+              <li className="space-y-2 border-b border-border/60 pb-4 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-5">
+                <p className="type-caption font-semibold tracking-[0.06em] text-primary/85">
                   STEP 2
                 </p>
                 <p className="type-body font-semibold text-foreground">
@@ -64,8 +64,8 @@ export function SajuQuestionIntro() {
                   필요한 기본 정보와 질문 목적을 한 번에 정리합니다.
                 </p>
               </li>
-              <li className="space-y-1.5">
-                <p className="type-caption font-semibold tracking-[0.06em] text-primary">
+              <li className="space-y-2">
+                <p className="type-caption font-semibold tracking-[0.06em] text-primary/85">
                   STEP 3
                 </p>
                 <p className="type-body font-semibold text-foreground">
@@ -86,7 +86,7 @@ export function SajuQuestionIntro() {
             type="button"
             size="lg"
             onClick={handleStart}
-            className="h-11 w-full shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_20%,transparent)]"
+            className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_20%,transparent)]"
           >
             시작하기
           </Button>

@@ -21,13 +21,24 @@ interface GoalFieldsProps {
 
 export function GoalFields({ goal, onChange }: GoalFieldsProps) {
   return (
-    <section className="space-y-5 rounded-2xl border border-border bg-background p-4 md:p-5">
-      <h3 className="type-title-sm font-semibold text-foreground">
-        질문 목적과 해석 스타일
-      </h3>
+    <section className="space-y-6 rounded-[1.75rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_95%,var(--card)_5%)] p-4 md:p-6">
+      <div className="space-y-2">
+        <p className="type-caption font-semibold tracking-[0.06em] text-primary/80">
+          질문 설계
+        </p>
+        <div className="space-y-1.5">
+          <h3 className="type-title-sm font-semibold text-foreground">
+            질문 목적과 해석 스타일
+          </h3>
+          <p className="type-body-sm max-w-[36rem] text-muted-foreground">
+            현재 상황부터 차례로 고르면 AI에 전달할 질문 흐름을 더 자연스럽게
+            정리할 수 있습니다.
+          </p>
+        </div>
+      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 md:gap-x-5 md:gap-y-4">
-        <div className="space-y-2">
+      <div className="grid gap-4 sm:grid-cols-2 md:gap-x-5 md:gap-y-5">
+        <div className="space-y-2.5">
           <Label>현재 상황</Label>
           <Select
             value={goal.situation || undefined}
@@ -46,7 +57,7 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <Label>질문 목적</Label>
           <Select
             value={goal.purpose || undefined}
@@ -65,7 +76,7 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <Label>해석 스타일</Label>
           <Select
             value={goal.style}
@@ -84,7 +95,7 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <Label>추가 요청사항</Label>
           <Select
             value={goal.customRequest || undefined}

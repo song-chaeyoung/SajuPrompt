@@ -83,8 +83,8 @@ export function SajuQuestionResult() {
     (!generatedQuestion && isWaitingForResult)
   ) {
     return (
-      <SajuQuestionStepShell currentStep="result" footer={null}>
-        <section className="flex min-h-72 flex-col items-center justify-center rounded-[calc(var(--radius-3xl)*0.95)] border border-border/70 bg-[color-mix(in_oklch,var(--card)_80%,var(--background)_20%)] px-6 py-10 text-center shadow-[0_18px_40px_color-mix(in_oklch,var(--color-text)_5%,transparent)]">
+      <SajuQuestionStepShell currentStep="result">
+        <section className="flex min-h-72 flex-col items-center justify-center rounded-[calc(var(--radius-3xl)*0.95)] border border-border/70 bg-[color-mix(in_oklch,var(--card)_82%,var(--background)_18%)] px-6 py-10 text-center shadow-[0_18px_40px_color-mix(in_oklch,var(--foreground)_5%,transparent)]">
           <div className="flex max-w-sm flex-col items-center gap-5">
             <CardSequenceLoader size="lg" />
 
@@ -92,7 +92,7 @@ export function SajuQuestionResult() {
               <h3 className="type-title-sm font-semibold text-foreground">
                 질문을 정리하고 있어요
               </h3>
-              <p className="type-body-sm text-[color:var(--color-text-muted)]">
+              <p className="type-body-sm text-muted-foreground">
                 입력하신 정보로 AI에 전달할 질문 흐름을 구성하는 중입니다.
               </p>
             </div>
@@ -106,45 +106,57 @@ export function SajuQuestionResult() {
     return null;
   }
 
+  const desktopPrimaryAction = (
+    <Button
+      type="button"
+      onClick={handleCopyQuestion}
+      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
+    >
+      복사하기
+    </Button>
+  );
+
+  const mobilePrimaryAction = (
+    <Button
+      type="button"
+      onClick={handleCopyQuestion}
+      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
+    >
+      복사하기
+    </Button>
+  );
+
+  const secondaryActions = (
+    <>
+      <Button
+        type="button"
+        size="sm"
+        variant="outline"
+        onClick={handleRegenerate}
+        className="h-11 rounded-[1rem] px-4"
+      >
+        다시 생성
+      </Button>
+
+      <Button
+        type="button"
+        size="sm"
+        variant="ghost"
+        onClick={handleReset}
+        className="h-11 rounded-[1rem] px-4 text-muted-foreground hover:text-foreground"
+      >
+        처음으로
+      </Button>
+    </>
+  );
+
   return (
     <SajuQuestionStepShell
       currentStep="result"
       errorMessage={generationError}
-      footer={
-        <div className="border-t border-border/70 pt-5">
-          <div className="flex flex-col gap-3">
-            <Button
-              type="button"
-              onClick={handleCopyQuestion}
-              className="h-11 w-full"
-            >
-              복사하기
-            </Button>
-
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={handleRegenerate}
-                className="h-9 px-4"
-              >
-                다시 생성
-              </Button>
-
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={handleReset}
-                className="h-9 px-3 text-muted-foreground hover:text-foreground"
-              >
-                처음으로
-              </Button>
-            </div>
-          </div>
-        </div>
-      }
+      desktopPrimaryAction={desktopPrimaryAction}
+      mobilePrimaryAction={mobilePrimaryAction}
+      secondaryActions={secondaryActions}
     >
       <GeneratedQuestionPreview
         generatedQuestion={generatedQuestion}

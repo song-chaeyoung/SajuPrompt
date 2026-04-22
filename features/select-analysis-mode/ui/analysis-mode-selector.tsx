@@ -29,7 +29,7 @@ function ModeButton({
       type="button"
       variant={isActive ? "secondary" : "outline"}
       onClick={() => onSelect(value)}
-      className="h-auto w-full flex-col items-start justify-start gap-2 rounded-2xl px-5 py-4 text-left whitespace-normal"
+      className="h-auto min-h-[10rem] w-full flex-col items-start justify-start gap-3 rounded-[1.625rem] px-5 py-5 text-left whitespace-normal shadow-[0_16px_32px_color-mix(in_oklch,var(--foreground)_4%,transparent)] transition-transform hover:-translate-y-0.5 sm:min-h-[11rem]"
     >
       <span className="type-body w-full font-semibold leading-snug break-keep">
         {label}

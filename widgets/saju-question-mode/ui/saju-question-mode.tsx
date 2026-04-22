@@ -21,32 +21,56 @@ export function SajuQuestionMode() {
     router.push("/", { scroll: false });
   };
 
+  const desktopPrimaryAction = (
+    <Button
+      type="button"
+      onClick={handleNext}
+      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
+    >
+      다음
+    </Button>
+  );
+
+  const mobilePrimaryAction = (
+    <Button
+      type="button"
+      onClick={handleNext}
+      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
+    >
+      다음
+    </Button>
+  );
+
+  const secondaryActions = (
+    <Button
+      type="button"
+      size="sm"
+      variant="ghost"
+      onClick={handleReset}
+      className="h-11 rounded-[1rem] px-4 text-muted-foreground hover:text-foreground"
+    >
+      처음으로
+    </Button>
+  );
+
   return (
     <SajuQuestionStepShell
       currentStep="mode"
-      footer={
-        <div className="border-t border-border/70 pt-5">
-          <div className="flex flex-col gap-3">
-            <Button type="button" onClick={handleNext} className="h-11 w-full">
-              다음
-            </Button>
-
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={handleReset}
-                className="h-9 px-3 text-muted-foreground hover:text-foreground"
-              >
-                처음으로
-              </Button>
-            </div>
-          </div>
-        </div>
-      }
+      desktopPrimaryAction={desktopPrimaryAction}
+      mobilePrimaryAction={mobilePrimaryAction}
+      secondaryActions={secondaryActions}
     >
-      <AnalysisModeSelector activeMode={form.mode} onSelect={handleModeSelect} />
+      <div className="space-y-4">
+        <p className="type-body-sm max-w-[34rem] text-muted-foreground">
+          이번 질문이 내 사주를 보는 흐름인지, 상대와의 궁합과 관계를 함께
+          정리하는 흐름인지 먼저 선택해 주세요.
+        </p>
+
+        <AnalysisModeSelector
+          activeMode={form.mode}
+          onSelect={handleModeSelect}
+        />
+      </div>
     </SajuQuestionStepShell>
   );
 }

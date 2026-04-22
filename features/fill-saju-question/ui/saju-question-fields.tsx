@@ -20,7 +20,7 @@ export function SajuQuestionFields({
   onUpdateGoal,
 }: SajuQuestionFieldsProps) {
   return (
-    <div className="space-y-6 md:space-y-7">
+    <div className="space-y-7 md:space-y-8">
       <ProfileFields title="내 정보" profile={form.me} onChange={onUpdateMe} />
 
       {form.mode === "compatibility" ? (

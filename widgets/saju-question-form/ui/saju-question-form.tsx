@@ -38,38 +38,51 @@ export function SajuQuestionForm() {
     router.push("/", { scroll: false });
   };
 
+  const primaryActionLabel = isTransitioningToResult
+    ? "질문 흐름을 정리하는 중..."
+    : "질문문 생성";
+
+  const desktopPrimaryAction = (
+    <Button
+      type="button"
+      onClick={handleGenerate}
+      disabled={isTransitioningToResult}
+      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
+    >
+      {primaryActionLabel}
+    </Button>
+  );
+
+  const mobilePrimaryAction = (
+    <Button
+      type="button"
+      onClick={handleGenerate}
+      disabled={isTransitioningToResult}
+      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
+    >
+      {primaryActionLabel}
+    </Button>
+  );
+
+  const secondaryActions = (
+    <Button
+      type="button"
+      size="sm"
+      variant="ghost"
+      onClick={handleReset}
+      className="h-11 rounded-[1rem] px-4 text-muted-foreground hover:text-foreground"
+    >
+      처음으로
+    </Button>
+  );
+
   return (
     <SajuQuestionStepShell
       currentStep="saju"
       errorMessage={generationError}
-      footer={
-        <div className="border-t border-border/70 pt-5">
-          <div className="flex flex-col gap-3">
-            <Button
-              type="button"
-              onClick={handleGenerate}
-              disabled={isTransitioningToResult}
-              className="h-11 w-full"
-            >
-              {isTransitioningToResult
-                ? "질문 흐름을 정리하는 중..."
-                : "질문문 생성"}
-            </Button>
-
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant="ghost"
-                onClick={handleReset}
-                className="h-9 px-3 text-muted-foreground hover:text-foreground"
-              >
-                처음으로
-              </Button>
-            </div>
-          </div>
-        </div>
-      }
+      desktopPrimaryAction={desktopPrimaryAction}
+      mobilePrimaryAction={mobilePrimaryAction}
+      secondaryActions={secondaryActions}
     >
       <SajuQuestionFields
         form={form}
