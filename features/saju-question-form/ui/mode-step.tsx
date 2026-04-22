@@ -29,11 +29,13 @@ function ModeButton({
       type="button"
       variant={isActive ? "secondary" : "outline"}
       onClick={() => onSelect(value)}
-      className="h-auto min-h-20 w-full items-start justify-start gap-2 px-4 py-3.5 text-left sm:min-h-24"
+      className="h-auto w-full flex-col items-start justify-start gap-2 rounded-2xl px-5 py-4 text-left whitespace-normal"
     >
-      <span className="type-body font-semibold">{label}</span>
+      <span className="type-body w-full font-semibold leading-snug break-keep">
+        {label}
+      </span>
       <span
-        className={`type-body-sm leading-snug ${
+        className={`type-body-sm w-full break-keep leading-relaxed whitespace-normal ${
           isActive ? "text-foreground/72" : "text-muted-foreground"
         }`}
       >
@@ -45,7 +47,7 @@ function ModeButton({
 
 export function ModeStep({ activeMode, onSelect }: ModeStepProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
       {MODE_OPTIONS.map((option) => (
         <ModeButton
           key={option.value}

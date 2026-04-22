@@ -3,9 +3,7 @@ import { FORM_STEPS } from "@/shared/config/form-steps";
 
 interface QuestionPlannerActionsProps {
   currentStep: (typeof FORM_STEPS)[number];
-  currentStepIndex: number;
   isGenerating: boolean;
-  onPrevStep: () => void;
   onMoveToSajuStep: () => void;
   onGenerateQuestion: () => void;
   onCopyQuestion: () => void;
@@ -14,9 +12,7 @@ interface QuestionPlannerActionsProps {
 
 export function QuestionPlannerActions({
   currentStep,
-  currentStepIndex,
   isGenerating,
-  onPrevStep,
   onMoveToSajuStep,
   onGenerateQuestion,
   onCopyQuestion,
@@ -26,55 +22,56 @@ export function QuestionPlannerActions({
 
   return (
     <div className="border-t border-border/70 pt-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex w-full flex-col gap-2 sm:order-2 sm:w-auto sm:flex-row sm:justify-end">
-          {currentStep === "mode" ? (
-            <Button type="button" onClick={onMoveToSajuStep} className="w-full sm:w-auto">
-              다음
-            </Button>
-          ) : null}
+      <div className="flex flex-col gap-3">
+        {currentStep === "mode" ? (
+          <Button type="button" onClick={onMoveToSajuStep} className="h-11 w-full">
+            다음
+          </Button>
+        ) : null}
 
-          {currentStep === "saju" ? (
-            <Button
-              type="button"
-              onClick={onGenerateQuestion}
-              disabled={isGenerating}
-              className="w-full sm:w-auto"
-            >
-              {isGenerating ? "질문문 생성 중.." : "질문문 생성"}
-            </Button>
-          ) : null}
+        {currentStep === "saju" ? (
+          <Button
+            type="button"
+            onClick={onGenerateQuestion}
+            disabled={isGenerating}
+            className="h-11 w-full"
+          >
+            {isGenerating ? "질문문 생성 중..." : "질문문 생성"}
+          </Button>
+        ) : null}
 
+        {isResultStep ? (
+          <Button
+            type="button"
+            onClick={onCopyQuestion}
+            className="h-11 w-full"
+          >
+            복사하기
+          </Button>
+        ) : null}
+
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {isResultStep ? (
-            <Button type="button" onClick={onCopyQuestion} className="w-full sm:w-auto">
-              복사하기
-            </Button>
-          ) : null}
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 sm:order-1">
-          {!isResultStep ? (
             <Button
               type="button"
-              variant="outline"
-              onClick={onPrevStep}
-              disabled={currentStepIndex === 0 || isGenerating}
-            >
-              이전
-            </Button>
-          ) : (
-            <Button
-              type="button"
+              size="sm"
               variant="outline"
               onClick={onGenerateQuestion}
               disabled={isGenerating}
+              className="h-9 px-4"
             >
-              {isGenerating ? "다시 생성 중.." : "다시 생성"}
+              {isGenerating ? "다시 생성 중..." : "다시 생성"}
             </Button>
-          )}
+          ) : null}
 
-          <Button type="button" variant="outline" onClick={onResetToStart}>
-            {isResultStep ? "처음부터 다시 하기" : "초기화"}
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={onResetToStart}
+            className="h-9 px-3 text-muted-foreground hover:text-foreground"
+          >
+            처음부터
           </Button>
         </div>
       </div>

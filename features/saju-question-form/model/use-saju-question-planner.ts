@@ -27,7 +27,7 @@ export function useSajuQuestionPlanner() {
     generatedQuestion,
     generationStatus,
     generationError,
-    selectModeAndAdvance,
+    setMode,
     updateMe,
     updatePartner,
     updateGoal,
@@ -45,9 +45,9 @@ export function useSajuQuestionPlanner() {
 
   const handleModeSelect = useCallback(
     (mode: AnalysisMode) => {
-      selectModeAndAdvance(mode);
+      setMode(mode);
     },
-    [selectModeAndAdvance],
+    [setMode],
   );
 
   const handleMoveToSajuStep = useCallback(() => {
