@@ -1,31 +1,42 @@
-import { Textarea } from "@/shared/ui/textarea";
+import { Sparkles } from "lucide-react";
+
+import { cn } from "@/shared/lib/utils";
 
 interface GeneratedQuestionPreviewProps {
   generatedQuestion: string;
+  className?: string;
 }
 
 export function GeneratedQuestionPreview({
   generatedQuestion,
+  className,
 }: GeneratedQuestionPreviewProps) {
   return (
-    <section className="space-y-5 rounded-[1.75rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_95%,var(--card)_5%)] p-4 md:p-6">
-      <div className="space-y-1.5">
-        <p className="type-caption font-semibold tracking-[0.06em] text-primary/80">
-          최종 문안
-        </p>
-        <h3 className="type-title-sm font-semibold text-foreground">
-          생성된 질문문
-        </h3>
-        <p className="type-body-sm max-w-[36rem] text-muted-foreground">
-          복사하기를 누르면 바로 외부 AI에 붙여넣을 수 있는 문장으로 정리됩니다.
-        </p>
+    <section
+      className={cn(
+        "overflow-hidden rounded-[1.9rem] border border-border/75 bg-[color-mix(in_oklch,var(--card)_97%,var(--background)_3%)] shadow-[0_24px_64px_color-mix(in_oklch,var(--primary)_10%,transparent)] dark:border-border/90 dark:bg-[color-mix(in_oklch,var(--card)_94%,var(--background)_6%)]",
+        className,
+      )}
+    >
+      <div className="border-b border-border/70 px-5 py-4 dark:border-border/90 sm:px-6">
+        <div className="flex items-center gap-3">
+          <span className="flex size-9 items-center justify-center rounded-full bg-[color-mix(in_oklch,var(--primary)_10%,var(--background)_90%)] text-primary dark:bg-[color-mix(in_oklch,var(--primary)_16%,var(--background)_84%)]">
+            <Sparkles className="size-4" aria-hidden />
+          </span>
+
+          <div>
+            <p className="type-caption font-semibold tracking-[0.08em] text-primary/80">
+              생성된 질문문
+            </p>
+          </div>
+        </div>
       </div>
-      <Textarea
-        value={generatedQuestion}
-        readOnly
-        className="min-h-60 leading-relaxed sm:min-h-72"
-        placeholder="질문문을 생성하면 여기에 표시됩니다."
-      />
+
+      <div className="px-5 py-5 sm:px-6 sm:py-6">
+        <div className="min-h-60 select-text whitespace-pre-wrap break-keep text-[0.98rem] leading-8 text-[color:color-mix(in_oklch,var(--foreground)_84%,var(--muted-foreground)_16%)] sm:min-h-72">
+          {generatedQuestion}
+        </div>
+      </div>
     </section>
   );
 }

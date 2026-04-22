@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useSajuQuestionPlannerStore } from "@/features/plan-saju-question/model/saju-question-planner.store";
 import { hasCoreRequiredFields } from "@/shared/lib/saju-question-form/validation";
@@ -16,12 +16,21 @@ type GenerateQuestionOptions = {
   minDurationMs?: number;
 };
 
+export type CopyFeedback = {
+  type: "success" | "error";
+  message: string;
+};
+
 const REQUIRED_FIELDS_MESSAGE =
   "생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요.";
 const GENERATION_FAILED_MESSAGE =
   "질문문 생성 중 오류가 발생했습니다.";
 const EMPTY_QUESTION_MESSAGE =
   "생성된 질문문이 비어 있습니다. 다시 시도해 주세요.";
+const COPY_MISSING_MESSAGE = "복사할 질문문이 없습니다.";
+const COPY_SUCCESS_MESSAGE = "질문문이 클립보드에 복사되었습니다.";
+const COPY_FAILED_MESSAGE =
+  "복사에 실패했습니다. 브라우저 권한을 확인해 주세요.";
 
 function waitForMinimumDuration(durationMs: number) {
   if (durationMs <= 0) {
@@ -50,6 +59,7 @@ export function usePlanSajuQuestion() {
     clearGenerationError,
     reset,
   } = useSajuQuestionPlannerStore();
+  const [copyFeedback, setCopyFeedback] = useState<CopyFeedback | null>(null);
 
   const isGenerating = generationStatus === "loading";
   const isQueued = generationStatus === "queued";
@@ -72,6 +82,7 @@ export function usePlanSajuQuestion() {
     }
 
     queueGeneration();
+    setCopyFeedback(null);
     return true;
   }, [clearGenerationError, form, queueGeneration]);
 
@@ -117,6 +128,7 @@ export function usePlanSajuQuestion() {
         await minDurationPromise;
 
         setGenerationSuccess(question);
+        setCopyFeedback(null);
         return true;
       } catch (error) {
         await minDurationPromise;
@@ -142,7 +154,11 @@ export function usePlanSajuQuestion() {
 
   const handleCopyQuestion = useCallback(async () => {
     if (!generatedQuestion) {
-      showErrorToast("복사할 질문문이 없습니다.", {
+      setCopyFeedback({
+        type: "error",
+        message: COPY_MISSING_MESSAGE,
+      });
+      showErrorToast(COPY_MISSING_MESSAGE, {
         id: "saju-copy-missing",
       });
       return;
@@ -150,11 +166,19 @@ export function usePlanSajuQuestion() {
 
     try {
       await navigator.clipboard.writeText(generatedQuestion);
-      showSuccessToast("질문문이 클립보드에 복사되었습니다.", {
+      setCopyFeedback({
+        type: "success",
+        message: COPY_SUCCESS_MESSAGE,
+      });
+      showSuccessToast(COPY_SUCCESS_MESSAGE, {
         id: "saju-copy-success",
       });
     } catch {
-      showErrorToast("복사에 실패했습니다. 브라우저 권한을 확인해 주세요.", {
+      setCopyFeedback({
+        type: "error",
+        message: COPY_FAILED_MESSAGE,
+      });
+      showErrorToast(COPY_FAILED_MESSAGE, {
         id: "saju-copy-failed",
       });
     }
@@ -162,7 +186,22 @@ export function usePlanSajuQuestion() {
 
   const handleResetPlanner = useCallback(() => {
     reset();
+    setCopyFeedback(null);
   }, [reset]);
+
+  useEffect(() => {
+    if (!copyFeedback) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setCopyFeedback(null);
+    }, 2200);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [copyFeedback]);
 
   return {
     form,
@@ -172,6 +211,7 @@ export function usePlanSajuQuestion() {
     isGenerating,
     isQueued,
     isWaitingForResult,
+    copyFeedback,
     updateMe,
     updatePartner,
     updateGoal,
