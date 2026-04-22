@@ -100,6 +100,9 @@
   --border: var(--color-border);
   --input: color-mix(in oklch, var(--color-bg) 76%, var(--color-primary) 5%);
   --ring: color-mix(in oklch, var(--color-primary) 82%, var(--color-accent) 18%);
+  --color-surface-muted: var(--color-surface-strong);
+  --color-text-muted: var(--color-muted);
+  --color-accent-soft: color-mix(in oklch, var(--color-accent) 18%, transparent);
   --radius: 0.75rem;
 }
 
@@ -124,6 +127,9 @@
   --border: oklch(0.36 0.025 286);
   --input: oklch(0.3 0.03 286);
   --ring: color-mix(in oklch, var(--primary) 82%, var(--accent) 18%);
+  --color-surface-muted: var(--muted);
+  --color-text-muted: var(--muted-foreground);
+  --color-accent-soft: color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
 @layer base {

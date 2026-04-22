@@ -11,10 +11,30 @@ type GenerationResponse = {
   message?: string;
 };
 
+type GenerateQuestionOptions = {
+  minDurationMs?: number;
+};
+
 export type CopyFeedback = {
   type: "success" | "error";
   message: string;
 };
+
+const REQUIRED_FIELDS_MESSAGE =
+  "생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요.";
+const GENERATION_FAILED_MESSAGE = "질문문 생성 중 오류가 발생했습니다.";
+const EMPTY_QUESTION_MESSAGE =
+  "생성된 질문문이 비어 있습니다. 다시 시도해 주세요.";
+
+function waitForMinimumDuration(durationMs: number) {
+  if (durationMs <= 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve) => {
+    window.setTimeout(resolve, durationMs);
+  });
+}
 
 export function usePlanSajuQuestion() {
   const {
@@ -26,6 +46,7 @@ export function usePlanSajuQuestion() {
     updateMe,
     updatePartner,
     updateGoal,
+    queueGeneration,
     startGeneration,
     setGenerationSuccess,
     setGenerationError,
@@ -34,6 +55,8 @@ export function usePlanSajuQuestion() {
   const [copyFeedback, setCopyFeedback] = useState<CopyFeedback | null>(null);
 
   const isGenerating = generationStatus === "loading";
+  const isQueued = generationStatus === "queued";
+  const isWaitingForResult = isQueued || isGenerating;
 
   const handleModeSelect = useCallback(
     (mode: AnalysisMode) => {
@@ -42,50 +65,70 @@ export function usePlanSajuQuestion() {
     [setMode],
   );
 
-  const handleGenerateQuestion = useCallback(async () => {
+  const handleQueueGeneration = useCallback(() => {
     if (!hasCoreRequiredFields(form)) {
-      setGenerationError("생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요.");
+      setGenerationError(REQUIRED_FIELDS_MESSAGE);
       return false;
     }
 
-    startGeneration();
+    queueGeneration();
+    setCopyFeedback(null);
+    return true;
+  }, [form, queueGeneration, setGenerationError]);
 
-    try {
-      const response = await fetch("/api/saju-question", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ form }),
-      });
-
-      const body = (await response.json().catch(() => null)) as
-        | GenerationResponse
-        | null;
-
-      if (!response.ok) {
-        throw new Error(body?.message ?? "질문문 생성 중 오류가 발생했습니다.");
+  const handleGenerateQuestion = useCallback(
+    async (options: GenerateQuestionOptions = {}) => {
+      if (!hasCoreRequiredFields(form)) {
+        setGenerationError(REQUIRED_FIELDS_MESSAGE);
+        return false;
       }
 
-      const question = body?.question?.trim();
+      const minDurationPromise = waitForMinimumDuration(
+        Math.max(0, options.minDurationMs ?? 0),
+      );
 
-      if (!question) {
-        throw new Error("생성된 질문문이 비어 있습니다. 다시 시도해 주세요.");
+      startGeneration();
+
+      try {
+        const response = await fetch("/api/saju-question", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ form }),
+        });
+
+        const body = (await response.json().catch(() => null)) as
+          | GenerationResponse
+          | null;
+
+        if (!response.ok) {
+          throw new Error(body?.message ?? GENERATION_FAILED_MESSAGE);
+        }
+
+        const question = body?.question?.trim();
+
+        if (!question) {
+          throw new Error(EMPTY_QUESTION_MESSAGE);
+        }
+
+        await minDurationPromise;
+
+        setGenerationSuccess(question);
+        setCopyFeedback(null);
+        return true;
+      } catch (error) {
+        await minDurationPromise;
+
+        const message =
+          error instanceof Error ? error.message : GENERATION_FAILED_MESSAGE;
+
+        setGenerationError(message);
+        return false;
       }
-
-      setGenerationSuccess(question);
-      setCopyFeedback(null);
-      return true;
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "질문문 생성 중 오류가 발생했습니다.";
-
-      setGenerationError(message);
-      return false;
-    }
-  }, [form, setGenerationError, setGenerationSuccess, startGeneration]);
+    },
+    [form, setGenerationError, setGenerationSuccess, startGeneration],
+  );
 
   const handleCopyQuestion = useCallback(async () => {
     if (!generatedQuestion) {
@@ -132,13 +175,17 @@ export function usePlanSajuQuestion() {
   return {
     form,
     generatedQuestion,
+    generationStatus,
     generationError,
     isGenerating,
+    isQueued,
+    isWaitingForResult,
     copyFeedback,
     updateMe,
     updatePartner,
     updateGoal,
     handleModeSelect,
+    handleQueueGeneration,
     handleGenerateQuestion,
     handleCopyQuestion,
     handleResetPlanner,

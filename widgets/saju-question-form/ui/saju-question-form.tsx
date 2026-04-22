@@ -12,19 +12,21 @@ export function SajuQuestionForm() {
   const router = useRouter();
   const {
     form,
+    generationStatus,
     generationError,
-    isGenerating,
     updateMe,
     updatePartner,
     updateGoal,
-    handleGenerateQuestion,
+    handleQueueGeneration,
     handleResetPlanner,
   } = usePlanSajuQuestion();
+  const isTransitioningToResult =
+    generationStatus === "queued" || generationStatus === "loading";
 
-  const handleGenerate = async () => {
-    const didGenerate = await handleGenerateQuestion();
+  const handleGenerate = () => {
+    const didQueue = handleQueueGeneration();
 
-    if (!didGenerate) {
+    if (!didQueue) {
       return;
     }
 
@@ -46,10 +48,12 @@ export function SajuQuestionForm() {
             <Button
               type="button"
               onClick={handleGenerate}
-              disabled={isGenerating}
+              disabled={isTransitioningToResult}
               className="h-11 w-full"
             >
-              {isGenerating ? "질문문 생성 중..." : "질문문 생성"}
+              {isTransitioningToResult
+                ? "질문 흐름을 정리하는 중..."
+                : "질문문 생성"}
             </Button>
 
             <div className="flex flex-wrap items-center justify-end gap-2">

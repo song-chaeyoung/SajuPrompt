@@ -8,7 +8,12 @@ export type PromptStyle = "balanced" | "direct" | "empathetic";
 
 export type FormStep = "mode" | "saju" | "result";
 
-export type GenerationStatus = "idle" | "loading" | "success" | "error";
+export type GenerationStatus =
+  | "idle"
+  | "queued"
+  | "loading"
+  | "success"
+  | "error";
 
 export interface BirthProfile {
   name: string;
