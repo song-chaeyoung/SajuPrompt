@@ -262,7 +262,7 @@ export async function POST(request: Request) {
 
   if (!hasCoreRequiredFields(form)) {
     return Response.json(
-      { message: "생년월일, 출생지, 현재 상황, 질문 목적을 먼저 입력해 주세요." },
+      { message: "생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요." },
       { status: 400 },
     );
   }

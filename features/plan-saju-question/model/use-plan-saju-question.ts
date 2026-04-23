@@ -24,7 +24,7 @@ export type CopyFeedback = {
 export const GENERATION_MIN_DURATION_MS = 6600;
 
 const REQUIRED_FIELDS_MESSAGE =
-  "생년월일, 출생지, 현재 상황, 질문 목적을 먼저 입력해 주세요.";
+  "생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요.";
 const REQUIRED_FIELDS_TITLE = "입력값을 확인해 주세요";
 const GENERATION_FAILED_MESSAGE = "질문문 생성 중 오류가 발생했습니다.";
 const GENERATION_FAILED_TITLE = "질문 생성에 실패했습니다";

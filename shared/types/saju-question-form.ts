@@ -18,6 +18,7 @@ export type GenerationStatus =
 
 export interface BirthProfile {
   name: string;
+  // Raw user-entered birthplace text. It is not normalized yet.
   birthPlace: string;
   calendarType: CalendarType;
   birthDate: string;

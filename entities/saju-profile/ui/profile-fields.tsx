@@ -139,9 +139,9 @@ export function ProfileFields({
               {title}
             </h3>
             <p className="type-body-sm max-w-[36rem] text-muted-foreground">
-              이름, 성별, 생년월일을 먼저 입력하고, 실제 만세력 계산에 쓸 수
-              있도록 출생지도 함께 적어 주세요. 출생 시간을 아는 경우에는 보조
-              정보까지 이어서 채워 주세요.
+              이름, 성별, 생년월일을 먼저 입력하고, 출생지는 아는 범위에서 함께
+              적어 주세요. 출생 시간을 아는 경우에는 보조 정보까지 이어서 채워
+              주세요.
             </p>
           </div>
         </div>
@@ -186,6 +186,11 @@ export function ProfileFields({
               onChange={(event) => onChange({ birthPlace: event.target.value })}
               placeholder="예: 서울, 대한민국 / Los Angeles, USA"
             />
+            <p className="text-[0.8125rem] leading-5 text-muted-foreground">
+              지금은 사용자가 아는 출생지 표현을 자유롭게 적어 주세요. 추후
+              계산에 활용할 수 있도록 도시나 국가를 가능한 한 구체적으로 적는
+              편이 좋습니다.
+            </p>
           </div>
 
           <div className="space-y-2.5 sm:col-span-2">
@@ -266,8 +271,8 @@ export function ProfileFields({
               </p>
             </div>
             <p className="type-body-sm max-w-[34rem] text-muted-foreground">
-              출생 시간은 시주 판단에 직접 연결되고, 출생지는 시간대나 태양시
-              보정이 필요한 계산에서 함께 쓰일 수 있습니다. 시간을 모르면 시간
+              출생 시간은 시주 판단에 직접 연결됩니다. 출생지는 추후 계산
+              정밀도를 높일 때 함께 활용할 수 있습니다. 시간을 모르면 시간
               입력은 건너뛰고 진행해도 됩니다.
             </p>
           </div>
