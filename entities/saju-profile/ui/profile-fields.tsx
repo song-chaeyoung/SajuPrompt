@@ -1,5 +1,21 @@
 import { useMemo } from "react";
 
+import {
+  GENDER_OPTIONS,
+  HOUR_OPTIONS,
+  KOREAN_BIRTH_PLACE_OPTIONS,
+  MINUTE_OPTIONS,
+  MONTH_OPTIONS,
+  YEAR_OPTIONS,
+} from "@/entities/saju-profile/config/birth-profile-options";
+import { getKoreanBirthPlaceOption } from "@/shared/config/korean-birth-places";
+import {
+  getMaxDay,
+  parseBirthDateParts,
+  parseBirthTimeParts,
+} from "@/shared/lib/saju-question-form/birth-date-time";
+import { cn } from "@/shared/lib/utils";
+import type { BirthProfile } from "@/shared/types/saju-question-form";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import {
@@ -9,20 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import {
-  GENDER_OPTIONS,
-  HOUR_OPTIONS,
-  MINUTE_OPTIONS,
-  MONTH_OPTIONS,
-  YEAR_OPTIONS,
-} from "@/entities/saju-profile/config/birth-profile-options";
-import {
-  getMaxDay,
-  parseBirthDateParts,
-  parseBirthTimeParts,
-} from "@/shared/lib/saju-question-form/birth-date-time";
-import { cn } from "@/shared/lib/utils";
-import type { BirthProfile } from "@/shared/types/saju-question-form";
 
 interface ProfileFieldsProps {
   title: string;
@@ -75,6 +77,10 @@ function SelectionField({
   );
 }
 
+function hasText(value: string): boolean {
+  return value.trim().length > 0;
+}
+
 export function ProfileFields({
   title,
   profile,
@@ -92,6 +98,8 @@ export function ProfileFields({
   const normalizedBirthMinute = MINUTE_OPTIONS.includes(birthMinute)
     ? birthMinute
     : "";
+  const hasKnownBirthTime =
+    !profile.isBirthTimeUnknown && hasText(profile.birthTime);
 
   const dayOptions = useMemo(() => {
     const maxDay = getMaxDay(birthYear, birthMonth);
@@ -114,6 +122,28 @@ export function ProfileFields({
 
   const updateBirthTime = (nextHour: string, nextMinute: string) => {
     onChange({ birthTime: `${nextHour}:${nextMinute}` });
+  };
+
+  const handleBirthPlaceChange = (value: string) => {
+    const nextBirthPlace = getKoreanBirthPlaceOption(
+      value as BirthProfile["birthPlaceCode"],
+    );
+
+    if (!nextBirthPlace) {
+      return;
+    }
+
+    onChange({
+      birthPlaceCode: nextBirthPlace.code,
+      birthPlace: nextBirthPlace.label,
+    });
+  };
+
+  const handleCalendarTypeChange = (calendarType: BirthProfile["calendarType"]) => {
+    onChange({
+      calendarType,
+      isLeapMonth: calendarType === "lunar" ? profile.isLeapMonth : null,
+    });
   };
 
   return (
@@ -139,9 +169,9 @@ export function ProfileFields({
               {title}
             </h3>
             <p className="type-body-sm max-w-[36rem] text-muted-foreground">
-              이름, 성별, 생년월일을 먼저 입력하고, 출생지는 아는 범위에서 함께
-              적어 주세요. 출생 시간을 아는 경우에는 보조 정보까지 이어서 채워
-              주세요.
+              이름, 성별, 생년월일을 먼저 입력해 주세요. 출생지는 대한민국
+              광역자치단체 기준으로 선택하고, 음력이라면 윤달 여부도 함께
+              정해 주세요.
             </p>
           </div>
         </div>
@@ -166,7 +196,7 @@ export function ProfileFields({
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="성별을 선택하세요" />
+                <SelectValue placeholder="성별을 선택해 주세요" />
               </SelectTrigger>
               <SelectContent>
                 {GENDER_OPTIONS.map((option) => (
@@ -179,13 +209,26 @@ export function ProfileFields({
           </div>
 
           <div className="space-y-2.5 sm:col-span-2">
-            <Label htmlFor={`${fieldIdPrefix}-birth-place`}>출생지</Label>
-            <Input
-              id={`${fieldIdPrefix}-birth-place`}
-              value={profile.birthPlace}
-              onChange={(event) => onChange({ birthPlace: event.target.value })}
-              placeholder="예: 서울, 대한민국 / Los Angeles, USA"
-            />
+            <Label>출생지</Label>
+            <Select
+              value={profile.birthPlaceCode || undefined}
+              onValueChange={handleBirthPlaceChange}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="대한민국 광역자치단체를 선택해 주세요" />
+              </SelectTrigger>
+              <SelectContent>
+                {KOREAN_BIRTH_PLACE_OPTIONS.map((option) => (
+                  <SelectItem key={option.code} value={option.code}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="type-body-sm text-muted-foreground">
+              출생 시간을 입력한 경우에는 시간 보정을 위해 출생지를 함께
+              선택해 주세요.
+            </p>
           </div>
 
           <div className="space-y-2.5 sm:col-span-2">
@@ -198,7 +241,7 @@ export function ProfileFields({
                 }
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="년" />
+                  <SelectValue placeholder="연도" />
                 </SelectTrigger>
                 <SelectContent>
                   {YEAR_OPTIONS.map((year) => (
@@ -266,9 +309,9 @@ export function ProfileFields({
               </p>
             </div>
             <p className="type-body-sm max-w-[34rem] text-muted-foreground">
-              출생 시간은 시주 판단에 직접 연결됩니다. 출생지는 추후 계산
-              정밀도를 높일 때 함께 활용할 수 있습니다. 시간을 모르면 시간
-              입력은 건너뛰고 진행해도 됩니다.
+              출생 시간은 시주와 시간 보정에 직접 연결됩니다. 시간을 알면
+              시각과 출생지를 함께 입력해 주시고, 모르면 시간 없이도 먼저
+              진행할 수 있습니다.
             </p>
           </div>
 
@@ -321,7 +364,7 @@ export function ProfileFields({
           </div>
 
           <div className="space-y-2.5">
-            <Label>달력 기준과 시간 입력 여부</Label>
+            <Label>달력 기준</Label>
             <div className="grid gap-3 sm:grid-cols-2">
               <SelectionField
                 type="radio"
@@ -329,7 +372,7 @@ export function ProfileFields({
                 checked={profile.calendarType === "solar"}
                 label="양력"
                 description="일반적인 생일 기준으로 입력합니다."
-                onChange={() => onChange({ calendarType: "solar" })}
+                onChange={() => handleCalendarTypeChange("solar")}
               />
 
               <SelectionField
@@ -338,10 +381,38 @@ export function ProfileFields({
                 checked={profile.calendarType === "lunar"}
                 label="음력"
                 description="음력 생일 기준으로 입력합니다."
-                onChange={() => onChange({ calendarType: "lunar" })}
+                onChange={() => handleCalendarTypeChange("lunar")}
               />
             </div>
           </div>
+
+          {profile.calendarType === "lunar" ? (
+            <div className="space-y-2.5">
+              <Label>음력 월 구분</Label>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <SelectionField
+                  type="radio"
+                  name={`${fieldIdPrefix}-lunar-leap`}
+                  checked={profile.isLeapMonth === false}
+                  label="일반 음력"
+                  description="윤달이 아닌 일반 음력 생일입니다."
+                  onChange={() => onChange({ isLeapMonth: false })}
+                />
+
+                <SelectionField
+                  type="radio"
+                  name={`${fieldIdPrefix}-lunar-leap`}
+                  checked={profile.isLeapMonth === true}
+                  label="윤달"
+                  description="윤달에 해당하는 음력 생일입니다."
+                  onChange={() => onChange({ isLeapMonth: true })}
+                />
+              </div>
+              <p className="type-body-sm text-muted-foreground">
+                음력 생일이라면 일반 음력인지 윤달인지 꼭 선택해 주세요.
+              </p>
+            </div>
+          ) : null}
 
           <SelectionField
             type="checkbox"
@@ -355,6 +426,13 @@ export function ProfileFields({
               })
             }
           />
+
+          {hasKnownBirthTime && !profile.birthPlaceCode ? (
+            <p className="type-body-sm text-muted-foreground">
+              출생 시간을 입력한 경우에는 시간 보정을 위해 출생지도 함께
+              선택해 주세요.
+            </p>
+          ) : null}
         </div>
       </div>
     </section>

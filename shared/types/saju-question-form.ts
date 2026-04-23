@@ -1,3 +1,5 @@
+import type { KoreanBirthPlaceCode } from "@/shared/config/korean-birth-places";
+
 export type AnalysisMode = "self" | "compatibility";
 
 export type CalendarType = "solar" | "lunar";
@@ -18,10 +20,12 @@ export type GenerationStatus =
 
 export interface BirthProfile {
   name: string;
-  // Raw user-entered birthplace text. It is not normalized yet.
+  birthPlaceCode: KoreanBirthPlaceCode | "";
+  // User-facing birthplace label that matches the selected Korean region.
   birthPlace: string;
   calendarType: CalendarType;
   birthDate: string;
+  isLeapMonth: boolean | null;
   birthTime: string;
   isBirthTimeUnknown: boolean;
   gender: Gender;

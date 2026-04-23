@@ -3,7 +3,12 @@ import {
   getDefaultOpenAIModel,
   getOpenAIClient,
 } from "@/shared/lib/openai/get-openai-client";
+import {
+  SajuProfileCalculationError,
+  deriveSajuProfileContext,
+} from "@/shared/lib/manseryeok/derive-saju-context";
 import { hasCoreRequiredFields } from "@/shared/lib/saju-question-form/validation";
+import { isKoreanBirthPlaceCode } from "@/shared/config/korean-birth-places";
 import type {
   AnalysisMode,
   BirthProfile,
@@ -24,6 +29,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+function hasText(value: string): boolean {
+  return value.trim().length > 0;
+}
+
 function isAnalysisMode(value: unknown): value is AnalysisMode {
   return value === "self" || value === "compatibility";
 }
@@ -37,13 +46,25 @@ function isBirthProfile(value: unknown): value is BirthProfile {
     return false;
   }
 
+  const birthPlaceCode =
+    typeof value.birthPlaceCode === "string" ? value.birthPlaceCode : null;
+  const isValidBirthPlaceCode =
+    birthPlaceCode !== null &&
+    (!hasText(birthPlaceCode) || isKoreanBirthPlaceCode(birthPlaceCode));
+  const isValidLeapMonth =
+    value.isLeapMonth === null ||
+    value.isLeapMonth === true ||
+    value.isLeapMonth === false;
+
   return (
     typeof value.name === "string" &&
+    isValidBirthPlaceCode &&
     typeof value.birthPlace === "string" &&
     (value.calendarType === "solar" || value.calendarType === "lunar") &&
     typeof value.birthDate === "string" &&
     typeof value.birthTime === "string" &&
     typeof value.isBirthTimeUnknown === "boolean" &&
+    isValidLeapMonth &&
     (value.gender === "male" ||
       value.gender === "female" ||
       value.gender === "other" ||
@@ -209,14 +230,20 @@ function toSSEEvent(data: unknown): string {
 }
 
 function mapOpenAIError(error: unknown): { status: number; message: string } {
+  if (error instanceof SajuProfileCalculationError) {
+    return {
+      status: 400,
+      message: error.message,
+    };
+  }
+
   if (error instanceof OpenAI.APIError) {
     const status = error.status ?? 500;
 
     if (status >= 400 && status < 500) {
       return {
         status,
-        message:
-          error.message || "요청값을 확인해 주세요. 질문문 생성 요청이 유효하지 않습니다.",
+        message: error.message || "요청값을 확인해 주세요.",
       };
     }
 
@@ -230,6 +257,10 @@ function mapOpenAIError(error: unknown): { status: number; message: string } {
     status: 500,
     message: "질문문 생성 중 서버 오류가 발생했습니다.",
   };
+}
+
+function getRequiredFieldsMessage(): string {
+  return "생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요. 음력이면 윤달 여부를, 출생 시간을 입력했다면 출생지도 함께 선택해 주세요.";
 }
 
 export async function POST(request: Request) {
@@ -262,15 +293,22 @@ export async function POST(request: Request) {
 
   if (!hasCoreRequiredFields(form)) {
     return Response.json(
-      { message: "생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요." },
+      { message: getRequiredFieldsMessage() },
       { status: 400 },
     );
   }
 
-  const { systemPrompt, userPrompt } = buildSajuPrompt(form);
   const streamEnabled = isStreamEnabled(parsedBody.stream);
 
   try {
+    const derived = {
+      me: deriveSajuProfileContext(form.me, "나"),
+      partner:
+        form.mode === "compatibility"
+          ? deriveSajuProfileContext(form.partner, "상대방")
+          : null,
+    };
+    const { systemPrompt, userPrompt } = buildSajuPrompt(form, derived);
     const client = getOpenAIClient();
     const model = getDefaultOpenAIModel();
     const messages = [
@@ -314,7 +352,9 @@ export async function POST(request: Request) {
             const question = fullQuestion.trim();
 
             if (!question) {
-              throw new Error("생성된 질문문이 비어 있습니다. 다시 시도해 주세요.");
+              throw new Error(
+                "생성된 질문문이 비어 있습니다. 다시 시도해 주세요.",
+              );
             }
 
             controller.enqueue(

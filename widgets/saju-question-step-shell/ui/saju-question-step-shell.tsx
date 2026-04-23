@@ -133,6 +133,14 @@ export function SajuQuestionStepShell({
                       </div>
                     ) : null}
 
+                    {primaryAction ? (
+                      <div className="fixed inset-x-0 bottom-0 z-30 bg-[linear-gradient(to_top,var(--background)_58%,transparent)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
+                        <div className="mx-auto w-full max-w-3xl">
+                          {primaryAction}
+                        </div>
+                      </div>
+                    ) : null}
+
                     <div
                       className={cn(
                         "hidden sm:flex sm:flex-wrap sm:items-center sm:gap-3",
