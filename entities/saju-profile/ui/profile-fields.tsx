@@ -186,11 +186,6 @@ export function ProfileFields({
               onChange={(event) => onChange({ birthPlace: event.target.value })}
               placeholder="예: 서울, 대한민국 / Los Angeles, USA"
             />
-            <p className="text-[0.8125rem] leading-5 text-muted-foreground">
-              지금은 사용자가 아는 출생지 표현을 자유롭게 적어 주세요. 추후
-              계산에 활용할 수 있도록 도시나 국가를 가능한 한 구체적으로 적는
-              편이 좋습니다.
-            </p>
           </div>
 
           <div className="space-y-2.5 sm:col-span-2">
