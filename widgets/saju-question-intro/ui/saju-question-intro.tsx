@@ -1,6 +1,4 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import { Button } from "@/shared/ui/button";
@@ -11,12 +9,6 @@ import {
 } from "@/widgets/saju-question-intro/config/intro-content";
 
 export function SajuQuestionIntro() {
-  const router = useRouter();
-
-  const handleStart = () => {
-    router.push(FORM_STEP_PATHS.mode, { scroll: false });
-  };
-
   return (
     <>
       <section className="pb-[calc(4.75rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1.25rem)] sm:pb-12 sm:pt-[calc(env(safe-area-inset-top)+5.25rem)]">
@@ -67,9 +59,9 @@ export function SajuQuestionIntro() {
                     className="hero-enter max-w-[12ch] text-[clamp(2.45rem,2.05rem+2vw,4.4rem)] font-semibold tracking-[-0.04em] text-foreground"
                     style={{ animationDelay: "120ms" }}
                   >
-                    사주의 답보다 먼저,
+                    사주를 더 잘 보고,
                     <br />
-                    제대로 묻는 질문을
+                    AI에게 바로 물을 질문을
                     <br />
                     만듭니다
                   </h1>
@@ -78,8 +70,9 @@ export function SajuQuestionIntro() {
                     className="hero-enter type-body max-w-[33rem] text-[color:color-mix(in_oklch,var(--foreground)_72%,var(--muted-foreground)_28%)] sm:text-[1.0625rem]"
                     style={{ animationDelay: "200ms" }}
                   >
-                    생년월일과 지금의 고민을 짧게 정리하면, 외부 AI에 바로 붙여
-                    넣을 질문문으로 차분하게 다듬어 드립니다.
+                    생년월일과 지금의 고민을 정리하면, 바로 복사해 ChatGPT,
+                    Gemini, Claude에 붙여 넣을 질문문으로 차분하게 다듬어
+                    드립니다.
                   </p>
                 </div>
               </div>
@@ -102,18 +95,13 @@ export function SajuQuestionIntro() {
               </ul>
 
               <div className="hidden items-center gap-4 sm:flex">
-                <Button
-                  type="button"
-                  size="lg"
-                  onClick={handleStart}
-                  className="min-w-[15rem]"
-                >
-                  내 사주 질문 만들기
+                <Button asChild size="lg" className="min-w-[15rem]">
+                  <Link href={FORM_STEP_PATHS.mode} scroll={false}>
+                    AI 사주 질문 만들기
+                  </Link>
                 </Button>
 
-                <p
-                  className="type-body-sm max-w-[24rem] text-muted-foreground"
-                >
+                <p className="type-body-sm max-w-[24rem] text-muted-foreground">
                   질문문을 생성한 뒤 복사해서 ChatGPT, Gemini, Claude에 바로
                   붙여 넣을 수 있습니다.
                 </p>
@@ -154,13 +142,10 @@ export function SajuQuestionIntro() {
 
       <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
         <div className="mx-auto w-full max-w-4xl">
-          <Button
-            type="button"
-            size="lg"
-            onClick={handleStart}
-            className="w-full"
-          >
-            내 사주 질문 만들기
+          <Button asChild size="lg" className="w-full">
+            <Link href={FORM_STEP_PATHS.mode} scroll={false}>
+              AI 사주 질문 만들기
+            </Link>
           </Button>
         </div>
       </div>

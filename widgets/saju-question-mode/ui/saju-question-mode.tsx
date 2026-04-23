@@ -3,14 +3,18 @@
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/shared/ui/button";
-import { usePlanSajuQuestion } from "@/features/plan-saju-question/model/use-plan-saju-question";
+import {
+  useSajuQuestionModeState,
+  useSajuQuestionResetAction,
+} from "@/features/plan-saju-question/model/use-plan-saju-question";
 import { AnalysisModeSelector } from "@/features/select-analysis-mode/ui/analysis-mode-selector";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import { SajuQuestionStepShell } from "@/widgets/saju-question-step-shell/ui/saju-question-step-shell";
 
 export function SajuQuestionMode() {
   const router = useRouter();
-  const { form, handleModeSelect, handleResetPlanner } = usePlanSajuQuestion();
+  const { mode, handleModeSelect } = useSajuQuestionModeState();
+  const handleResetPlanner = useSajuQuestionResetAction();
 
   const handleNext = () => {
     router.push(FORM_STEP_PATHS.saju, { scroll: false });
@@ -70,7 +74,7 @@ export function SajuQuestionMode() {
         </p>
 
         <AnalysisModeSelector
-          activeMode={form.mode}
+          activeMode={mode}
           onSelect={handleModeSelect}
         />
       </div>

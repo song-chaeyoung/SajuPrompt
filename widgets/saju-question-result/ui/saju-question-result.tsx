@@ -1,14 +1,19 @@
 "use client";
 
 import { Check, Copy, RotateCcw, TriangleAlert } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import { GENDER_OPTIONS } from "@/entities/saju-profile/config/birth-profile-options";
 import {
+  GENERATION_MIN_DURATION_MS,
   type CopyFeedback,
-  usePlanSajuQuestion,
+  useSajuQuestionCopy,
+  useSajuQuestionFormState,
+  useSajuQuestionGenerationActions,
+  useSajuQuestionGenerationState,
+  useSajuQuestionResetAction,
 } from "@/features/plan-saju-question/model/use-plan-saju-question";
 import { MODE_OPTIONS } from "@/features/select-analysis-mode/config/mode-options";
 import { GeneratedQuestionPreview } from "@/features/view-generated-question/ui/generated-question-preview";
@@ -23,7 +28,6 @@ import type {
 } from "@/shared/types/saju-question-form";
 import { SajuQuestionStepShell } from "@/widgets/saju-question-step-shell/ui/saju-question-step-shell";
 
-const MIN_RESULT_LOADING_DURATION_MS = 6600;
 const RESULT_STEP_NUMBER = FORM_STEPS.indexOf("result") + 1;
 
 type SummaryChip = {
@@ -166,59 +170,26 @@ function ResultHeroSection({
 
 export function SajuQuestionResult() {
   const router = useRouter();
-  const hasQueuedGenerationStartedRef = useRef(false);
-  const isMountedRef = useRef(true);
+  const { form } = useSajuQuestionFormState();
   const {
-    form,
     generatedQuestion,
     generationStatus,
     generationError,
     isWaitingForResult,
-    copyFeedback,
-    handleGenerateQuestion,
-    handleCopyQuestion,
-    handleResetPlanner,
-  } = usePlanSajuQuestion();
+  } = useSajuQuestionGenerationState();
+  const { handleGenerateQuestion: triggerQuestionGeneration } =
+    useSajuQuestionGenerationActions();
+  const handleResetPlanner = useSajuQuestionResetAction();
+  const { copyFeedback, handleCopyQuestion } =
+    useSajuQuestionCopy(generatedQuestion);
 
   useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (
-      generatedQuestion ||
-      generationStatus === "queued" ||
-      generationStatus === "loading"
-    ) {
+    if (generatedQuestion || generationStatus === "loading") {
       return;
     }
 
     router.replace(FORM_STEP_PATHS.saju, { scroll: false });
   }, [generatedQuestion, generationStatus, router]);
-
-  useEffect(() => {
-    if (
-      generationStatus !== "queued" ||
-      generatedQuestion ||
-      hasQueuedGenerationStartedRef.current
-    ) {
-      return;
-    }
-
-    hasQueuedGenerationStartedRef.current = true;
-
-    void (async () => {
-      const didGenerate = await handleGenerateQuestion({
-        minDurationMs: MIN_RESULT_LOADING_DURATION_MS,
-      });
-
-      if (!didGenerate && isMountedRef.current) {
-        router.replace(FORM_STEP_PATHS.saju, { scroll: false });
-      }
-    })();
-  }, [generatedQuestion, generationStatus, handleGenerateQuestion, router]);
 
   const handleReset = () => {
     handleResetPlanner();
@@ -226,8 +197,8 @@ export function SajuQuestionResult() {
   };
 
   const handleRegenerate = async () => {
-    await handleGenerateQuestion({
-      minDurationMs: MIN_RESULT_LOADING_DURATION_MS,
+    await triggerQuestionGeneration({
+      minDurationMs: GENERATION_MIN_DURATION_MS,
     });
   };
 

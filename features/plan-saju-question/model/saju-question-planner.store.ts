@@ -18,7 +18,6 @@ interface SajuQuestionPlannerStore {
   updateMe: (patch: Partial<BirthProfile>) => void;
   updatePartner: (patch: Partial<BirthProfile>) => void;
   updateGoal: (patch: Partial<GoalInfo>) => void;
-  queueGeneration: () => void;
   startGeneration: () => void;
   setGenerationSuccess: (question: string) => void;
   setGenerationError: (message: string) => void;
@@ -86,15 +85,9 @@ export const useSajuQuestionPlannerStore = create<SajuQuestionPlannerStore>(
         },
       }));
     },
-    queueGeneration: () => {
-      set({
-        generatedQuestion: "",
-        generationStatus: "queued",
-        generationError: null,
-      });
-    },
     startGeneration: () => {
       set({
+        generatedQuestion: "",
         generationStatus: "loading",
         generationError: null,
       });

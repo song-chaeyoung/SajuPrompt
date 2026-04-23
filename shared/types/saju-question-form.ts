@@ -10,7 +10,6 @@ export type FormStep = "mode" | "saju" | "result";
 
 export type GenerationStatus =
   | "idle"
-  | "queued"
   | "loading"
   | "success"
   | "error";

@@ -4,32 +4,38 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/shared/ui/button";
 import { SajuQuestionFields } from "@/features/fill-saju-question/ui/saju-question-fields";
-import { usePlanSajuQuestion } from "@/features/plan-saju-question/model/use-plan-saju-question";
+import {
+  GENERATION_MIN_DURATION_MS,
+  useSajuQuestionFormState,
+  useSajuQuestionGenerationActions,
+  useSajuQuestionGenerationState,
+  useSajuQuestionResetAction,
+} from "@/features/plan-saju-question/model/use-plan-saju-question";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import { SajuQuestionStepShell } from "@/widgets/saju-question-step-shell/ui/saju-question-step-shell";
 
 export function SajuQuestionForm() {
   const router = useRouter();
+  const { form, updateMe, updatePartner, updateGoal } = useSajuQuestionFormState();
   const {
-    form,
     generationStatus,
     generationError,
-    updateMe,
-    updatePartner,
-    updateGoal,
-    handleQueueGeneration,
-    handleResetPlanner,
-  } = usePlanSajuQuestion();
-  const isTransitioningToResult =
-    generationStatus === "queued" || generationStatus === "loading";
+  } = useSajuQuestionGenerationState();
+  const { handlePrepareGeneration, handleGenerateQuestion } =
+    useSajuQuestionGenerationActions();
+  const handleResetPlanner = useSajuQuestionResetAction();
+  const isTransitioningToResult = generationStatus === "loading";
 
   const handleGenerate = () => {
-    const didQueue = handleQueueGeneration();
+    const didPrepare = handlePrepareGeneration();
 
-    if (!didQueue) {
+    if (!didPrepare) {
       return;
     }
 
+    void handleGenerateQuestion({
+      minDurationMs: GENERATION_MIN_DURATION_MS,
+    });
     router.push(FORM_STEP_PATHS.result, { scroll: false });
   };
 
