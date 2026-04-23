@@ -75,10 +75,17 @@ function SelectionField({
   );
 }
 
-export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) {
+export function ProfileFields({
+  title,
+  profile,
+  onChange,
+}: ProfileFieldsProps) {
   const fieldIdPrefix = title.replace(/\s+/g, "-").toLowerCase();
-  const { year: birthYear, month: birthMonth, day: birthDay } =
-    parseBirthDateParts(profile.birthDate);
+  const {
+    year: birthYear,
+    month: birthMonth,
+    day: birthDay,
+  } = parseBirthDateParts(profile.birthDate);
   const { hour: birthHour, minute: birthMinute } = parseBirthTimeParts(
     profile.birthTime,
   );
@@ -100,8 +107,7 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
     nextDay: string,
   ) => {
     const maxDay = getMaxDay(nextYear, nextMonth);
-    const normalizedDay =
-      nextDay && Number(nextDay) <= maxDay ? nextDay : "01";
+    const normalizedDay = nextDay && Number(nextDay) <= maxDay ? nextDay : "01";
 
     onChange({ birthDate: `${nextYear}-${nextMonth}-${normalizedDay}` });
   };
@@ -129,10 +135,13 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
             </p>
           </div>
           <div className="space-y-1.5">
-            <h3 className="type-title-sm font-semibold text-foreground">{title}</h3>
+            <h3 className="type-title-sm font-semibold text-foreground">
+              {title}
+            </h3>
             <p className="type-body-sm max-w-[36rem] text-muted-foreground">
-              이름, 성별, 생년월일을 먼저 입력하고 출생 시간을 아는 경우에만
-              보조 정보까지 이어서 채워 주세요.
+              이름, 성별, 생년월일을 먼저 입력하고, 실제 만세력 계산에 쓸 수
+              있도록 출생지도 함께 적어 주세요. 출생 시간을 아는 경우에는 보조
+              정보까지 이어서 채워 주세요.
             </p>
           </div>
         </div>
@@ -167,6 +176,16 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2.5 sm:col-span-2">
+            <Label htmlFor={`${fieldIdPrefix}-birth-place`}>출생지</Label>
+            <Input
+              id={`${fieldIdPrefix}-birth-place`}
+              value={profile.birthPlace}
+              onChange={(event) => onChange({ birthPlace: event.target.value })}
+              placeholder="예: 서울, 대한민국 / Los Angeles, USA"
+            />
           </div>
 
           <div className="space-y-2.5 sm:col-span-2">
@@ -247,8 +266,9 @@ export function ProfileFields({ title, profile, onChange }: ProfileFieldsProps) 
               </p>
             </div>
             <p className="type-body-sm max-w-[34rem] text-muted-foreground">
-              출생 시간을 알면 더 정밀하게 질문 흐름을 구성할 수 있습니다. 모르면
-              시간 입력을 건너뛰고 진행해도 됩니다.
+              출생 시간은 시주 판단에 직접 연결되고, 출생지는 시간대나 태양시
+              보정이 필요한 계산에서 함께 쓰일 수 있습니다. 시간을 모르면 시간
+              입력은 건너뛰고 진행해도 됩니다.
             </p>
           </div>
 

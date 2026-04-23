@@ -18,6 +18,7 @@ export type GenerationStatus =
 
 export interface BirthProfile {
   name: string;
+  birthPlace: string;
   calendarType: CalendarType;
   birthDate: string;
   birthTime: string;

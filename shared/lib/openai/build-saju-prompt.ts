@@ -51,7 +51,7 @@ export const SAJU_QUESTION_EXPANSION_GUIDE: SajuQuestionExpansionGuide = {
   basicInfoInstruction:
     "'기본 정보' 섹션은 입력값을 키-값 요약처럼 옮기지 말고, 사용자가 직접 말하듯 자연스러운 1인칭 문장 1~2개로 작성한다.",
   requiredProfileFieldsInstruction:
-    "이름, 달력 기준, 생년월일, 출생시간, 성별 중 입력된 값은 '기본 정보'에서 한 번씩 반드시 반영한다. 특히 달력 기준과 출생시간이 있으면 생략하지 않는다.",
+    "이름, 출생지, 달력 기준, 생년월일, 출생시간, 성별 중 입력된 값은 '기본 정보'에서 한 번씩 반드시 반영한다. 특히 출생지, 달력 기준, 출생시간이 있으면 생략하지 않는다.",
   sectionSeparationInstruction:
     "'기본 정보'에는 프로필 사실만 넣고, 현재 고민이나 요청은 넣지 않는다. '현재 상황'에는 고민, 맥락, 원하는 조언만 넣고 프로필 사실은 넣지 않는다.",
   prioritizationInstruction:
@@ -217,6 +217,7 @@ function formatProfile(label: string, profile: BirthProfile): string {
   const lines = [label];
 
   appendField(lines, "이름", profile.name.trim());
+  appendField(lines, "출생지", profile.birthPlace.trim());
   appendField(lines, "성별", toGenderLabel(profile.gender));
   appendField(lines, "달력 기준", toCalendarLabel(profile.calendarType));
   appendField(lines, "생년월일", formatBirthDate(profile));
@@ -233,6 +234,10 @@ function buildRequiredBasicInfoFacts(
 
   if (hasText(profile.name)) {
     facts.push(`이름 ${profile.name.trim()}`);
+  }
+
+  if (hasText(profile.birthPlace)) {
+    facts.push(`출생지 ${profile.birthPlace.trim()}`);
   }
 
   facts.push(`달력 기준 ${toCalendarLabel(profile.calendarType)}`);
@@ -349,7 +354,7 @@ export function buildSajuPrompt(form: SajuQuestionFormData): BuiltSajuPrompt {
     "- 사용자에게 보이는 섹션 제목은 '기본 정보', '현재 상황', '중점적으로 알고 싶은 내용', '응답 방식'만 사용한다.",
     "- '기본 정보'는 입력값 요약이 아니라 자연스러운 1인칭 문장으로 쓴다. 예: '저는 ...입니다.' 또는 '제 이름은 ...이고, 저는 ...입니다.'",
     "- 아래 '기본 정보에 반드시 반영할 사실'의 항목은 '기본 정보' 문장에서 빠짐없이 1회씩 반영한다.",
-    "- 달력 기준과 출생시간이 있으면 '기본 정보'에서 생략하지 않는다.",
+    "- 출생지, 달력 기준, 출생시간이 있으면 '기본 정보'에서 생략하지 않는다.",
     "- '기본 정보'에는 현재 고민이나 요청을 넣지 않고, '현재 상황'에는 프로필 사실을 넣지 않는다.",
     "- '중점적으로 알고 싶은 내용'에는 번호가 붙은 구체 질문 5~6개를 넣는다.",
     "- 각 질문은 서로 다른 분석 렌즈 하나만 담당하게 쓴다.",
