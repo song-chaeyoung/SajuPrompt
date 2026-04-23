@@ -28,8 +28,8 @@ interface SajuQuestionPlannerStore {
 
 const createInitialForm = (): SajuQuestionFormData => ({
   mode: "self",
-  me: createDefaultBirthProfile("나"),
-  partner: createDefaultBirthProfile("상대방"),
+  me: createDefaultBirthProfile(""),
+  partner: createDefaultBirthProfile(""),
   goal: {
     situation: "",
     situationInputMode: "preset",

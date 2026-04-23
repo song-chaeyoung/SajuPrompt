@@ -1,3 +1,4 @@
+import { Gowun_Batang } from "next/font/google";
 import Link from "next/link";
 
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
@@ -7,6 +8,12 @@ import {
   FLOW_STEPS,
   HERO_BADGES,
 } from "@/widgets/saju-question-intro/config/intro-content";
+
+const gowunBatang = Gowun_Batang({
+  weight: ["400", "700"],
+  display: "swap",
+  preload: false,
+});
 
 export function SajuQuestionIntro() {
   return (
@@ -56,14 +63,10 @@ export function SajuQuestionIntro() {
 
                 <div className="space-y-3.5">
                   <h1
-                    className="hero-enter max-w-[12ch] text-[clamp(2.45rem,2.05rem+2vw,4.4rem)] font-semibold tracking-[-0.04em] text-foreground"
+                    className={`${gowunBatang.className} hero-enter max-w-[11em] text-[clamp(2.45rem,2.05rem+2vw,4.4rem)] font-bold leading-[1.18] tracking-[-0.02em] text-foreground [text-wrap:balance] [word-break:keep-all]`}
                     style={{ animationDelay: "120ms" }}
                   >
-                    사주를 더 잘 보고,
-                    <br />
-                    AI에게 바로 물을 질문을
-                    <br />
-                    만듭니다
+                    사주를 더 잘 보고, AI에게 바로 물을 질문을 만듭니다
                   </h1>
 
                   <p
