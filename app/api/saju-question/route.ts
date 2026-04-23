@@ -52,11 +52,17 @@ function isGoalInfo(value: unknown): value is GoalInfo {
 
   return (
     typeof value.situation === "string" &&
+    (value.situationInputMode === "preset" ||
+      value.situationInputMode === "custom") &&
     typeof value.purpose === "string" &&
+    (value.purposeInputMode === "preset" ||
+      value.purposeInputMode === "custom") &&
     (value.style === "balanced" ||
       value.style === "direct" ||
       value.style === "empathetic") &&
-    typeof value.customRequest === "string"
+    typeof value.customRequest === "string" &&
+    (value.customRequestInputMode === "preset" ||
+      value.customRequestInputMode === "custom")
   );
 }
 

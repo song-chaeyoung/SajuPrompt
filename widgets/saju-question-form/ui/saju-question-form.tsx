@@ -48,19 +48,7 @@ export function SajuQuestionForm() {
     ? "질문 흐름을 정리하는 중..."
     : "질문문 생성";
 
-  const desktopPrimaryAction = (
-    <Button
-      type="button"
-      size="lg"
-      onClick={handleGenerate}
-      disabled={isTransitioningToResult}
-      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
-    >
-      {primaryActionLabel}
-    </Button>
-  );
-
-  const mobilePrimaryAction = (
+  const primaryAction = (
     <Button
       type="button"
       size="lg"
@@ -89,8 +77,7 @@ export function SajuQuestionForm() {
       currentStep="saju"
       visualVariant="hero"
       errorMessage={generationError}
-      desktopPrimaryAction={desktopPrimaryAction}
-      mobilePrimaryAction={mobilePrimaryAction}
+      primaryAction={primaryAction}
       secondaryActions={secondaryActions}
     >
       <SajuQuestionFields

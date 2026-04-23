@@ -1,12 +1,14 @@
-import { useState } from "react";
-
 import {
   CUSTOM_REQUEST_OPTIONS,
   PURPOSE_OPTIONS,
   SITUATION_OPTIONS,
   STYLE_OPTIONS,
 } from "@/features/fill-saju-question/config/goal-options";
-import type { GoalInfo, PromptStyle } from "@/shared/types/saju-question-form";
+import type {
+  GoalInfo,
+  GoalInputMode,
+  PromptStyle,
+} from "@/shared/types/saju-question-form";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import {
@@ -19,10 +21,6 @@ import {
 
 const CUSTOM_OPTION_VALUE = "__custom__";
 
-type CustomizableGoalField = "situation" | "purpose" | "customRequest";
-
-type CustomModeState = Record<CustomizableGoalField, boolean>;
-
 interface GoalFieldsProps {
   goal: GoalInfo;
   onChange: (patch: Partial<GoalInfo>) => void;
@@ -33,25 +31,9 @@ interface CustomSelectFieldProps {
   selectPlaceholder: string;
   inputPlaceholder: string;
   value: string;
+  mode: GoalInputMode;
   options: readonly string[];
-  isCustomMode: boolean;
-  onValueChange: (value: string) => void;
-  onCustomModeChange: (next: boolean) => void;
-}
-
-function isCustomOptionValue(value: string, options: readonly string[]) {
-  return value.trim().length > 0 && !options.includes(value);
-}
-
-function createInitialCustomModes(goal: GoalInfo): CustomModeState {
-  return {
-    situation: isCustomOptionValue(goal.situation, SITUATION_OPTIONS),
-    purpose: isCustomOptionValue(goal.purpose, PURPOSE_OPTIONS),
-    customRequest: isCustomOptionValue(
-      goal.customRequest,
-      CUSTOM_REQUEST_OPTIONS,
-    ),
-  };
+  onChange: (next: { value: string; mode: GoalInputMode }) => void;
 }
 
 function CustomSelectField({
@@ -59,31 +41,24 @@ function CustomSelectField({
   selectPlaceholder,
   inputPlaceholder,
   value,
+  mode,
   options,
-  isCustomMode,
-  onValueChange,
-  onCustomModeChange,
+  onChange,
 }: CustomSelectFieldProps) {
   const handleSelectChange = (nextValue: string) => {
     if (nextValue === CUSTOM_OPTION_VALUE) {
-      onCustomModeChange(true);
-
-      if (!isCustomMode) {
-        onValueChange("");
-      }
-
+      onChange({ mode: "custom", value: "" });
       return;
     }
 
-    onCustomModeChange(false);
-    onValueChange(nextValue);
+    onChange({ mode: "preset", value: nextValue });
   };
 
   return (
     <div className="space-y-2.5">
       <Label>{label}</Label>
       <Select
-        value={isCustomMode ? CUSTOM_OPTION_VALUE : value || undefined}
+        value={mode === "custom" ? CUSTOM_OPTION_VALUE : value || undefined}
         onValueChange={handleSelectChange}
       >
         <SelectTrigger className="w-full">
@@ -99,10 +74,12 @@ function CustomSelectField({
         </SelectContent>
       </Select>
 
-      {isCustomMode ? (
+      {mode === "custom" ? (
         <Input
           value={value}
-          onChange={(event) => onValueChange(event.target.value)}
+          onChange={(event) =>
+            onChange({ mode: "custom", value: event.target.value })
+          }
           placeholder={inputPlaceholder}
         />
       ) : null}
@@ -111,16 +88,6 @@ function CustomSelectField({
 }
 
 export function GoalFields({ goal, onChange }: GoalFieldsProps) {
-  const [customModes, setCustomModes] = useState<CustomModeState>(() =>
-    createInitialCustomModes(goal),
-  );
-
-  const setCustomMode = (field: CustomizableGoalField, next: boolean) => {
-    setCustomModes((current) =>
-      current[field] === next ? current : { ...current, [field]: next },
-    );
-  };
-
   return (
     <section className="relative overflow-hidden rounded-[1.75rem] border border-[color-mix(in_oklch,var(--primary)_10%,var(--border)_90%)] bg-[color-mix(in_oklch,var(--background)_96%,var(--card)_4%)] p-4 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--background)_88%,transparent)] md:p-6">
       <div
@@ -144,8 +111,8 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
               질문 목적과 해석 스타일
             </h3>
             <p className="type-body-sm max-w-[36rem] text-muted-foreground">
-              현재 상황부터 차분히 고르면 AI에 바로 붙여 넣을 질문 흐름을 더
-              자연스럽게 정리할 수 있습니다.
+              현재 상황부터 차분히 고르면 AI에 바로 붙여 넣을 질문 흐름까지
+              자연스럽게 정리해드립니다.
             </p>
           </div>
         </div>
@@ -156,10 +123,14 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
             selectPlaceholder="현재 상황을 선택해 주세요"
             inputPlaceholder="현재 상황을 직접 입력해 주세요"
             value={goal.situation}
+            mode={goal.situationInputMode}
             options={SITUATION_OPTIONS}
-            isCustomMode={customModes.situation}
-            onValueChange={(value) => onChange({ situation: value })}
-            onCustomModeChange={(next) => setCustomMode("situation", next)}
+            onChange={({ mode: nextMode, value: nextValue }) =>
+              onChange({
+                situation: nextValue,
+                situationInputMode: nextMode,
+              })
+            }
           />
 
           <CustomSelectField
@@ -167,10 +138,14 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
             selectPlaceholder="질문 목적을 선택해 주세요"
             inputPlaceholder="질문 목적을 직접 입력해 주세요"
             value={goal.purpose}
+            mode={goal.purposeInputMode}
             options={PURPOSE_OPTIONS}
-            isCustomMode={customModes.purpose}
-            onValueChange={(value) => onChange({ purpose: value })}
-            onCustomModeChange={(next) => setCustomMode("purpose", next)}
+            onChange={({ mode: nextMode, value: nextValue }) =>
+              onChange({
+                purpose: nextValue,
+                purposeInputMode: nextMode,
+              })
+            }
           />
 
           <div className="space-y-2.5">
@@ -199,10 +174,14 @@ export function GoalFields({ goal, onChange }: GoalFieldsProps) {
             selectPlaceholder="추가 요청사항을 선택해 주세요"
             inputPlaceholder="추가 요청사항을 직접 입력해 주세요"
             value={goal.customRequest}
+            mode={goal.customRequestInputMode}
             options={CUSTOM_REQUEST_OPTIONS}
-            isCustomMode={customModes.customRequest}
-            onValueChange={(value) => onChange({ customRequest: value })}
-            onCustomModeChange={(next) => setCustomMode("customRequest", next)}
+            onChange={({ mode: nextMode, value: nextValue }) =>
+              onChange({
+                customRequest: nextValue,
+                customRequestInputMode: nextMode,
+              })
+            }
           />
         </div>
       </div>

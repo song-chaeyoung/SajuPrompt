@@ -32,9 +32,12 @@ const createInitialForm = (): SajuQuestionFormData => ({
   partner: createDefaultBirthProfile("상대방"),
   goal: {
     situation: "",
+    situationInputMode: "preset",
     purpose: "",
+    purposeInputMode: "preset",
     style: "balanced",
     customRequest: "",
+    customRequestInputMode: "preset",
   },
 });
 

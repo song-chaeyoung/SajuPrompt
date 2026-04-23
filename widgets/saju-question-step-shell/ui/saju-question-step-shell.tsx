@@ -11,8 +11,7 @@ import { HeroOrbitOrnament } from "@/shared/ui/hero-orbit-ornament";
 interface SajuQuestionStepShellProps {
   currentStep: FormStep;
   children: ReactNode;
-  desktopPrimaryAction?: ReactNode;
-  mobilePrimaryAction?: ReactNode;
+  primaryAction?: ReactNode;
   secondaryActions?: ReactNode;
   errorMessage?: string | null;
   visualVariant?: "default" | "hero";
@@ -21,14 +20,13 @@ interface SajuQuestionStepShellProps {
 export function SajuQuestionStepShell({
   currentStep,
   children,
-  desktopPrimaryAction,
-  mobilePrimaryAction,
+  primaryAction,
   secondaryActions,
   errorMessage,
   visualVariant = "default",
 }: SajuQuestionStepShellProps) {
   const currentStepIndex = FORM_STEPS.indexOf(currentStep);
-  const hasDesktopActionArea = Boolean(desktopPrimaryAction || secondaryActions);
+  const hasActionArea = Boolean(primaryAction || secondaryActions);
   const isHeroVariant = visualVariant === "hero";
 
   return (
@@ -38,7 +36,7 @@ export function SajuQuestionStepShell({
           isHeroVariant
             ? "pb-[calc(7.25rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:pb-8 sm:pt-[calc(env(safe-area-inset-top)+2rem)]"
             : "py-4 sm:py-6",
-          mobilePrimaryAction
+          primaryAction
             ? "pb-[calc(7.75rem+env(safe-area-inset-bottom))] sm:pb-6"
             : undefined,
         )}
@@ -127,7 +125,7 @@ export function SajuQuestionStepShell({
                   </div>
                 ) : null}
 
-                {hasDesktopActionArea ? (
+                {hasActionArea ? (
                   <div className="border-t border-border/75 dark:border-border/95 pt-4 sm:pt-5">
                     {secondaryActions ? (
                       <div className="flex flex-wrap items-center justify-end gap-2 sm:hidden">
@@ -147,9 +145,9 @@ export function SajuQuestionStepShell({
                         </div>
                       ) : null}
 
-                      {desktopPrimaryAction ? (
+                      {primaryAction ? (
                         <div className="w-full sm:w-auto sm:min-w-[15rem]">
-                          {desktopPrimaryAction}
+                          {primaryAction}
                         </div>
                       ) : null}
                     </div>
@@ -161,10 +159,10 @@ export function SajuQuestionStepShell({
         </div>
       </section>
 
-      {mobilePrimaryAction ? (
+      {primaryAction ? (
         <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
           <div className="mx-auto w-full max-w-3xl">
-            {mobilePrimaryAction}
+            {primaryAction}
           </div>
         </div>
       ) : null}

@@ -259,8 +259,7 @@ export function SajuQuestionResult() {
     </Button>
   );
 
-  const desktopPrimaryAction = buildCopyButton();
-  const mobilePrimaryAction = buildCopyButton();
+  const primaryAction = buildCopyButton();
 
   const secondaryActions = (
     <>
@@ -391,13 +390,13 @@ export function SajuQuestionResult() {
                   다시 생성
                 </Button>
 
-                <div className="w-full max-w-[16rem]">{desktopPrimaryAction}</div>
+                <div className="w-full max-w-[16rem]">{buildCopyButton()}</div>
               </div>
           </div>
         </ResultHeroSection>
 
         <div className="fixed inset-x-0 bottom-0 z-30 bg-[linear-gradient(to_top,var(--background)_58%,transparent)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
-          <div className="mx-auto w-full max-w-4xl">{mobilePrimaryAction}</div>
+          <div className="mx-auto w-full max-w-4xl">{buildCopyButton()}</div>
         </div>
       </>
     );
@@ -407,8 +406,7 @@ export function SajuQuestionResult() {
     <SajuQuestionStepShell
       currentStep="result"
       errorMessage={generationError}
-      desktopPrimaryAction={desktopPrimaryAction}
-      mobilePrimaryAction={mobilePrimaryAction}
+      primaryAction={primaryAction}
       secondaryActions={secondaryActions}
     >
       <GeneratedQuestionPreview generatedQuestion={generatedQuestion} />

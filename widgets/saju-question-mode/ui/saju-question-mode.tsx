@@ -25,18 +25,7 @@ export function SajuQuestionMode() {
     router.push("/", { scroll: false });
   };
 
-  const desktopPrimaryAction = (
-    <Button
-      type="button"
-      size="lg"
-      onClick={handleNext}
-      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
-    >
-      다음
-    </Button>
-  );
-
-  const mobilePrimaryAction = (
+  const primaryAction = (
     <Button
       type="button"
       size="lg"
@@ -63,8 +52,7 @@ export function SajuQuestionMode() {
     <SajuQuestionStepShell
       currentStep="mode"
       visualVariant="hero"
-      desktopPrimaryAction={desktopPrimaryAction}
-      mobilePrimaryAction={mobilePrimaryAction}
+      primaryAction={primaryAction}
       secondaryActions={secondaryActions}
     >
       <div className="space-y-4">
