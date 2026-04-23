@@ -269,6 +269,18 @@ function buildInterpretationBasis(
   };
 }
 
+function buildLlmCompactContext(
+  result: SsajuResult,
+  knownBirthTime: boolean,
+  hasSupportedGender: boolean,
+): string | null {
+  if (!knownBirthTime || !hasSupportedGender) {
+    return null;
+  }
+
+  return result.toCompact().trim();
+}
+
 function isSsajuInputError(error: unknown): boolean {
   if (!(error instanceof Error)) {
     return false;
@@ -374,6 +386,11 @@ export function deriveSajuProfileContext(
       birthPlaceLabel: birthPlace?.label ?? profile.birthPlace.trim(),
       birthPlaceLongitude: birthPlace?.longitude ?? null,
       interpretationBasis: buildInterpretationBasis(
+        result,
+        knownBirthTime,
+        hasSupportedGender,
+      ),
+      llmCompactContext: buildLlmCompactContext(
         result,
         knownBirthTime,
         hasSupportedGender,

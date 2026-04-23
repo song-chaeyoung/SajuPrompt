@@ -516,6 +516,20 @@ function buildRequiredBasicInfoFacts(
   return lines.join("\n");
 }
 
+function buildLlmCompactEvidenceBlock(
+  label: string,
+  derived: DerivedSajuProfileContext,
+): string {
+  if (!hasText(derived.llmCompactContext ?? "")) {
+    return "";
+  }
+
+  return [
+    `### ${label} 사주 구조 압축 근거`,
+    derived.llmCompactContext!,
+  ].join("\n");
+}
+
 function toModeLabel(mode: AnalysisMode): string {
   return mode === "compatibility" ? "궁합 분석" : "내 사주 분석";
 }
@@ -650,6 +664,16 @@ export function buildSajuPrompt(
   const topicLensSummary = buildTopicLensSummary(topicProfiles);
   const topicFocusSummary = buildTopicFocusSummary(topicProfiles);
   const topicResponseLines = buildTopicResponseLines(topicProfiles);
+  const compactEvidenceBlocks = [
+    buildLlmCompactEvidenceBlock("나 정보", derived.me),
+    isCompatibilityMode && derived.partner
+      ? buildLlmCompactEvidenceBlock("상대방 정보", derived.partner)
+      : "",
+  ].filter(Boolean);
+  const compactEvidenceSystemRules = [
+    "- 아래에 'LLM 참고용 사주 구조 압축 근거'가 주어지면, 그 블록을 입력된 명식의 1차 근거로 사용하고 다른 명식으로 다시 계산하거나 바꾸지 않는다.",
+    "- 'LLM 참고용 사주 구조 압축 근거'는 내부 참고용이므로 최종 질문문에 원문 그대로 길게 복사하지 않는다.",
+  ];
 
   const systemPrompt = [
     "당신은 사주 해석 질문문을 설계하는 편집자다.",
@@ -675,6 +699,7 @@ export function buildSajuPrompt(
     `- 문체 변주: ${expansionGuide.phrasingVariationInstruction}`,
     `- 응답 계약: ${expansionGuide.responseContractInstruction}`,
     `- 시간축 반영: ${expansionGuide.timeHorizonInstruction}`,
+    ...compactEvidenceSystemRules,
     "- 번호 질문은 반드시 '중점적으로 묻고 싶은 내용' 섹션 안에만 둔다.",
     "- 사용자에게 보이는 새 섹션 제목을 추가하지 않는다.",
     "- 계산 정보는 줄이지 말고 기본 정보 섹션 안에 분명하게 드러낸다.",
@@ -698,6 +723,13 @@ export function buildSajuPrompt(
           derived.partner,
         )
       : "",
+    ...(compactEvidenceBlocks.length
+      ? [
+          "",
+          "[LLM 참고용 사주 구조 압축 근거 - 출력에 그대로 노출하지 말 것]",
+          ...compactEvidenceBlocks,
+        ]
+      : []),
     `현재 상황: ${form.goal.situation.trim() || "없음"}`,
     `질문 목적: ${form.goal.purpose.trim() || "없음"}`,
     `원하는 응답 톤: ${toStyleLabel(form.goal.style)}`,

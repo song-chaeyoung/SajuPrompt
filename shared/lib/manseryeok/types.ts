@@ -124,6 +124,7 @@ export interface DerivedSajuProfileContext {
   birthPlaceLabel: string;
   birthPlaceLongitude: number | null;
   interpretationBasis: DerivedSajuInterpretationBasis | null;
+  llmCompactContext: string | null;
 }
 
 export interface DerivedSajuPromptContext {
