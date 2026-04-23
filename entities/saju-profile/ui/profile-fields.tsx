@@ -77,6 +77,42 @@ function SelectionField({
   );
 }
 
+const GENDER_OPTION_ITEMS = GENDER_OPTIONS.map((option) => (
+  <SelectItem key={option.value} value={option.value}>
+    {option.label}
+  </SelectItem>
+));
+
+const BIRTH_PLACE_OPTION_ITEMS = KOREAN_BIRTH_PLACE_OPTIONS.map((option) => (
+  <SelectItem key={option.code} value={option.code}>
+    {option.label}
+  </SelectItem>
+));
+
+const YEAR_OPTION_ITEMS = YEAR_OPTIONS.map((year) => (
+  <SelectItem key={year} value={year}>
+    {year}년
+  </SelectItem>
+));
+
+const MONTH_OPTION_ITEMS = MONTH_OPTIONS.map((month) => (
+  <SelectItem key={month} value={month}>
+    {Number(month)}월
+  </SelectItem>
+));
+
+const HOUR_OPTION_ITEMS = HOUR_OPTIONS.map((hour) => (
+  <SelectItem key={hour} value={hour}>
+    {hour}시
+  </SelectItem>
+));
+
+const MINUTE_OPTION_ITEMS = MINUTE_OPTIONS.map((minute) => (
+  <SelectItem key={minute} value={minute}>
+    {minute}분
+  </SelectItem>
+));
+
 function hasText(value: string): boolean {
   return value.trim().length > 0;
 }
@@ -198,13 +234,7 @@ export function ProfileFields({
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="성별을 선택해 주세요" />
               </SelectTrigger>
-              <SelectContent>
-                {GENDER_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
+              <SelectContent>{GENDER_OPTION_ITEMS}</SelectContent>
             </Select>
           </div>
 
@@ -217,13 +247,7 @@ export function ProfileFields({
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="대한민국 광역자치단체를 선택해 주세요" />
               </SelectTrigger>
-              <SelectContent>
-                {KOREAN_BIRTH_PLACE_OPTIONS.map((option) => (
-                  <SelectItem key={option.code} value={option.code}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
+              <SelectContent>{BIRTH_PLACE_OPTION_ITEMS}</SelectContent>
             </Select>
             <p className="type-body-sm text-muted-foreground">
               출생 시간을 입력한 경우에는 시간 보정을 위해 출생지를 함께
@@ -243,13 +267,7 @@ export function ProfileFields({
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="연도" />
                 </SelectTrigger>
-                <SelectContent>
-                  {YEAR_OPTIONS.map((year) => (
-                    <SelectItem key={year} value={year}>
-                      {year}년
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectContent>{YEAR_OPTION_ITEMS}</SelectContent>
               </Select>
 
               <Select
@@ -264,13 +282,7 @@ export function ProfileFields({
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="월" />
                 </SelectTrigger>
-                <SelectContent>
-                  {MONTH_OPTIONS.map((month) => (
-                    <SelectItem key={month} value={month}>
-                      {Number(month)}월
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectContent>{MONTH_OPTION_ITEMS}</SelectContent>
               </Select>
 
               <Select
@@ -333,13 +345,7 @@ export function ProfileFields({
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="시" />
                 </SelectTrigger>
-                <SelectContent>
-                  {HOUR_OPTIONS.map((hour) => (
-                    <SelectItem key={hour} value={hour}>
-                      {hour}시
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectContent>{HOUR_OPTION_ITEMS}</SelectContent>
               </Select>
 
               <Select
@@ -352,13 +358,7 @@ export function ProfileFields({
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="분" />
                 </SelectTrigger>
-                <SelectContent>
-                  {MINUTE_OPTIONS.map((minute) => (
-                    <SelectItem key={minute} value={minute}>
-                      {minute}분
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                <SelectContent>{MINUTE_OPTION_ITEMS}</SelectContent>
               </Select>
             </div>
           </div>
