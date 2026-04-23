@@ -329,6 +329,94 @@ function formatPillar(hangul: string | null, hanja: string | null): string {
   return hanja ? `${hangul}(${hanja})` : hangul;
 }
 
+function formatFiveElementsSummary(
+  fiveElements: NonNullable<
+    DerivedSajuProfileContext["interpretationBasis"]
+  >["fiveElements"],
+): string {
+  return `목${fiveElements.목} 화${fiveElements.화} 토${fiveElements.토} 금${fiveElements.금} 수${fiveElements.수}`;
+}
+
+function formatTenGodSummary(
+  tenGods: NonNullable<
+    DerivedSajuProfileContext["interpretationBasis"]
+  >["tenGods"],
+): string {
+  const parts = [
+    `년주 ${tenGods.year.stem}/${tenGods.year.branch}`,
+    `월주 ${tenGods.month.stem}/${tenGods.month.branch}`,
+    `일주 ${tenGods.day.stem}/${tenGods.day.branch}`,
+  ];
+
+  if (tenGods.hour) {
+    parts.push(`시주 ${tenGods.hour.stem}/${tenGods.hour.branch}`);
+  }
+
+  return parts.join(", ");
+}
+
+function formatRelationshipSignalsSummary(
+  relationshipSignals: NonNullable<
+    DerivedSajuProfileContext["interpretationBasis"]
+  >["relationshipSignals"],
+): string {
+  return relationshipSignals.slice(0, 6).join(", ");
+}
+
+function formatDaeunSummary(
+  interpretationBasis: NonNullable<
+    DerivedSajuProfileContext["interpretationBasis"]
+  >,
+): string {
+  const { current, next, startAge } = interpretationBasis.daeun;
+
+  if (!current) {
+    return `${startAge}세에 시작한다.`;
+  }
+
+  const nextSummary = next
+    ? ` 다음 대운은 ${next.ganzhi}(${next.startAge}~${next.endAge}세)이다.`
+    : "";
+
+  return `${startAge}세에 시작했고, 현재 대운은 ${current.ganzhi}(${current.startAge}~${current.endAge}세, ${current.stemTenGod}/${current.branchTenGod}, ${current.stage12})이다.${nextSummary}`;
+}
+
+function formatSeyunSummary(
+  interpretationBasis: NonNullable<
+    DerivedSajuProfileContext["interpretationBasis"]
+  >,
+): string {
+  const { current, next, currentYear } = interpretationBasis.seyun;
+
+  if (!current) {
+    return "";
+  }
+
+  const nextSummary = next
+    ? ` 내년은 ${next.ganzhi}(${next.stemTenGod}/${next.branchTenGod}, ${next.stage12})이다.`
+    : "";
+
+  return `올해 ${currentYear}년 세운은 ${current.ganzhi}(${current.stemTenGod}/${current.branchTenGod}, ${current.stage12})이다.${nextSummary}`;
+}
+
+function formatWolunSummary(
+  interpretationBasis: NonNullable<
+    DerivedSajuProfileContext["interpretationBasis"]
+  >,
+): string {
+  const { currentMonth, current, next } = interpretationBasis.wolun;
+
+  if (!currentMonth || !current) {
+    return "";
+  }
+
+  const nextSummary = next
+    ? ` 다음 달 ${next.month}월은 ${next.ganzhi}(${next.stemTenGod}/${next.branchTenGod}, ${next.stage12})이다.`
+    : "";
+
+  return `이번 달 ${currentMonth}월 운은 ${current.ganzhi}(${current.stemTenGod}/${current.branchTenGod}, ${current.stage12})이다.${nextSummary}`;
+}
+
 function appendField(lines: string[], label: string, value: string): void {
   if (!hasText(value)) {
     return;
@@ -395,6 +483,36 @@ function buildRequiredBasicInfoFacts(
     }
   }
 
+  if (derived.interpretationBasis) {
+    const basis = derived.interpretationBasis;
+    const relationshipSignals = formatRelationshipSignalsSummary(
+      basis.relationshipSignals,
+    );
+    const seyunSummary = formatSeyunSummary(basis);
+    const wolunSummary = formatWolunSummary(basis);
+
+    lines.push(
+      `- ${label}: 일간은 ${basis.dayMaster.hanja}(${basis.dayMaster.hangul}${basis.dayMaster.element}, ${basis.dayMaster.yinYang})이고, 강약은 ${basis.dayStrength.label}(${basis.dayStrength.score}), 격국은 ${basis.geukguk}, 용신은 ${basis.yongsin.join(", ") || "-"}이다.`,
+    );
+    lines.push(
+      `- ${label}: 오행 분포는 ${formatFiveElementsSummary(basis.fiveElements)}이고, 십성은 ${formatTenGodSummary(basis.tenGods)}이다.`,
+    );
+
+    if (relationshipSignals) {
+      lines.push(`- ${label}: 합충형파 등 관계 신호는 ${relationshipSignals}이다.`);
+    }
+
+    lines.push(`- ${label}: 대운은 ${formatDaeunSummary(basis)}`);
+
+    if (seyunSummary) {
+      lines.push(`- ${label}: ${seyunSummary}`);
+    }
+
+    if (wolunSummary) {
+      lines.push(`- ${label}: ${wolunSummary}`);
+    }
+  }
+
   return lines.join("\n");
 }
 
@@ -422,6 +540,7 @@ function buildDetailedResponseRequest(style: PromptStyle): string[] {
   const base = [
     "- '응답 방식'에는 먼저 전체 흐름을 짧게 요약한 뒤, 각 번호 질문을 순서대로 자세히 답해 달라고 요청한다.",
     "- 각 항목마다 왜 그렇게 해석하는지 사주 정보와 현재 상황을 연결해서 설명해 달라고 요청한다.",
+    "- 가능하면 일간, 강약, 격국, 용신, 오행, 십성, 합충형파, 대운·세운·월운 같은 사주 구조를 먼저 근거로 사용해 달라고 요청한다.",
     "- 각 항목마다 좋은 점과 주의할 점, 기회와 리스크를 나누어 설명해 달라고 요청한다.",
     "- 추상적인 표현보다 바로 적용할 수 있는 판단 기준, 행동 예시, 점검 포인트를 구체적으로 알려 달라고 요청한다.",
     "- 단정적으로 예언하기보다 가능성과 조건, 변수와 전제까지 함께 설명해 달라고 요청한다.",
