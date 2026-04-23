@@ -1,12 +1,7 @@
 import {
-  InvalidDateError,
-  OutOfRangeError,
   calculateSaju,
-  calculateSajuSimple,
-  lunarToSolar,
   solarToLunar,
-} from "@fullstackfamily/manseryeok";
-import { calculateSaju as calculateDetailedSaju } from "ssaju";
+} from "ssaju";
 
 import { getKoreanBirthPlaceOption } from "@/shared/config/korean-birth-places";
 import {
@@ -21,6 +16,12 @@ import type {
   DerivedSajuInterpretationBasis,
   DerivedSajuProfileContext,
 } from "./types";
+
+type SsajuResult = ReturnType<typeof calculateSaju>;
+type SsajuDaeunItem = SsajuResult["daeun"]["list"][number];
+type SsajuSeyunItem = SsajuResult["seyun"][number];
+type SsajuWolunItem = SsajuResult["wolun"][number];
+type SsajuPillarDetail = SsajuResult["pillarDetails"]["year"];
 
 const BRANCH_RELATION_KEYS = [
   "방합",
@@ -60,7 +61,7 @@ function parseTime(profile: BirthProfile, profileLabel: string) {
 
   if (!hour || !minute) {
     throw new SajuProfileCalculationError(
-      `${profileLabel}의 출생 시간을 확인해 주세요.`,
+      `${profileLabel}의 출생 시간 입력을 확인해 주세요.`,
     );
   }
 
@@ -78,10 +79,10 @@ function normalizeLunarDate(
   value: ReturnType<typeof solarToLunar>,
 ): DerivedLunarDate {
   return {
-    year: value.lunar.year,
-    month: value.lunar.month,
-    day: value.lunar.day,
-    isLeapMonth: value.lunar.isLeapMonth,
+    year: value.year,
+    month: value.month,
+    day: value.day,
+    isLeapMonth: value.isLeapMonth,
   };
 }
 
@@ -99,6 +100,10 @@ function toSsajuGender(
   return null;
 }
 
+function resolveBaseSsajuGender(gender: BirthProfile["gender"]): "남" | "여" {
+  return toSsajuGender(gender) ?? "여";
+}
+
 function toDayStrengthLabel(
   strength: "strong" | "weak" | "neutral",
 ): "강" | "약" | "중화" {
@@ -113,29 +118,28 @@ function toDayStrengthLabel(
   return "중화";
 }
 
-function buildRelationshipSignals(
-  result: ReturnType<typeof calculateDetailedSaju>,
-): string[] {
+function formatPillarHangul(detail: SsajuPillarDetail): string {
+  return `${detail.stemKo}${detail.branchKo}`;
+}
+
+function formatPillarHanja(detail: SsajuPillarDetail): string {
+  return `${detail.stem}${detail.branch}`;
+}
+
+function buildRelationshipSignals(result: SsajuResult): string[] {
   const stemSignals = result.stemRelations.map((relation) => relation.desc);
   const branchSignals = BRANCH_RELATION_KEYS.flatMap((key) => {
-    const relationGroup = result.branchRelations[key] as Record<
-      string,
-      string
-    > | null;
+    const relationGroup = result.branchRelations[key] as
+      | Record<string, string>
+      | undefined;
 
-    if (!relationGroup) {
-      return [];
-    }
-
-    return Object.values(relationGroup);
+    return relationGroup ? Object.values(relationGroup) : [];
   });
 
   return Array.from(new Set([...stemSignals, ...branchSignals]));
 }
 
-function toDaeunItem(
-  item: ReturnType<typeof calculateDetailedSaju>["daeun"]["current"],
-) {
+function toDaeunItem(item: SsajuDaeunItem | null | undefined) {
   if (!item) {
     return null;
   }
@@ -153,9 +157,7 @@ function toDaeunItem(
   };
 }
 
-function toSeyunItem(
-  item: ReturnType<typeof calculateDetailedSaju>["seyun"][number] | undefined,
-) {
+function toSeyunItem(item: SsajuSeyunItem | undefined) {
   if (!item) {
     return null;
   }
@@ -169,9 +171,7 @@ function toSeyunItem(
   };
 }
 
-function toWolunItem(
-  item: ReturnType<typeof calculateDetailedSaju>["wolun"][number] | undefined,
-) {
+function toWolunItem(item: SsajuWolunItem | undefined) {
   if (!item) {
     return null;
   }
@@ -195,36 +195,13 @@ function resolveCurrentMonth(now: string): number | null {
 }
 
 function buildInterpretationBasis(
-  profile: BirthProfile,
-  birthPlaceLongitude: number | null,
+  result: SsajuResult,
+  knownBirthTime: boolean,
+  hasSupportedGender: boolean,
 ): DerivedSajuInterpretationBasis | null {
-  const knownBirthTime = hasKnownBirthTime(profile);
-  const ssajuGender = toSsajuGender(profile.gender);
-
-  if (!knownBirthTime || !ssajuGender) {
+  if (!knownBirthTime || !hasSupportedGender) {
     return null;
   }
-
-  const { year, month, day } = parseBirthDateParts(profile.birthDate);
-  const { hour, minute } = parseBirthTimeParts(profile.birthTime);
-
-  if (!year || !month || !day || !hour || !minute) {
-    return null;
-  }
-
-  const result = calculateDetailedSaju({
-    year: Number(year),
-    month: Number(month),
-    day: Number(day),
-    hour: Number(hour),
-    minute: Number(minute),
-    gender: ssajuGender,
-    calendar: profile.calendarType,
-    leap: profile.isLeapMonth ?? false,
-    timezone: "Asia/Seoul",
-    longitude: birthPlaceLongitude ?? undefined,
-    applyLocalMeanTime: birthPlaceLongitude !== null,
-  });
 
   const currentDaeunIndex = result.daeun.current
     ? result.daeun.list.findIndex(
@@ -276,7 +253,7 @@ function buildInterpretationBasis(
       current: toDaeunItem(result.daeun.current),
       next:
         currentDaeunIndex >= 0
-          ? toDaeunItem(result.daeun.list[currentDaeunIndex + 1] ?? null)
+          ? toDaeunItem(result.daeun.list[currentDaeunIndex + 1])
           : null,
     },
     seyun: {
@@ -290,6 +267,26 @@ function buildInterpretationBasis(
       next: toWolunItem(nextWolun),
     },
   };
+}
+
+function isSsajuInputError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return [
+    "invalid solar date",
+    "solar year must be between",
+    "solar month must be between",
+    "solar day must be between",
+    "lunar year must be between",
+    "lunar month must be between",
+    "lunar day must be between",
+    "lunar leap month mismatch",
+    "invalid lunar day",
+    "hour must be an integer",
+    "minute must be an integer",
+  ].some((message) => error.message.includes(message));
 }
 
 export class SajuProfileCalculationError extends Error {
@@ -306,6 +303,8 @@ export function deriveSajuProfileContext(
   const inputDate = parseDate(profile, profileLabel);
   const birthPlace = getKoreanBirthPlaceOption(profile.birthPlaceCode);
   const knownBirthTime = hasKnownBirthTime(profile);
+  const baseGender = resolveBaseSsajuGender(profile.gender);
+  const hasSupportedGender = toSsajuGender(profile.gender) !== null;
 
   if (profile.calendarType === "lunar" && profile.isLeapMonth === null) {
     throw new SajuProfileCalculationError(
@@ -320,66 +319,68 @@ export function deriveSajuProfileContext(
   }
 
   try {
-    const solarDate =
-      profile.calendarType === "solar"
-        ? inputDate
-        : lunarToSolar(
-            inputDate.year,
-            inputDate.month,
-            inputDate.day,
-            profile.isLeapMonth ?? false,
-          ).solar;
-    const lunarResult = solarToLunar(
-      solarDate.year,
-      solarDate.month,
-      solarDate.day,
+    const time = knownBirthTime
+      ? parseTime(profile, profileLabel)
+      : { hour: 12, minute: 0 };
+    const result = calculateSaju({
+      year: inputDate.year,
+      month: inputDate.month,
+      day: inputDate.day,
+      hour: time.hour,
+      minute: time.minute,
+      gender: baseGender,
+      calendar: profile.calendarType,
+      leap: profile.isLeapMonth ?? false,
+      timezone: "Asia/Seoul",
+      longitude: birthPlace?.longitude ?? undefined,
+      applyLocalMeanTime: knownBirthTime && birthPlace !== undefined,
+    });
+    const { solar } = result.normalized;
+    const solarDate: DerivedSajuDate = {
+      year: solar.year,
+      month: solar.month,
+      day: solar.day,
+    };
+    const lunarDate = normalizeLunarDate(
+      solarToLunar(solarDate.year, solarDate.month, solarDate.day),
     );
-
-    const saju = knownBirthTime
-      ? (() => {
-          const { hour, minute } = parseTime(profile, profileLabel);
-
-          return calculateSaju(
-            solarDate.year,
-            solarDate.month,
-            solarDate.day,
-            hour,
-            minute,
-            {
-              longitude: birthPlace?.longitude ?? 127,
-              applyTimeCorrection: true,
-            },
-          );
-        })()
-      : calculateSajuSimple(solarDate.year, solarDate.month, solarDate.day);
+    const correctedTime = result.normalized.localMeanTime
+      ? {
+          hour: result.normalized.localMeanTime.hour,
+          minute: result.normalized.localMeanTime.minute,
+        }
+      : null;
 
     return {
       inputCalendarType: profile.calendarType,
       solarDate,
-      lunarDate: normalizeLunarDate(lunarResult),
+      lunarDate,
       pillars: {
-        year: saju.yearPillar,
-        month: saju.monthPillar,
-        day: saju.dayPillar,
-        hour: saju.hourPillar,
+        year: formatPillarHangul(result.pillarDetails.year),
+        month: formatPillarHangul(result.pillarDetails.month),
+        day: formatPillarHangul(result.pillarDetails.day),
+        hour: knownBirthTime
+          ? formatPillarHangul(result.pillarDetails.hour)
+          : null,
       },
       pillarsHanja: {
-        year: saju.yearPillarHanja,
-        month: saju.monthPillarHanja,
-        day: saju.dayPillarHanja,
-        hour: saju.hourPillarHanja,
+        year: formatPillarHanja(result.pillarDetails.year),
+        month: formatPillarHanja(result.pillarDetails.month),
+        day: formatPillarHanja(result.pillarDetails.day),
+        hour: knownBirthTime ? formatPillarHanja(result.pillarDetails.hour) : null,
       },
-      isTimeCorrected: saju.isTimeCorrected,
-      correctedTime: saju.correctedTime ?? null,
+      isTimeCorrected: correctedTime !== null,
+      correctedTime,
       birthPlaceLabel: birthPlace?.label ?? profile.birthPlace.trim(),
       birthPlaceLongitude: birthPlace?.longitude ?? null,
       interpretationBasis: buildInterpretationBasis(
-        profile,
-        birthPlace?.longitude ?? null,
+        result,
+        knownBirthTime,
+        hasSupportedGender,
       ),
     };
   } catch (error) {
-    if (error instanceof InvalidDateError || error instanceof OutOfRangeError) {
+    if (isSsajuInputError(error)) {
       throw new SajuProfileCalculationError(
         `${profileLabel}의 음력·윤달 또는 생년월일 입력을 확인해 주세요.`,
       );
