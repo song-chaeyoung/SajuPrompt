@@ -245,7 +245,7 @@ function buildInterpretationBasis(
       year: { ...result.tenGods.year },
       month: { ...result.tenGods.month },
       day: { ...result.tenGods.day },
-      hour: { ...result.tenGods.hour },
+      hour: result.tenGods.hour ? { ...result.tenGods.hour } : null,
     },
     relationshipSignals: buildRelationshipSignals(result),
     daeun: {
@@ -345,7 +345,7 @@ export function deriveSajuProfileContext(
       leap: profile.isLeapMonth ?? false,
       timezone: "Asia/Seoul",
       longitude: birthPlace?.longitude ?? undefined,
-      applyLocalMeanTime: knownBirthTime && birthPlace !== undefined,
+      applyLocalMeanTime: knownBirthTime && birthPlace !== null,
     });
     const { solar } = result.normalized;
     const solarDate: DerivedSajuDate = {

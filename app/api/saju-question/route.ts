@@ -47,10 +47,9 @@ function isBirthProfile(value: unknown): value is BirthProfile {
   }
 
   const birthPlaceCode =
-    typeof value.birthPlaceCode === "string" ? value.birthPlaceCode : null;
+    typeof value.birthPlaceCode === "string" ? value.birthPlaceCode : "";
   const isValidBirthPlaceCode =
-    birthPlaceCode !== null &&
-    (!hasText(birthPlaceCode) || isKoreanBirthPlaceCode(birthPlaceCode));
+    !hasText(birthPlaceCode) || isKoreanBirthPlaceCode(birthPlaceCode);
   const isValidLeapMonth =
     value.isLeapMonth === null ||
     value.isLeapMonth === true ||
