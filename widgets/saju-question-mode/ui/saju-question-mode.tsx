@@ -3,14 +3,18 @@
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/shared/ui/button";
-import { usePlanSajuQuestion } from "@/features/plan-saju-question/model/use-plan-saju-question";
+import {
+  useSajuQuestionModeState,
+  useSajuQuestionResetAction,
+} from "@/features/plan-saju-question/model/use-plan-saju-question";
 import { AnalysisModeSelector } from "@/features/select-analysis-mode/ui/analysis-mode-selector";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import { SajuQuestionStepShell } from "@/widgets/saju-question-step-shell/ui/saju-question-step-shell";
 
 export function SajuQuestionMode() {
   const router = useRouter();
-  const { form, handleModeSelect, handleResetPlanner } = usePlanSajuQuestion();
+  const { mode, handleModeSelect } = useSajuQuestionModeState();
+  const handleResetPlanner = useSajuQuestionResetAction();
 
   const handleNext = () => {
     router.push(FORM_STEP_PATHS.saju, { scroll: false });
@@ -21,18 +25,7 @@ export function SajuQuestionMode() {
     router.push("/", { scroll: false });
   };
 
-  const desktopPrimaryAction = (
-    <Button
-      type="button"
-      size="lg"
-      onClick={handleNext}
-      className="w-full rounded-[1.125rem] shadow-[0_16px_32px_color-mix(in_oklch,var(--primary)_18%,transparent)]"
-    >
-      다음
-    </Button>
-  );
-
-  const mobilePrimaryAction = (
+  const primaryAction = (
     <Button
       type="button"
       size="lg"
@@ -59,8 +52,7 @@ export function SajuQuestionMode() {
     <SajuQuestionStepShell
       currentStep="mode"
       visualVariant="hero"
-      desktopPrimaryAction={desktopPrimaryAction}
-      mobilePrimaryAction={mobilePrimaryAction}
+      primaryAction={primaryAction}
       secondaryActions={secondaryActions}
     >
       <div className="space-y-4">
@@ -70,7 +62,7 @@ export function SajuQuestionMode() {
         </p>
 
         <AnalysisModeSelector
-          activeMode={form.mode}
+          activeMode={mode}
           onSelect={handleModeSelect}
         />
       </div>

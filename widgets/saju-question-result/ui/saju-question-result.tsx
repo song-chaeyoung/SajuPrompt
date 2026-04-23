@@ -1,14 +1,19 @@
 "use client";
 
 import { Check, Copy, RotateCcw, TriangleAlert } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import { GENDER_OPTIONS } from "@/entities/saju-profile/config/birth-profile-options";
 import {
+  GENERATION_MIN_DURATION_MS,
   type CopyFeedback,
-  usePlanSajuQuestion,
+  useSajuQuestionCopy,
+  useSajuQuestionFormState,
+  useSajuQuestionGenerationActions,
+  useSajuQuestionGenerationState,
+  useSajuQuestionResetAction,
 } from "@/features/plan-saju-question/model/use-plan-saju-question";
 import { MODE_OPTIONS } from "@/features/select-analysis-mode/config/mode-options";
 import { GeneratedQuestionPreview } from "@/features/view-generated-question/ui/generated-question-preview";
@@ -23,7 +28,6 @@ import type {
 } from "@/shared/types/saju-question-form";
 import { SajuQuestionStepShell } from "@/widgets/saju-question-step-shell/ui/saju-question-step-shell";
 
-const MIN_RESULT_LOADING_DURATION_MS = 6600;
 const RESULT_STEP_NUMBER = FORM_STEPS.indexOf("result") + 1;
 
 type SummaryChip = {
@@ -166,31 +170,24 @@ function ResultHeroSection({
 
 export function SajuQuestionResult() {
   const router = useRouter();
-  const hasQueuedGenerationStartedRef = useRef(false);
-  const isMountedRef = useRef(true);
+  const { form } = useSajuQuestionFormState();
   const {
-    form,
     generatedQuestion,
     generationStatus,
     generationError,
     isWaitingForResult,
-    copyFeedback,
-    handleGenerateQuestion,
-    handleCopyQuestion,
-    handleResetPlanner,
-  } = usePlanSajuQuestion();
-
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
+  } = useSajuQuestionGenerationState();
+  const { handleGenerateQuestion: triggerQuestionGeneration } =
+    useSajuQuestionGenerationActions();
+  const handleResetPlanner = useSajuQuestionResetAction();
+  const { copyFeedback, handleCopyQuestion } =
+    useSajuQuestionCopy(generatedQuestion);
 
   useEffect(() => {
     if (
       generatedQuestion ||
-      generationStatus === "queued" ||
-      generationStatus === "loading"
+      generationStatus === "loading" ||
+      generationStatus === "error"
     ) {
       return;
     }
@@ -198,36 +195,14 @@ export function SajuQuestionResult() {
     router.replace(FORM_STEP_PATHS.saju, { scroll: false });
   }, [generatedQuestion, generationStatus, router]);
 
-  useEffect(() => {
-    if (
-      generationStatus !== "queued" ||
-      generatedQuestion ||
-      hasQueuedGenerationStartedRef.current
-    ) {
-      return;
-    }
-
-    hasQueuedGenerationStartedRef.current = true;
-
-    void (async () => {
-      const didGenerate = await handleGenerateQuestion({
-        minDurationMs: MIN_RESULT_LOADING_DURATION_MS,
-      });
-
-      if (!didGenerate && isMountedRef.current) {
-        router.replace(FORM_STEP_PATHS.saju, { scroll: false });
-      }
-    })();
-  }, [generatedQuestion, generationStatus, handleGenerateQuestion, router]);
-
   const handleReset = () => {
     handleResetPlanner();
     router.push("/", { scroll: false });
   };
 
   const handleRegenerate = async () => {
-    await handleGenerateQuestion({
-      minDurationMs: MIN_RESULT_LOADING_DURATION_MS,
+    await triggerQuestionGeneration({
+      minDurationMs: GENERATION_MIN_DURATION_MS,
     });
   };
 
@@ -264,7 +239,7 @@ export function SajuQuestionResult() {
     );
   }
 
-  if (!generatedQuestion) {
+  if (!generatedQuestion && generationStatus !== "error") {
     return null;
   }
 
@@ -288,8 +263,7 @@ export function SajuQuestionResult() {
     </Button>
   );
 
-  const desktopPrimaryAction = buildCopyButton();
-  const mobilePrimaryAction = buildCopyButton();
+  const primaryAction = buildCopyButton();
 
   const secondaryActions = (
     <>
@@ -420,13 +394,13 @@ export function SajuQuestionResult() {
                   다시 생성
                 </Button>
 
-                <div className="w-full max-w-[16rem]">{desktopPrimaryAction}</div>
+                <div className="w-full max-w-[16rem]">{buildCopyButton()}</div>
               </div>
           </div>
         </ResultHeroSection>
 
         <div className="fixed inset-x-0 bottom-0 z-30 bg-[linear-gradient(to_top,var(--background)_58%,transparent)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
-          <div className="mx-auto w-full max-w-4xl">{mobilePrimaryAction}</div>
+          <div className="mx-auto w-full max-w-4xl">{buildCopyButton()}</div>
         </div>
       </>
     );
@@ -436,11 +410,12 @@ export function SajuQuestionResult() {
     <SajuQuestionStepShell
       currentStep="result"
       errorMessage={generationError}
-      desktopPrimaryAction={desktopPrimaryAction}
-      mobilePrimaryAction={mobilePrimaryAction}
+      primaryAction={generatedQuestion ? primaryAction : undefined}
       secondaryActions={secondaryActions}
     >
-      <GeneratedQuestionPreview generatedQuestion={generatedQuestion} />
+      {generatedQuestion ? (
+        <GeneratedQuestionPreview generatedQuestion={generatedQuestion} />
+      ) : null}
     </SajuQuestionStepShell>
   );
 }

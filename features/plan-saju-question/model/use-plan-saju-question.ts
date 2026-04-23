@@ -21,16 +21,22 @@ export type CopyFeedback = {
   message: string;
 };
 
+export const GENERATION_MIN_DURATION_MS = 6600;
+
 const REQUIRED_FIELDS_MESSAGE =
   "생년월일, 현재 상황, 질문 목적을 먼저 입력해 주세요.";
-const GENERATION_FAILED_MESSAGE =
-  "질문문 생성 중 오류가 발생했습니다.";
+const REQUIRED_FIELDS_TITLE = "입력값을 확인해 주세요";
+const GENERATION_FAILED_MESSAGE = "질문문 생성 중 오류가 발생했습니다.";
+const GENERATION_FAILED_TITLE = "질문 생성에 실패했습니다";
 const EMPTY_QUESTION_MESSAGE =
   "생성된 질문문이 비어 있습니다. 다시 시도해 주세요.";
 const COPY_MISSING_MESSAGE = "복사할 질문문이 없습니다.";
+const COPY_MISSING_TITLE = "복사할 내용이 없습니다";
 const COPY_SUCCESS_MESSAGE = "질문문이 클립보드에 복사되었습니다.";
+const COPY_SUCCESS_TITLE = "복사 완료";
 const COPY_FAILED_MESSAGE =
   "복사에 실패했습니다. 브라우저 권한을 확인해 주세요.";
+const COPY_FAILED_TITLE = "복사에 실패했습니다";
 
 function waitForMinimumDuration(durationMs: number) {
   if (durationMs <= 0) {
@@ -42,62 +48,106 @@ function waitForMinimumDuration(durationMs: number) {
   });
 }
 
-export function usePlanSajuQuestion() {
-  const {
-    form,
-    generatedQuestion,
-    generationStatus,
-    generationError,
-    setMode,
-    updateMe,
-    updatePartner,
-    updateGoal,
-    queueGeneration,
-    startGeneration,
-    setGenerationSuccess,
-    setGenerationError,
-    clearGenerationError,
-    reset,
-  } = useSajuQuestionPlannerStore();
-  const [copyFeedback, setCopyFeedback] = useState<CopyFeedback | null>(null);
+// Event handler only: reads a one-off Zustand snapshot without subscribing.
+function getPlannerFormSnapshot() {
+  return useSajuQuestionPlannerStore.getState().form;
+}
 
-  const isGenerating = generationStatus === "loading";
-  const isQueued = generationStatus === "queued";
-  const isWaitingForResult = isQueued || isGenerating;
+// Event handler only: validates against the latest store snapshot.
+function hasValidGenerationInputSnapshot() {
+  return hasCoreRequiredFields(getPlannerFormSnapshot());
+}
+
+export function useSajuQuestionModeState() {
+  const mode = useSajuQuestionPlannerStore((state) => state.form.mode);
+  const setMode = useSajuQuestionPlannerStore((state) => state.setMode);
 
   const handleModeSelect = useCallback(
-    (mode: AnalysisMode) => {
-      setMode(mode);
+    (nextMode: AnalysisMode) => {
+      setMode(nextMode);
     },
     [setMode],
   );
 
-  const handleQueueGeneration = useCallback(() => {
-    if (!hasCoreRequiredFields(form)) {
+  return {
+    mode,
+    handleModeSelect,
+  };
+}
+
+export function useSajuQuestionFormState() {
+  const form = useSajuQuestionPlannerStore((state) => state.form);
+  const updateMe = useSajuQuestionPlannerStore((state) => state.updateMe);
+  const updatePartner = useSajuQuestionPlannerStore(
+    (state) => state.updatePartner,
+  );
+  const updateGoal = useSajuQuestionPlannerStore((state) => state.updateGoal);
+
+  return {
+    form,
+    updateMe,
+    updatePartner,
+    updateGoal,
+  };
+}
+
+export function useSajuQuestionGenerationState() {
+  const generatedQuestion = useSajuQuestionPlannerStore(
+    (state) => state.generatedQuestion,
+  );
+  const generationStatus = useSajuQuestionPlannerStore(
+    (state) => state.generationStatus,
+  );
+  const generationError = useSajuQuestionPlannerStore(
+    (state) => state.generationError,
+  );
+
+  const isWaitingForResult = generationStatus === "loading";
+
+  return {
+    generatedQuestion,
+    generationStatus,
+    generationError,
+    isWaitingForResult,
+  };
+}
+
+export function useSajuQuestionGenerationActions() {
+  const startGeneration = useSajuQuestionPlannerStore(
+    (state) => state.startGeneration,
+  );
+  const setGenerationSuccess = useSajuQuestionPlannerStore(
+    (state) => state.setGenerationSuccess,
+  );
+  const setGenerationError = useSajuQuestionPlannerStore(
+    (state) => state.setGenerationError,
+  );
+  const clearGenerationError = useSajuQuestionPlannerStore(
+    (state) => state.clearGenerationError,
+  );
+
+  const handlePrepareGeneration = useCallback(() => {
+    if (hasValidGenerationInputSnapshot()) {
       clearGenerationError();
-      showErrorToast(REQUIRED_FIELDS_MESSAGE, {
-        id: "saju-required-fields",
-        title: "입력을 확인해 주세요",
-      });
-      return false;
+      return true;
     }
 
-    queueGeneration();
-    setCopyFeedback(null);
-    return true;
-  }, [clearGenerationError, form, queueGeneration]);
+    clearGenerationError();
+    showErrorToast(REQUIRED_FIELDS_MESSAGE, {
+      id: "saju-required-fields",
+      title: REQUIRED_FIELDS_TITLE,
+    });
+
+    return false;
+  }, [clearGenerationError]);
 
   const handleGenerateQuestion = useCallback(
     async (options: GenerateQuestionOptions = {}) => {
-      if (!hasCoreRequiredFields(form)) {
-        clearGenerationError();
-        showErrorToast(REQUIRED_FIELDS_MESSAGE, {
-          id: "saju-required-fields",
-          title: "입력을 확인해 주세요",
-        });
+      if (!handlePrepareGeneration()) {
         return false;
       }
 
+      const form = getPlannerFormSnapshot();
       const minDurationPromise = waitForMinimumDuration(
         Math.max(0, options.minDurationMs ?? 0),
       );
@@ -130,7 +180,6 @@ export function usePlanSajuQuestion() {
         await minDurationPromise;
 
         setGenerationSuccess(question);
-        setCopyFeedback(null);
         return true;
       } catch (error) {
         await minDurationPromise;
@@ -141,19 +190,36 @@ export function usePlanSajuQuestion() {
         setGenerationError(message);
         showErrorToast(message, {
           id: "saju-generation-error",
-          title: "질문 생성에 실패했습니다",
+          title: GENERATION_FAILED_TITLE,
         });
+
         return false;
       }
     },
     [
-      clearGenerationError,
-      form,
+      handlePrepareGeneration,
       setGenerationError,
       setGenerationSuccess,
       startGeneration,
     ],
   );
+
+  return {
+    handlePrepareGeneration,
+    handleGenerateQuestion,
+  };
+}
+
+export function useSajuQuestionResetAction() {
+  const reset = useSajuQuestionPlannerStore((state) => state.reset);
+
+  return useCallback(() => {
+    reset();
+  }, [reset]);
+}
+
+export function useSajuQuestionCopy(generatedQuestion: string) {
+  const [copyFeedback, setCopyFeedback] = useState<CopyFeedback | null>(null);
 
   const handleCopyQuestion = useCallback(async () => {
     if (!generatedQuestion) {
@@ -163,7 +229,7 @@ export function usePlanSajuQuestion() {
       });
       showErrorToast(COPY_MISSING_MESSAGE, {
         id: "saju-copy-missing",
-        title: "복사할 수 없습니다",
+        title: COPY_MISSING_TITLE,
       });
       return;
     }
@@ -176,7 +242,7 @@ export function usePlanSajuQuestion() {
       });
       showSuccessToast(COPY_SUCCESS_MESSAGE, {
         id: "saju-copy-success",
-        title: "복사 완료",
+        title: COPY_SUCCESS_TITLE,
       });
     } catch {
       setCopyFeedback({
@@ -185,15 +251,10 @@ export function usePlanSajuQuestion() {
       });
       showErrorToast(COPY_FAILED_MESSAGE, {
         id: "saju-copy-failed",
-        title: "복사할 수 없습니다",
+        title: COPY_FAILED_TITLE,
       });
     }
   }, [generatedQuestion]);
-
-  const handleResetPlanner = useCallback(() => {
-    reset();
-    setCopyFeedback(null);
-  }, [reset]);
 
   useEffect(() => {
     if (!copyFeedback) {
@@ -210,21 +271,7 @@ export function usePlanSajuQuestion() {
   }, [copyFeedback]);
 
   return {
-    form,
-    generatedQuestion,
-    generationStatus,
-    generationError,
-    isGenerating,
-    isQueued,
-    isWaitingForResult,
     copyFeedback,
-    updateMe,
-    updatePartner,
-    updateGoal,
-    handleModeSelect,
-    handleQueueGeneration,
-    handleGenerateQuestion,
     handleCopyQuestion,
-    handleResetPlanner,
   };
 }

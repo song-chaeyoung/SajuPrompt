@@ -6,11 +6,12 @@ export type Gender = "male" | "female" | "other" | "unknown";
 
 export type PromptStyle = "balanced" | "direct" | "empathetic";
 
+export type GoalInputMode = "preset" | "custom";
+
 export type FormStep = "mode" | "saju" | "result";
 
 export type GenerationStatus =
   | "idle"
-  | "queued"
   | "loading"
   | "success"
   | "error";
@@ -26,9 +27,12 @@ export interface BirthProfile {
 
 export interface GoalInfo {
   situation: string;
+  situationInputMode: GoalInputMode;
   purpose: string;
+  purposeInputMode: GoalInputMode;
   style: PromptStyle;
   customRequest: string;
+  customRequestInputMode: GoalInputMode;
 }
 
 export interface SajuQuestionFormData {

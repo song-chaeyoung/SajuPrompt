@@ -8,6 +8,7 @@ import type {
   AnalysisMode,
   BirthProfile,
   GoalInfo,
+  GoalInputMode,
   SajuQuestionFormData,
 } from "@/shared/types/saju-question-form";
 import OpenAI from "openai";
@@ -25,6 +26,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isAnalysisMode(value: unknown): value is AnalysisMode {
   return value === "self" || value === "compatibility";
+}
+
+function isGoalInputMode(value: unknown): value is GoalInputMode {
+  return value === "preset" || value === "custom";
 }
 
 function isBirthProfile(value: unknown): value is BirthProfile {
@@ -52,12 +57,70 @@ function isGoalInfo(value: unknown): value is GoalInfo {
 
   return (
     typeof value.situation === "string" &&
+    isGoalInputMode(value.situationInputMode) &&
     typeof value.purpose === "string" &&
+    isGoalInputMode(value.purposeInputMode) &&
     (value.style === "balanced" ||
       value.style === "direct" ||
       value.style === "empathetic") &&
-    typeof value.customRequest === "string"
+    typeof value.customRequest === "string" &&
+    isGoalInputMode(value.customRequestInputMode)
   );
+}
+
+type GoalInputModeField =
+  | "situationInputMode"
+  | "purposeInputMode"
+  | "customRequestInputMode";
+
+function normalizeGoalInputMode(
+  value: unknown,
+  fieldName: GoalInputModeField,
+): GoalInputMode {
+  if (isGoalInputMode(value)) {
+    return value;
+  }
+
+  console.warn(`[saju-question] normalized goal.${fieldName} to "preset".`);
+  return "preset";
+}
+
+function normalizeGoalInfo(value: unknown): GoalInfo | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (
+    typeof value.situation !== "string" ||
+    typeof value.purpose !== "string" ||
+    (value.style !== "balanced" &&
+      value.style !== "direct" &&
+      value.style !== "empathetic") ||
+    typeof value.customRequest !== "string"
+  ) {
+    return null;
+  }
+
+  const goal: GoalInfo = {
+    situation: value.situation,
+    situationInputMode: normalizeGoalInputMode(
+      value.situationInputMode,
+      "situationInputMode",
+    ),
+    purpose: value.purpose,
+    purposeInputMode: normalizeGoalInputMode(
+      value.purposeInputMode,
+      "purposeInputMode",
+    ),
+    style: value.style,
+    customRequest: value.customRequest,
+    customRequestInputMode: normalizeGoalInputMode(
+      value.customRequestInputMode,
+      "customRequestInputMode",
+    ),
+  };
+
+  return isGoalInfo(goal) ? goal : null;
 }
 
 function parseForm(value: unknown): SajuQuestionFormData | null {
@@ -65,11 +128,13 @@ function parseForm(value: unknown): SajuQuestionFormData | null {
     return null;
   }
 
+  const goal = normalizeGoalInfo(value.goal);
+
   if (
     !isAnalysisMode(value.mode) ||
     !isBirthProfile(value.me) ||
     !isBirthProfile(value.partner) ||
-    !isGoalInfo(value.goal)
+    !goal
   ) {
     return null;
   }
@@ -78,7 +143,7 @@ function parseForm(value: unknown): SajuQuestionFormData | null {
     mode: value.mode,
     me: value.me,
     partner: value.partner,
-    goal: value.goal,
+    goal,
   };
 }
 
