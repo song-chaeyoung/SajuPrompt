@@ -58,6 +58,7 @@ export function SajuQuestionMode() {
   return (
     <SajuQuestionStepShell
       currentStep="mode"
+      visualVariant="hero"
       desktopPrimaryAction={desktopPrimaryAction}
       mobilePrimaryAction={mobilePrimaryAction}
       secondaryActions={secondaryActions}

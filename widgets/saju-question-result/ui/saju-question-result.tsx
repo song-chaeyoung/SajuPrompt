@@ -2,6 +2,7 @@
 
 import { Check, Copy, RotateCcw, TriangleAlert } from "lucide-react";
 import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
 import { GENDER_OPTIONS } from "@/entities/saju-profile/config/birth-profile-options";
@@ -14,6 +15,7 @@ import { GeneratedQuestionPreview } from "@/features/view-generated-question/ui/
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { CardSequenceLoader } from "@/shared/ui/card-sequence-loader";
+import { HeroOrbitOrnament } from "@/shared/ui/hero-orbit-ornament";
 import { FORM_STEP_PATHS, FORM_STEPS } from "@/shared/config/form-steps";
 import type {
   BirthProfile,
@@ -28,6 +30,9 @@ type SummaryChip = {
   key: string;
   label: string;
 };
+
+const RESULT_STEP_BADGE_CLASSNAME =
+  "inline-flex items-center gap-2 rounded-full border border-primary/20 bg-[color-mix(in_oklch,var(--primary)_7%,var(--background)_93%)] px-3 py-1.5 text-[0.8125rem] font-semibold tracking-[0.04em] text-[color:color-mix(in_oklch,var(--foreground)_82%,var(--primary)_18%)] dark:border-primary/28 dark:bg-[color-mix(in_oklch,var(--primary)_14%,var(--background)_86%)] dark:text-[color:color-mix(in_oklch,var(--foreground)_88%,var(--primary)_12%)]";
 
 function getOptionLabel<T extends string>(
   options: { value: T; label: string }[],
@@ -109,62 +114,53 @@ function getCopyAction(copyFeedback: CopyFeedback | null) {
   };
 }
 
-function ResultHeroOrnament() {
+function ResultHeroBackdrop({
+  ornamentClassName,
+}: {
+  ornamentClassName: string;
+}) {
   return (
-    <svg
-      viewBox="0 0 320 320"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="hero-ornament-reveal h-full w-full opacity-70"
-      style={{ color: "var(--hero-ornament)" }}
-    >
-      <circle cx="160" cy="160" r="132" stroke="currentColor" strokeWidth="1" />
-      <circle
-        cx="160"
-        cy="160"
-        r="102"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeDasharray="5 9"
+    <>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-[-4.5rem] top-[-2.5rem] h-52 w-52 rounded-full bg-[var(--hero-halo)] blur-[88px] sm:right-[-2.5rem] sm:top-[-3rem] sm:h-72 sm:w-72"
       />
-      <circle cx="160" cy="160" r="70" stroke="currentColor" strokeWidth="0.9" />
-      <line
-        x1="160"
-        y1="24"
-        x2="160"
-        y2="296"
-        stroke="currentColor"
-        strokeWidth="0.8"
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-[-3.5rem] top-32 h-56 w-56 rounded-full bg-[color-mix(in_oklch,var(--primary)_12%,transparent)] blur-[110px] sm:h-72 sm:w-72"
       />
-      <line
-        x1="24"
-        y1="160"
-        x2="296"
-        y2="160"
-        stroke="currentColor"
-        strokeWidth="0.8"
+      <div aria-hidden className={ornamentClassName}>
+        <HeroOrbitOrnament className="hero-ornament-reveal" />
+      </div>
+
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-[10%] top-[12%] size-1.5 rounded-full bg-[var(--hero-dust)]"
       />
-      <line
-        x1="63"
-        y1="63"
-        x2="257"
-        y2="257"
-        stroke="currentColor"
-        strokeWidth="0.7"
+      <span
+        aria-hidden
+        className="pointer-events-none absolute right-[22%] top-[18%] size-1 rounded-full bg-[var(--hero-dust)]"
       />
-      <line
-        x1="257"
-        y1="63"
-        x2="63"
-        y2="257"
-        stroke="currentColor"
-        strokeWidth="0.7"
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-[42%] top-[8%] size-1 rounded-full bg-[var(--hero-dust)]"
       />
-      <circle cx="160" cy="124" r="34" stroke="currentColor" strokeWidth="0.8" />
-      <circle cx="160" cy="196" r="34" stroke="currentColor" strokeWidth="0.8" />
-      <circle cx="160" cy="106" r="15" stroke="currentColor" strokeWidth="0.8" />
-      <circle cx="160" cy="214" r="15" stroke="currentColor" strokeWidth="0.8" />
-    </svg>
+    </>
+  );
+}
+
+function ResultHeroSection({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return (
+    <section className="pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:pb-10 sm:pt-[calc(env(safe-area-inset-top)+2.5rem)]">
+      <div className="relative mx-auto w-full max-w-4xl">
+        <ResultHeroBackdrop ornamentClassName="pointer-events-none absolute right-[-2rem] top-8 h-60 w-60 sm:right-[-1rem] sm:top-[-0.5rem] sm:h-80 sm:w-80" />
+        {children}
+      </div>
+    </section>
   );
 }
 
@@ -240,9 +236,31 @@ export function SajuQuestionResult() {
     (!generatedQuestion && isWaitingForResult)
   ) {
     return (
-      <section className="-mx-4 -my-6 flex min-h-[100dvh] items-center justify-center bg-transparent sm:mx-0 sm:my-0 sm:min-h-[calc(100dvh-5rem)] sm:py-6">
-        <CardSequenceLoader className="w-full sm:max-w-[390px]" />
-      </section>
+      <ResultHeroSection>
+        <div className="relative flex min-h-[calc(100dvh-8rem)] flex-col gap-6 sm:min-h-[calc(100dvh-10rem)]">
+          <div
+            className="hero-enter flex items-center justify-between gap-3"
+            style={{ animationDelay: "40ms" }}
+          >
+            <div className={RESULT_STEP_BADGE_CLASSNAME}>
+              <span
+                aria-hidden
+                className="size-1.5 rounded-full bg-accent/80"
+              />
+              단계 {RESULT_STEP_NUMBER} / {FORM_STEPS.length}
+            </div>
+          </div>
+
+          <div className="flex flex-1 items-center justify-center">
+            <div
+              className="hero-enter w-full max-w-[26rem]"
+              style={{ animationDelay: "120ms" }}
+            >
+              <CardSequenceLoader />
+            </div>
+          </div>
+        </div>
+      </ResultHeroSection>
     );
   }
 
@@ -302,42 +320,13 @@ export function SajuQuestionResult() {
   if (generationStatus === "success") {
     return (
       <>
-        <section className="pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:pb-10 sm:pt-[calc(env(safe-area-inset-top)+2.5rem)]">
-          <div className="relative mx-auto w-full max-w-4xl">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute right-[-4.5rem] top-[-2.5rem] h-52 w-52 rounded-full bg-[var(--hero-halo)] blur-[88px] sm:right-[-2.5rem] sm:top-[-3rem] sm:h-72 sm:w-72"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute left-[-3.5rem] top-32 h-56 w-56 rounded-full bg-[color-mix(in_oklch,var(--primary)_12%,transparent)] blur-[110px] sm:h-72 sm:w-72"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute right-[-2rem] top-8 h-60 w-60 sm:right-[-1rem] sm:top-[-0.5rem] sm:h-80 sm:w-80"
-            >
-              <ResultHeroOrnament />
-            </div>
-
-            <span
-              aria-hidden
-              className="pointer-events-none absolute left-[10%] top-[12%] size-1.5 rounded-full bg-[var(--hero-dust)]"
-            />
-            <span
-              aria-hidden
-              className="pointer-events-none absolute right-[22%] top-[18%] size-1 rounded-full bg-[var(--hero-dust)]"
-            />
-            <span
-              aria-hidden
-              className="pointer-events-none absolute left-[42%] top-[8%] size-1 rounded-full bg-[var(--hero-dust)]"
-            />
-
-            <div className="relative flex flex-col gap-5 sm:gap-6">
+        <ResultHeroSection>
+          <div className="relative flex flex-col gap-5 sm:gap-6">
               <div
                 className="hero-enter flex items-center justify-between gap-3"
                 style={{ animationDelay: "40ms" }}
               >
-                <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-[color-mix(in_oklch,var(--primary)_7%,var(--background)_93%)] px-3 py-1.5 text-[0.8125rem] font-semibold tracking-[0.04em] text-[color:color-mix(in_oklch,var(--foreground)_82%,var(--primary)_18%)] dark:border-primary/28 dark:bg-[color-mix(in_oklch,var(--primary)_14%,var(--background)_86%)] dark:text-[color:color-mix(in_oklch,var(--foreground)_88%,var(--primary)_12%)]">
+                <div className={RESULT_STEP_BADGE_CLASSNAME}>
                   <span
                     aria-hidden
                     className="size-1.5 rounded-full bg-accent/80"
@@ -433,9 +422,8 @@ export function SajuQuestionResult() {
 
                 <div className="w-full max-w-[16rem]">{desktopPrimaryAction}</div>
               </div>
-            </div>
           </div>
-        </section>
+        </ResultHeroSection>
 
         <div className="fixed inset-x-0 bottom-0 z-30 bg-[linear-gradient(to_top,var(--background)_58%,transparent)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
           <div className="mx-auto w-full max-w-4xl">{mobilePrimaryAction}</div>

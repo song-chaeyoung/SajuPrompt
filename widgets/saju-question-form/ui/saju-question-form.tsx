@@ -81,6 +81,7 @@ export function SajuQuestionForm() {
   return (
     <SajuQuestionStepShell
       currentStep="saju"
+      visualVariant="hero"
       errorMessage={generationError}
       desktopPrimaryAction={desktopPrimaryAction}
       mobilePrimaryAction={mobilePrimaryAction}

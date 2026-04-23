@@ -15,8 +15,6 @@ type LoaderStep = {
   msg: string;
 };
 
-type StarPreset = CSSProperties & Record<`--${string}`, string>;
-
 const INITIAL_DELAY_MS = 800;
 const MESSAGE_FADE_DURATION_MS = 300;
 const FINAL_DELAY_MESSAGE_MS = 6600;
@@ -55,28 +53,6 @@ const STEP_CHANGE_SCHEDULE = [
   INITIAL_DELAY_MS + 600 + 1600 + 1400,
   INITIAL_DELAY_MS + 600 + 1600 + 1400 + 1000,
 ] as const;
-
-const STAR_PRESETS: readonly StarPreset[] = Array.from(
-  { length: 50 },
-  (_, index) => {
-    const top = ((index * 37) % 100) + ((index % 5) * 0.4);
-    const left = ((index * 53 + 17) % 100) + ((index % 3) * 0.28);
-    const size = 0.4 + ((index * 29) % 180) / 100;
-    const duration = 3 + ((index * 41) % 400) / 100;
-    const delay = ((index * 19) % 60) / 10;
-    const opacity = 0.1 + ((index * 23) % 45) / 100;
-
-    return {
-      width: `${size.toFixed(2)}px`,
-      height: `${size.toFixed(2)}px`,
-      top: `${Math.min(top, 99).toFixed(2)}%`,
-      left: `${Math.min(left, 99).toFixed(2)}%`,
-      "--star-duration": `${duration.toFixed(2)}s`,
-      "--star-delay": `${delay.toFixed(2)}s`,
-      "--star-opacity": opacity.toFixed(2),
-    } satisfies StarPreset;
-  },
-);
 
 function usePrefersReducedMotion() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -163,23 +139,15 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
       role="status"
       aria-live="polite"
     >
-      <div className="loader-phone-frame">
-        <div className="loader-bg" />
-
-        <div className="loader-stars" aria-hidden="true">
-          {STAR_PRESETS.map((style, index) => (
-            <span key={index} className="loader-star" style={style} />
-          ))}
-        </div>
-
+      <div className="loader-shell">
         <div className="loader-content">
           <div className="loader-orb-wrap" aria-hidden="true">
             <div className="loader-orb-glow" />
             <div className="loader-ring loader-ring--outer" />
             <div className="loader-ring loader-ring--mid" />
             <div className="loader-ring loader-ring--inner" />
-            <div className="loader-orb-center">
-              <span className="loader-orb-glyph">☯</span>
+            <div className="loader-core">
+              <span className="loader-core-dot" />
             </div>
           </div>
 
@@ -205,9 +173,9 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
               <span className="loader-progress-pct">{activeStep.pct}%</span>
             </div>
           </div>
-        </div>
 
-        <p className="loader-hint">브라우저에서만 동작 · 서버 전송 없음</p>
+          <p className="loader-hint">브라우저에서만 동작 · 서버 전송 없음</p>
+        </div>
       </div>
 
       <span className="sr-only">
@@ -216,79 +184,61 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
       </span>
 
       <style jsx>{`
-        .loader-phone-frame {
-          --loader-ink: #1a1410;
-          --loader-paper: #f5f0e8;
-          --loader-paper-dim: rgba(245, 240, 232, 0.5);
-          --loader-paper-faint: rgba(245, 240, 232, 0.15);
-          --loader-gold: #c9a84c;
-          --loader-gold-dim: rgba(201, 168, 76, 0.3);
+        .loader-shell {
           position: relative;
-          width: min(390px, 100%);
-          min-height: 844px;
-          margin: 40px auto;
+          width: 100%;
           overflow: hidden;
-          border-radius: 48px;
-          background: var(--loader-ink);
+          border-radius: calc(var(--radius-3xl) * 0.95);
+          border: 1px solid
+            color-mix(in oklch, var(--primary) 10%, var(--border) 90%);
+          background: linear-gradient(
+            180deg,
+            color-mix(in oklch, var(--background) 84%, var(--card) 16%) 0%,
+            color-mix(in oklch, var(--background) 72%, var(--card) 28%) 100%
+          );
           box-shadow:
-            0 0 0 1px rgba(201, 168, 76, 0.2),
-            0 40px 120px rgba(0, 0, 0, 0.8),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            0 24px 54px color-mix(in oklch, var(--primary) 10%, transparent),
+            inset 0 1px 0 color-mix(in oklch, var(--background) 86%, transparent);
         }
 
-        .loader-bg {
+        .loader-shell::before {
+          content: "";
           position: absolute;
-          inset: 0;
-          z-index: 0;
-          background:
-            radial-gradient(
-              ellipse 70% 50% at 50% 40%,
-              rgba(140, 100, 40, 0.22) 0%,
-              transparent 70%
-            ),
-            radial-gradient(
-              ellipse 50% 40% at 20% 80%,
-              rgba(80, 40, 20, 0.3) 0%,
-              transparent 60%
-            ),
-            linear-gradient(170deg, #12100d 0%, #1e1810 40%, #0e0c09 100%);
-        }
-
-        .loader-stars {
-          position: absolute;
-          inset: 0;
-          z-index: 1;
-          overflow: hidden;
+          top: -4.5rem;
+          right: -3rem;
+          width: 11rem;
+          height: 11rem;
+          border-radius: 999px;
+          background: var(--hero-halo);
+          filter: blur(82px);
           pointer-events: none;
         }
 
-        .loader-star {
+        .loader-shell::after {
+          content: "";
           position: absolute;
-          display: block;
-          border-radius: 999px;
-          background: var(--loader-gold);
-          opacity: 0;
-          animation: loader-twinkle var(--star-duration) ease-in-out infinite
-            var(--star-delay);
+          inset: 0;
+          border-radius: inherit;
+          border: 1px solid color-mix(in oklch, var(--background) 40%, transparent);
+          pointer-events: none;
         }
 
         .loader-content {
           position: relative;
           z-index: 10;
           display: flex;
-          min-height: 844px;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 0 36px;
+          padding: clamp(1.75rem, 4vw, 2.5rem) clamp(1.5rem, 4vw, 2rem);
           text-align: center;
         }
 
         .loader-orb-wrap {
           position: relative;
-          width: 160px;
-          height: 160px;
-          margin-bottom: 48px;
+          width: 140px;
+          height: 140px;
+          margin-bottom: 32px;
         }
 
         .loader-ring {
@@ -299,20 +249,28 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
         }
 
         .loader-ring--outer {
-          border-color: rgba(201, 168, 76, 0.2);
+          border-color: color-mix(
+            in oklch,
+            var(--hero-ornament) 24%,
+            transparent
+          );
           animation: loader-spin-cw 12s linear infinite;
         }
 
         .loader-ring--mid {
-          inset: 14px;
-          border-color: rgba(201, 168, 76, 0.15);
+          inset: 12px;
+          border-color: color-mix(
+            in oklch,
+            var(--hero-ornament) 18%,
+            transparent
+          );
           border-style: dashed;
           animation: loader-spin-ccw 8s linear infinite;
         }
 
         .loader-ring--inner {
-          inset: 30px;
-          border-color: rgba(201, 168, 76, 0.25);
+          inset: 28px;
+          border-color: color-mix(in oklch, var(--primary) 18%, transparent);
           animation: loader-spin-cw 5s linear infinite;
         }
 
@@ -326,9 +284,9 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           top: 50%;
           left: -2px;
           border-radius: 50%;
-          background: var(--loader-gold);
+          background: var(--hero-dust);
           transform: translateY(-50%);
-          box-shadow: 0 0 6px var(--loader-gold);
+          box-shadow: 0 0 10px color-mix(in oklch, var(--hero-dust) 72%, transparent);
         }
 
         .loader-ring--outer::after {
@@ -348,53 +306,69 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
         .loader-orb-glow {
           position: absolute;
           inset: 0;
-          border-radius: 50%;
+          border-radius: 999px;
           background: radial-gradient(
             circle,
-            rgba(201, 168, 76, 0.12) 0%,
+            color-mix(in oklch, var(--hero-halo) 92%, transparent) 0%,
+            color-mix(in oklch, var(--accent) 12%, transparent) 38%,
             transparent 70%
           );
           animation: loader-glow-pulse 3s ease-in-out infinite;
         }
 
-        .loader-orb-center {
+        .loader-core {
           position: absolute;
-          inset: 0;
+          inset: 44px;
           display: flex;
           align-items: center;
           justify-content: center;
+          border-radius: 999px;
+          background:
+            radial-gradient(
+              circle at 34% 32%,
+              color-mix(in oklch, var(--hero-halo) 90%, transparent) 0%,
+              color-mix(in oklch, var(--accent) 20%, transparent) 36%,
+              transparent 72%
+            ),
+            color-mix(in oklch, var(--background) 84%, var(--card) 16%);
+          box-shadow:
+            inset 0 1px 0 color-mix(in oklch, var(--background) 90%, transparent),
+            0 18px 30px color-mix(in oklch, var(--primary) 8%, transparent);
         }
 
-        .loader-orb-glyph {
-          color: var(--loader-paper);
-          font-family: var(--font-loader-title), serif;
-          font-size: 36px;
-          filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.5));
+        .loader-core-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          background: var(--hero-dust);
+          box-shadow:
+            0 0 0 8px color-mix(in oklch, var(--hero-halo) 28%, transparent),
+            0 0 18px color-mix(in oklch, var(--hero-dust) 72%, transparent);
           animation: loader-breathe 3s ease-in-out infinite;
         }
 
         .loader-title {
-          margin-bottom: 12px;
-          color: var(--loader-paper);
-          font-family: var(--font-loader-title), serif;
-          font-size: 22px;
+          margin-bottom: 10px;
+          color: var(--foreground);
+          font-family: var(--app-font-heading), sans-serif;
+          font-size: clamp(1.4rem, 1.28rem + 0.45vw, 1.75rem);
           font-weight: 700;
           line-height: 1.4;
           animation: loader-fade-in 0.8s ease forwards 0.3s;
         }
 
         .loader-copy-block {
-          min-height: 40px;
-          margin-bottom: 40px;
+          min-height: 46px;
+          margin-bottom: 26px;
         }
 
         .loader-step-message {
           min-height: 22px;
-          color: var(--loader-paper-dim);
-          font-family: var(--font-loader-body), serif;
-          font-size: 13px;
-          font-weight: 300;
-          line-height: 1.7;
+          color: color-mix(in oklch, var(--foreground) 70%, var(--muted-foreground) 30%);
+          font-family: var(--app-font-sans), sans-serif;
+          font-size: 0.95rem;
+          font-weight: 400;
+          line-height: 1.65;
           opacity: 1;
           transition: opacity 0.3s ease;
           animation: loader-fade-in 0.8s ease forwards 0.5s;
@@ -406,8 +380,8 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
 
         .loader-delayed-message {
           margin-top: 8px;
-          color: rgba(245, 240, 232, 0.36);
-          font-family: var(--font-loader-mono), monospace;
+          color: color-mix(in oklch, var(--muted-foreground) 74%, transparent);
+          font-family: var(--app-font-mono), monospace;
           font-size: 10px;
           letter-spacing: 0.1em;
           text-transform: uppercase;
@@ -425,7 +399,7 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           margin-bottom: 10px;
           overflow: visible;
           border-radius: 2px;
-          background: rgba(201, 168, 76, 0.1);
+          background: color-mix(in oklch, var(--primary) 10%, transparent);
         }
 
         .loader-progress-fill {
@@ -434,8 +408,8 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           border-radius: 2px;
           background: linear-gradient(
             90deg,
-            var(--loader-gold-dim),
-            var(--loader-gold)
+            color-mix(in oklch, var(--primary) 18%, transparent),
+            color-mix(in oklch, var(--hero-ornament) 88%, var(--primary) 12%)
           );
           transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -448,9 +422,9 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: var(--loader-gold);
+          background: var(--hero-dust);
           transform: translateY(-50%);
-          box-shadow: 0 0 8px var(--loader-gold);
+          box-shadow: 0 0 10px color-mix(in oklch, var(--hero-dust) 74%, transparent);
         }
 
         .loader-progress-label {
@@ -462,26 +436,22 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
 
         .loader-progress-step-text,
         .loader-progress-pct {
-          color: rgba(201, 168, 76, 0.5);
-          font-family: var(--font-loader-mono), monospace;
+          color: color-mix(in oklch, var(--foreground) 56%, var(--primary) 44%);
+          font-family: var(--app-font-mono), monospace;
           font-size: 10px;
           letter-spacing: 0.1em;
         }
 
         .loader-progress-pct {
-          color: rgba(201, 168, 76, 0.4);
+          color: color-mix(in oklch, var(--muted-foreground) 84%, var(--primary) 16%);
           letter-spacing: 0.05em;
         }
 
         .loader-hint {
-          position: absolute;
-          right: 0;
-          bottom: 52px;
-          left: 0;
-          z-index: 10;
-          color: var(--loader-paper-faint);
+          margin-top: 18px;
+          color: color-mix(in oklch, var(--muted-foreground) 76%, transparent);
           text-align: center;
-          font-family: var(--font-loader-mono), monospace;
+          font-family: var(--app-font-mono), monospace;
           font-size: 10px;
           letter-spacing: 0.1em;
           animation: loader-fade-in 1s ease forwards 1.2s;
@@ -515,26 +485,13 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
         @keyframes loader-glow-pulse {
           0%,
           100% {
-            transform: scale(0.9);
-            opacity: 0.5;
+            transform: scale(0.92);
+            opacity: 0.56;
           }
 
           50% {
-            transform: scale(1.15);
+            transform: scale(1.1);
             opacity: 1;
-          }
-        }
-
-        @keyframes loader-twinkle {
-          0%,
-          100% {
-            opacity: 0;
-            transform: scale(0.5);
-          }
-
-          50% {
-            opacity: var(--star-opacity);
-            transform: scale(1);
           }
         }
 
@@ -548,26 +505,12 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           }
         }
 
-        @media (max-width: 430px) {
-          .loader-phone-frame {
-            width: 100%;
-            min-height: 100dvh;
-            margin: 0;
-            border-radius: 0;
-          }
-
-          .loader-content {
-            min-height: 100dvh;
-          }
-        }
-
         @media (prefers-reduced-motion: reduce) {
-          .loader-star,
           .loader-ring--outer,
           .loader-ring--mid,
           .loader-ring--inner,
           .loader-orb-glow,
-          .loader-orb-glyph {
+          .loader-core-dot {
             animation: none !important;
           }
 

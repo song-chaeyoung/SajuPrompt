@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { DM_Mono, Gowun_Batang, Noto_Serif_KR } from "next/font/google";
 
 import {
   getThemeInitializationScript,
@@ -8,27 +7,6 @@ import { ThemeToaster } from "@/features/toggle-theme/ui/theme-toaster";
 import { ThemeToggle } from "@/features/toggle-theme/ui/theme-toggle";
 
 import "./globals.css";
-
-const loaderTitleFont = Gowun_Batang({
-  weight: ["400", "700"],
-  preload: false,
-  display: "swap",
-  variable: "--font-loader-title",
-});
-
-const loaderBodyFont = Noto_Serif_KR({
-  weight: ["300", "400", "600"],
-  preload: false,
-  display: "swap",
-  variable: "--font-loader-body",
-});
-
-const loaderMonoFont = DM_Mono({
-  weight: ["300", "400"],
-  preload: false,
-  display: "swap",
-  variable: "--font-loader-mono",
-});
 
 export const metadata: Metadata = {
   title: {
@@ -88,9 +66,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: themeInitializationScript }}
         />
       </head>
-      <body
-        className={`min-h-full flex flex-col ${loaderTitleFont.variable} ${loaderBodyFont.variable} ${loaderMonoFont.variable}`}
-      >
+      <body className="min-h-full flex flex-col">
         <ThemeToggle />
         {children}
         <ThemeToaster />
