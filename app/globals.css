@@ -242,26 +242,15 @@
   .cn-toast {
     position: relative;
     overflow: hidden;
-    width: min(26.5rem, calc(100vw - 1.5rem));
+    width: min(25rem, calc(100vw - 1.5rem));
     align-items: flex-start;
-    gap: 0.875rem;
-    padding: 1rem 1rem 1rem;
-    background:
-      radial-gradient(
-        circle at 0% 0%,
-        color-mix(in oklch, var(--accent) 10%, transparent),
-        transparent 38%
-      ),
-      linear-gradient(
-        180deg,
-        color-mix(in oklch, var(--background) 72%, transparent),
-        transparent 58%
-      ),
-      color-mix(in oklch, var(--popover) 94%, var(--primary) 6%);
+    gap: 0.75rem;
+    padding: 0.92rem 0.95rem 0.95rem;
+    border: 1px solid color-mix(in oklch, var(--primary) 8%, var(--border));
+    background: color-mix(in oklch, var(--popover) 97%, var(--primary) 3%);
     box-shadow:
-      0 22px 46px color-mix(in oklch, var(--primary) 11%, transparent),
-      0 4px 14px color-mix(in oklch, var(--foreground) 5%, transparent),
-      inset 0 1px 0 color-mix(in oklch, var(--background) 82%, transparent);
+      0 18px 34px color-mix(in oklch, var(--foreground) 5%, transparent),
+      0 3px 12px color-mix(in oklch, var(--foreground) 3%, transparent);
     color: var(--popover-foreground);
   }
 
@@ -274,25 +263,16 @@
   }
 
   .cn-toast[data-type="success"] {
-    background:
-      radial-gradient(
-        circle at 0% 0%,
-        color-mix(in oklch, var(--success) 12%, transparent),
-        transparent 36%
-      ),
-      linear-gradient(
-        180deg,
-        color-mix(in oklch, var(--background) 74%, transparent),
-        transparent 58%
-      ),
-      color-mix(in oklch, var(--popover) 92%, var(--success) 8%);
+    border-color: color-mix(in oklch, var(--success) 12%, var(--border));
+    background: color-mix(in oklch, var(--popover) 96%, var(--success) 4%);
   }
 
   .cn-toast[data-type="error"] {
+    border-color: color-mix(in oklch, var(--destructive) 12%, var(--border));
     background: color-mix(
       in oklch,
-      var(--popover) 91%,
-      var(--destructive) 9%
+      var(--popover) 95%,
+      var(--destructive) 5%
     );
   }
 
@@ -301,44 +281,42 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    margin-top: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    margin-top: 0.05rem;
     border-radius: 999px;
-    background: color-mix(in oklch, var(--primary) 12%, var(--background));
-    color: color-mix(in oklch, var(--foreground) 66%, var(--primary) 34%);
-    box-shadow:
-      0 10px 22px color-mix(in oklch, var(--primary) 10%, transparent),
-      inset 0 1px 0 color-mix(in oklch, var(--background) 76%, transparent);
+    border: 1px solid color-mix(in oklch, var(--primary) 10%, var(--border));
+    background: color-mix(in oklch, var(--primary) 9%, var(--background));
+    color: color-mix(in oklch, var(--foreground) 70%, var(--primary) 30%);
   }
 
   .cn-toast[data-type="success"] .cn-toast__icon {
-    background: color-mix(in oklch, var(--success) 16%, var(--background));
-    color: color-mix(in oklch, var(--success) 72%, var(--foreground) 28%);
+    border-color: color-mix(in oklch, var(--success) 16%, var(--border));
+    background: color-mix(in oklch, var(--success) 10%, var(--background));
+    color: color-mix(in oklch, var(--success) 62%, var(--foreground) 38%);
   }
 
   .cn-toast[data-type="error"] .cn-toast__icon {
-    background: color-mix(in oklch, var(--destructive) 14%, var(--background));
-    color: color-mix(in oklch, var(--destructive) 74%, var(--foreground) 26%);
-    box-shadow:
-      0 10px 22px color-mix(in oklch, var(--destructive) 12%, transparent),
-      inset 0 1px 0 color-mix(in oklch, var(--background) 76%, transparent);
+    border-color: color-mix(in oklch, var(--destructive) 18%, var(--border));
+    background: color-mix(in oklch, var(--destructive) 10%, var(--background));
+    color: color-mix(in oklch, var(--destructive) 66%, var(--foreground) 34%);
   }
 
   .cn-toast__content {
     min-width: 0;
-    min-height: 2rem;
+    min-height: 1.75rem;
     justify-content: center;
-    gap: 0;
-    padding-top: 0;
+    gap: 0.2rem;
+    padding-top: 0.02rem;
   }
 
   .cn-toast__title {
-    display: none;
-    font-size: 0.96875rem;
-    font-weight: 680;
-    line-height: 1.28;
-    letter-spacing: -0.015em;
+    display: block;
+    color: color-mix(in oklch, var(--popover-foreground) 72%, var(--primary) 28%);
+    font-size: 0.75rem;
+    font-weight: 650;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
     text-wrap: pretty;
   }
 
@@ -347,12 +325,20 @@
   }
 
   .cn-toast__description {
-    color: color-mix(in oklch, var(--popover-foreground) 88%, var(--primary) 12%);
-    font-size: 0.915rem;
-    font-weight: 620;
-    line-height: 1.42;
+    color: color-mix(in oklch, var(--popover-foreground) 92%, var(--primary) 8%);
+    font-size: 0.9rem;
+    font-weight: 560;
+    line-height: 1.48;
     letter-spacing: -0.012em;
     text-wrap: pretty;
+  }
+
+  .cn-toast[data-type="success"] .cn-toast__title {
+    color: color-mix(in oklch, var(--success) 46%, var(--foreground) 54%);
+  }
+
+  .cn-toast[data-type="error"] .cn-toast__title {
+    color: color-mix(in oklch, var(--destructive) 46%, var(--foreground) 54%);
   }
 
   .cn-toast__action,
@@ -377,8 +363,7 @@
 
   @media (max-width: 640px) {
     .cn-toast {
-      gap: 0.75rem;
-      padding: 0.95rem 0.9rem 0.92rem;
+      padding: 0.88rem 0.88rem 0.9rem;
     }
 
     .cn-toast__description {

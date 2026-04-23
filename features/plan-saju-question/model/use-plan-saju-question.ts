@@ -77,6 +77,7 @@ export function usePlanSajuQuestion() {
       clearGenerationError();
       showErrorToast(REQUIRED_FIELDS_MESSAGE, {
         id: "saju-required-fields",
+        title: "입력을 확인해 주세요",
       });
       return false;
     }
@@ -92,6 +93,7 @@ export function usePlanSajuQuestion() {
         clearGenerationError();
         showErrorToast(REQUIRED_FIELDS_MESSAGE, {
           id: "saju-required-fields",
+          title: "입력을 확인해 주세요",
         });
         return false;
       }
@@ -139,6 +141,7 @@ export function usePlanSajuQuestion() {
         setGenerationError(message);
         showErrorToast(message, {
           id: "saju-generation-error",
+          title: "질문 생성에 실패했습니다",
         });
         return false;
       }
@@ -160,6 +163,7 @@ export function usePlanSajuQuestion() {
       });
       showErrorToast(COPY_MISSING_MESSAGE, {
         id: "saju-copy-missing",
+        title: "복사할 수 없습니다",
       });
       return;
     }
@@ -172,6 +176,7 @@ export function usePlanSajuQuestion() {
       });
       showSuccessToast(COPY_SUCCESS_MESSAGE, {
         id: "saju-copy-success",
+        title: "복사 완료",
       });
     } catch {
       setCopyFeedback({
@@ -180,6 +185,7 @@ export function usePlanSajuQuestion() {
       });
       showErrorToast(COPY_FAILED_MESSAGE, {
         id: "saju-copy-failed",
+        title: "복사할 수 없습니다",
       });
     }
   }, [generatedQuestion]);
