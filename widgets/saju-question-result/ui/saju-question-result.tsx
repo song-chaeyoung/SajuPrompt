@@ -21,7 +21,7 @@ import type {
 } from "@/shared/types/saju-question-form";
 import { SajuQuestionStepShell } from "@/widgets/saju-question-step-shell/ui/saju-question-step-shell";
 
-const MIN_RESULT_LOADING_DURATION_MS = 1400;
+const MIN_RESULT_LOADING_DURATION_MS = 6600;
 const RESULT_STEP_NUMBER = FORM_STEPS.indexOf("result") + 1;
 
 type SummaryChip = {
@@ -240,23 +240,9 @@ export function SajuQuestionResult() {
     (!generatedQuestion && isWaitingForResult)
   ) {
     return (
-      <SajuQuestionStepShell currentStep="result">
-        <section className="flex min-h-72 flex-col items-center justify-center rounded-[calc(var(--radius-3xl)*0.95)] border border-border/70 bg-[color-mix(in_oklch,var(--card)_82%,var(--background)_18%)] px-6 py-10 text-center shadow-[0_18px_40px_color-mix(in_oklch,var(--foreground)_5%,transparent)]">
-          <div className="flex max-w-sm flex-col items-center gap-5">
-            <CardSequenceLoader size="lg" />
-
-            <div className="space-y-2">
-              <h3 className="type-title-sm font-semibold text-foreground">
-                질문문을 정리하고 있어요
-              </h3>
-              <p className="type-body-sm text-muted-foreground">
-                입력해 주신 정보를 바탕으로 AI에 바로 붙여 넣을 질문 문장을
-                구성하는 중입니다.
-              </p>
-            </div>
-          </div>
-        </section>
-      </SajuQuestionStepShell>
+      <section className="-mx-4 -my-6 flex min-h-[100dvh] items-center justify-center bg-transparent sm:mx-0 sm:my-0 sm:min-h-[calc(100dvh-5rem)] sm:py-6">
+        <CardSequenceLoader className="w-full sm:max-w-[390px]" />
+      </section>
     );
   }
 

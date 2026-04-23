@@ -1,660 +1,591 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 import { cn } from "@/shared/lib/utils";
 
-type CardSequenceLoaderSize = "sm" | "md" | "lg";
-type CardSequenceLoaderColorVariant = "default" | "muted" | "transparent";
-
 export interface CardSequenceLoaderProps {
-  size?: CardSequenceLoaderSize;
-  speed?: number;
-  colorVariant?: CardSequenceLoaderColorVariant;
   className?: string;
 }
 
-type LoaderStyle = CSSProperties & Record<`--${string}`, string>;
-
-type TilePreset = {
-  x: string;
-  y: string;
-  scale: string;
-  rotate: string;
-  activeRotate: string;
-  zIndex: number;
-  delayMultiplier: number;
+type LoaderStep = {
+  pct: number;
+  label: string;
+  msg: string;
 };
 
-const SIZE_STYLES: Record<CardSequenceLoaderSize, LoaderStyle> = {
-  sm: {
-    "--loader-stage-width": "calc(var(--space-4xl) * 1.02)",
-    "--loader-stage-height": "calc(var(--space-4xl) * 0.88)",
-    "--loader-card-width": "calc(var(--space-2xl) * 0.82)",
-    "--loader-card-height": "calc(var(--space-2xl) * 0.98)",
-    "--loader-card-radius": "var(--radius-2xl)",
-    "--loader-depth": "calc(var(--space-xs) * 0.78)",
-    "--loader-lift": "calc(var(--space-2xs) * -1.6)",
-    "--loader-gloss-height": "32%",
-    "--loader-edge-inset": "11%",
-  },
-  md: {
-    "--loader-stage-width": "calc(var(--space-4xl) * 1.18)",
-    "--loader-stage-height": "calc(var(--space-4xl) * 1.02)",
-    "--loader-card-width": "calc(var(--space-2xl) * 0.98)",
-    "--loader-card-height": "calc(var(--space-2xl) * 1.18)",
-    "--loader-card-radius": "var(--radius-3xl)",
-    "--loader-depth": "calc(var(--space-xs) * 0.96)",
-    "--loader-lift": "calc(var(--space-xs) * -1.48)",
-    "--loader-gloss-height": "34%",
-    "--loader-edge-inset": "12%",
-  },
-  lg: {
-    "--loader-stage-width": "calc(var(--space-4xl) * 1.36)",
-    "--loader-stage-height": "calc(var(--space-4xl) * 1.18)",
-    "--loader-card-width": "calc(var(--space-2xl) * 1.16)",
-    "--loader-card-height": "calc(var(--space-2xl) * 1.38)",
-    "--loader-card-radius": "calc(var(--radius-3xl) * 1.02)",
-    "--loader-depth": "calc(var(--space-sm) * 0.82)",
-    "--loader-lift": "calc(var(--space-sm) * -1.18)",
-    "--loader-gloss-height": "35%",
-    "--loader-edge-inset": "13%",
-  },
-};
+type StarPreset = CSSProperties & Record<`--${string}`, string>;
 
-const COLOR_STYLES: Record<CardSequenceLoaderColorVariant, LoaderStyle> = {
-  default: {
-    "--loader-face-top":
-      "color-mix(in oklch, var(--color-surface) 82%, var(--color-bg) 18%)",
-    "--loader-face-bottom":
-      "color-mix(in oklch, var(--color-surface-muted) 74%, var(--color-bg) 26%)",
-    "--loader-face-mid":
-      "color-mix(in oklch, var(--color-surface) 76%, var(--color-surface-muted) 24%)",
-    "--loader-border":
-      "color-mix(in oklch, var(--color-border) 72%, var(--color-text) 7%)",
-    "--loader-inner-line":
-      "color-mix(in oklch, var(--color-bg) 78%, var(--color-text) 8%)",
-    "--loader-highlight":
-      "color-mix(in oklch, var(--color-bg) 88%, transparent)",
-    "--loader-shade":
-      "color-mix(in oklch, var(--color-primary) 18%, transparent)",
-    "--loader-edge":
-      "color-mix(in oklch, var(--color-surface-muted) 86%, var(--color-text) 8%)",
-    "--loader-edge-shadow":
-      "color-mix(in oklch, var(--color-primary) 12%, transparent)",
-    "--loader-brass-rim":
-      "color-mix(in oklch, var(--color-accent) 38%, transparent)",
-    "--loader-brass-glow":
-      "color-mix(in oklch, var(--color-accent-soft) 94%, transparent)",
-    "--loader-shadow-rest":
-      "0 20px 26px color-mix(in oklch, var(--color-text) 7%, transparent), 0 7px 10px color-mix(in oklch, var(--color-text) 3%, transparent)",
-    "--loader-shadow-active":
-      "0 26px 36px color-mix(in oklch, var(--color-text) 11%, transparent), 0 10px 16px color-mix(in oklch, var(--color-text) 5%, transparent), 0 0 0 1px color-mix(in oklch, var(--color-accent) 18%, transparent), 0 0 30px color-mix(in oklch, var(--color-accent-soft) 88%, transparent)",
-    "--loader-ambient":
-      "color-mix(in oklch, var(--color-primary) 9%, transparent)",
-    "--loader-ambient-brass":
-      "color-mix(in oklch, var(--color-accent-soft) 74%, transparent)",
-  },
-  muted: {
-    "--loader-face-top":
-      "color-mix(in oklch, var(--color-surface) 74%, var(--color-bg) 26%)",
-    "--loader-face-bottom":
-      "color-mix(in oklch, var(--color-surface-muted) 78%, var(--color-bg) 22%)",
-    "--loader-face-mid":
-      "color-mix(in oklch, var(--color-surface-muted) 30%, var(--color-surface) 70%)",
-    "--loader-border":
-      "color-mix(in oklch, var(--color-border) 76%, var(--color-text) 5%)",
-    "--loader-inner-line":
-      "color-mix(in oklch, var(--color-bg) 72%, var(--color-text) 8%)",
-    "--loader-highlight":
-      "color-mix(in oklch, var(--color-bg) 84%, transparent)",
-    "--loader-shade":
-      "color-mix(in oklch, var(--color-primary) 14%, transparent)",
-    "--loader-edge":
-      "color-mix(in oklch, var(--color-surface-muted) 88%, var(--color-text) 6%)",
-    "--loader-edge-shadow":
-      "color-mix(in oklch, var(--color-primary) 9%, transparent)",
-    "--loader-brass-rim":
-      "color-mix(in oklch, var(--color-accent) 28%, transparent)",
-    "--loader-brass-glow":
-      "color-mix(in oklch, var(--color-accent-soft) 78%, transparent)",
-    "--loader-shadow-rest":
-      "0 18px 24px color-mix(in oklch, var(--color-text) 6%, transparent), 0 6px 10px color-mix(in oklch, var(--color-text) 3%, transparent)",
-    "--loader-shadow-active":
-      "0 24px 33px color-mix(in oklch, var(--color-text) 9%, transparent), 0 8px 14px color-mix(in oklch, var(--color-text) 5%, transparent), 0 0 0 1px color-mix(in oklch, var(--color-accent) 14%, transparent), 0 0 26px color-mix(in oklch, var(--color-accent-soft) 78%, transparent)",
-    "--loader-ambient":
-      "color-mix(in oklch, var(--color-primary) 7%, transparent)",
-    "--loader-ambient-brass":
-      "color-mix(in oklch, var(--color-accent-soft) 62%, transparent)",
-  },
-  transparent: {
-    "--loader-face-top":
-      "color-mix(in oklch, var(--color-surface) 62%, transparent)",
-    "--loader-face-bottom":
-      "color-mix(in oklch, var(--color-surface-muted) 68%, transparent)",
-    "--loader-face-mid":
-      "color-mix(in oklch, var(--color-surface) 56%, var(--color-surface-muted) 44%)",
-    "--loader-border":
-      "color-mix(in oklch, var(--color-border) 58%, transparent)",
-    "--loader-inner-line":
-      "color-mix(in oklch, var(--color-bg) 50%, transparent)",
-    "--loader-highlight":
-      "color-mix(in oklch, var(--color-bg) 72%, transparent)",
-    "--loader-shade":
-      "color-mix(in oklch, var(--color-primary) 11%, transparent)",
-    "--loader-edge":
-      "color-mix(in oklch, var(--color-surface-muted) 72%, transparent)",
-    "--loader-edge-shadow":
-      "color-mix(in oklch, var(--color-primary) 8%, transparent)",
-    "--loader-brass-rim":
-      "color-mix(in oklch, var(--color-accent) 24%, transparent)",
-    "--loader-brass-glow":
-      "color-mix(in oklch, var(--color-accent-soft) 72%, transparent)",
-    "--loader-shadow-rest":
-      "0 18px 24px color-mix(in oklch, var(--color-text) 6%, transparent)",
-    "--loader-shadow-active":
-      "0 24px 34px color-mix(in oklch, var(--color-text) 9%, transparent), 0 0 0 1px color-mix(in oklch, var(--color-accent) 12%, transparent), 0 0 24px color-mix(in oklch, var(--color-accent-soft) 76%, transparent)",
-    "--loader-ambient":
-      "color-mix(in oklch, var(--color-primary) 6%, transparent)",
-    "--loader-ambient-brass":
-      "color-mix(in oklch, var(--color-accent-soft) 56%, transparent)",
-  },
-};
+const INITIAL_DELAY_MS = 800;
+const MESSAGE_FADE_DURATION_MS = 300;
+const FINAL_DELAY_MESSAGE_MS = 6600;
 
-const TILE_PRESETS: readonly TilePreset[] = [
+const LOADER_STEPS: readonly LoaderStep[] = [
   {
-    x: "-34%",
-    y: "-9%",
-    scale: "0.92",
-    rotate: "-12deg",
-    activeRotate: "-10deg",
-    zIndex: 1,
-    delayMultiplier: 0,
+    pct: 0,
+    label: "STEP 1 / 3",
+    msg: "생년월일에서 사주팔자를 추출하는 중...",
   },
   {
-    x: "32%",
-    y: "-13%",
-    scale: "0.9",
-    rotate: "11deg",
-    activeRotate: "9deg",
-    zIndex: 2,
-    delayMultiplier: 1,
+    pct: 30,
+    label: "STEP 1 / 3",
+    msg: "생년월일에서 사주팔자를 추출하는 중...",
   },
   {
-    x: "-16%",
-    y: "12%",
-    scale: "1",
-    rotate: "-5deg",
-    activeRotate: "-3deg",
-    zIndex: 4,
-    delayMultiplier: 2,
+    pct: 55,
+    label: "STEP 2 / 3",
+    msg: "음양오행과 십신을 분석하는 중...",
   },
   {
-    x: "17%",
-    y: "8%",
-    scale: "0.98",
-    rotate: "6deg",
-    activeRotate: "4deg",
-    zIndex: 3,
-    delayMultiplier: 3,
+    pct: 80,
+    label: "STEP 3 / 3",
+    msg: "질문 목적에 맞는 문장으로 다듬는 중...",
+  },
+  {
+    pct: 100,
+    label: "STEP 3 / 3",
+    msg: "거의 다 됐어요 ✦",
   },
 ] as const;
 
-export function CardSequenceLoader({
-  size = "md",
-  speed = 1.4,
-  colorVariant = "default",
-  className,
-}: CardSequenceLoaderProps) {
-  const clampedSpeed = Math.min(1.6, Math.max(1.2, speed));
-  const rootStyle = {
-    ...SIZE_STYLES[size],
-    ...COLOR_STYLES[colorVariant],
-    "--loader-duration": `${clampedSpeed}s`,
-  } satisfies LoaderStyle;
+const STEP_CHANGE_SCHEDULE = [
+  INITIAL_DELAY_MS + 600,
+  INITIAL_DELAY_MS + 600 + 1600,
+  INITIAL_DELAY_MS + 600 + 1600 + 1400,
+  INITIAL_DELAY_MS + 600 + 1600 + 1400 + 1000,
+] as const;
+
+const STAR_PRESETS: readonly StarPreset[] = Array.from(
+  { length: 50 },
+  (_, index) => {
+    const top = ((index * 37) % 100) + ((index % 5) * 0.4);
+    const left = ((index * 53 + 17) % 100) + ((index % 3) * 0.28);
+    const size = 0.4 + ((index * 29) % 180) / 100;
+    const duration = 3 + ((index * 41) % 400) / 100;
+    const delay = ((index * 19) % 60) / 10;
+    const opacity = 0.1 + ((index * 23) % 45) / 100;
+
+    return {
+      width: `${size.toFixed(2)}px`,
+      height: `${size.toFixed(2)}px`,
+      top: `${Math.min(top, 99).toFixed(2)}%`,
+      left: `${Math.min(left, 99).toFixed(2)}%`,
+      "--star-duration": `${duration.toFixed(2)}s`,
+      "--star-delay": `${delay.toFixed(2)}s`,
+      "--star-opacity": opacity.toFixed(2),
+    } satisfies StarPreset;
+  },
+);
+
+function usePrefersReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => {
+      setPrefersReducedMotion(mediaQuery.matches);
+    };
+
+    syncPreference();
+    mediaQuery.addEventListener("change", syncPreference);
+
+    return () => {
+      mediaQuery.removeEventListener("change", syncPreference);
+    };
+  }, []);
+
+  return prefersReducedMotion;
+}
+
+export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
+  const [stepIndex, setStepIndex] = useState(0);
+  const [stepMessage, setStepMessage] = useState(LOADER_STEPS[0].msg);
+  const [isMessageFading, setIsMessageFading] = useState(false);
+  const [showDelayedMessage, setShowDelayedMessage] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const timeoutIdsRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    const timeoutIds = timeoutIdsRef.current;
+
+    const updateStep = (nextStepIndex: number) => {
+      const nextStep = LOADER_STEPS[nextStepIndex];
+      setStepIndex(nextStepIndex);
+      setShowDelayedMessage(false);
+
+      if (prefersReducedMotion) {
+        setIsMessageFading(false);
+        setStepMessage(nextStep.msg);
+        return;
+      }
+
+      setIsMessageFading(true);
+
+      const messageTimer = window.setTimeout(() => {
+        setStepMessage(nextStep.msg);
+        setIsMessageFading(false);
+      }, MESSAGE_FADE_DURATION_MS);
+
+      timeoutIds.push(messageTimer);
+    };
+
+    STEP_CHANGE_SCHEDULE.forEach((time, index) => {
+      const stepTimer = window.setTimeout(() => {
+        updateStep(index + 1);
+      }, time);
+
+      timeoutIds.push(stepTimer);
+    });
+
+    const delayedMessageTimer = window.setTimeout(() => {
+      setShowDelayedMessage(true);
+    }, FINAL_DELAY_MESSAGE_MS);
+
+    timeoutIds.push(delayedMessageTimer);
+
+    return () => {
+      timeoutIds.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+      timeoutIdsRef.current = [];
+    };
+  }, [prefersReducedMotion]);
+
+  const activeStep = LOADER_STEPS[stepIndex];
+  const progressStyle = {
+    width: `${activeStep.pct}%`,
+  } satisfies CSSProperties;
 
   return (
     <div
-      className={cn("relative inline-flex items-center justify-center", className)}
-      style={rootStyle}
+      className={cn("relative w-full", className)}
       role="status"
       aria-live="polite"
     >
-      <div data-slot="loader-stage" className="relative">
-        <div data-slot="loader-ground" aria-hidden="true" />
+      <div className="loader-phone-frame">
+        <div className="loader-bg" />
 
-        {TILE_PRESETS.map((tile, index) => (
-          <div
-            key={index}
-            data-slot="loader-tile"
-            data-static-depth={index}
-            className="absolute left-1/2 top-1/2"
-            style={
-              {
-                "--tile-x": tile.x,
-                "--tile-y": tile.y,
-                "--tile-scale": tile.scale,
-                "--tile-rotate": tile.rotate,
-                "--tile-active-rotate": tile.activeRotate,
-                animationDelay: `${tile.delayMultiplier * 0.14}s`,
-                zIndex: tile.zIndex,
-              } as LoaderStyle
-            }
-          >
-            <div data-slot="loader-tile-shell" className="relative">
-              <div data-slot="loader-tile-face" className="absolute inset-0" />
-              <div data-slot="loader-tile-rim" className="absolute inset-0" />
-              <div data-slot="loader-tile-gloss" className="absolute inset-0" />
-              <div data-slot="loader-tile-edge" className="absolute inset-x-0 bottom-0" />
-              <div data-slot="loader-tile-reflection" className="absolute inset-0" />
-              <div data-slot="loader-tile-core" className="absolute inset-0" />
+        <div className="loader-stars" aria-hidden="true">
+          {STAR_PRESETS.map((style, index) => (
+            <span key={index} className="loader-star" style={style} />
+          ))}
+        </div>
+
+        <div className="loader-content">
+          <div className="loader-orb-wrap" aria-hidden="true">
+            <div className="loader-orb-glow" />
+            <div className="loader-ring loader-ring--outer" />
+            <div className="loader-ring loader-ring--mid" />
+            <div className="loader-ring loader-ring--inner" />
+            <div className="loader-orb-center">
+              <span className="loader-orb-glyph">☯</span>
             </div>
           </div>
-        ))}
+
+          <h2 className="loader-title">사주를 읽고 있습니다</h2>
+
+          <div className="loader-copy-block">
+            <p
+              className={cn("loader-step-message", isMessageFading && "is-fading")}
+            >
+              {stepMessage}
+            </p>
+            {showDelayedMessage ? (
+              <p className="loader-delayed-message">마무리하고 있습니다</p>
+            ) : null}
+          </div>
+
+          <div className="loader-progress-wrap">
+            <div className="loader-progress-track">
+              <div className="loader-progress-fill" style={progressStyle} />
+            </div>
+            <div className="loader-progress-label">
+              <span className="loader-progress-step-text">{activeStep.label}</span>
+              <span className="loader-progress-pct">{activeStep.pct}%</span>
+            </div>
+          </div>
+        </div>
+
+        <p className="loader-hint">브라우저에서만 동작 · 서버 전송 없음</p>
       </div>
 
-      <span className="sr-only">질문을 정리하는 중입니다.</span>
+      <span className="sr-only">
+        {activeStep.label} {activeStep.pct}% {stepMessage}
+        {showDelayedMessage ? " 마무리하고 있습니다" : ""}
+      </span>
 
       <style jsx>{`
-        [data-slot="loader-stage"] {
-          width: var(--loader-stage-width);
-          height: var(--loader-stage-height);
-          isolation: isolate;
+        .loader-phone-frame {
+          --loader-ink: #1a1410;
+          --loader-paper: #f5f0e8;
+          --loader-paper-dim: rgba(245, 240, 232, 0.5);
+          --loader-paper-faint: rgba(245, 240, 232, 0.15);
+          --loader-gold: #c9a84c;
+          --loader-gold-dim: rgba(201, 168, 76, 0.3);
+          position: relative;
+          width: min(390px, 100%);
+          min-height: 844px;
+          margin: 40px auto;
+          overflow: hidden;
+          border-radius: 48px;
+          background: var(--loader-ink);
+          box-shadow:
+            0 0 0 1px rgba(201, 168, 76, 0.2),
+            0 40px 120px rgba(0, 0, 0, 0.8),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .loader-bg {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          background:
+            radial-gradient(
+              ellipse 70% 50% at 50% 40%,
+              rgba(140, 100, 40, 0.22) 0%,
+              transparent 70%
+            ),
+            radial-gradient(
+              ellipse 50% 40% at 20% 80%,
+              rgba(80, 40, 20, 0.3) 0%,
+              transparent 60%
+            ),
+            linear-gradient(170deg, #12100d 0%, #1e1810 40%, #0e0c09 100%);
+        }
+
+        .loader-stars {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          overflow: hidden;
           pointer-events: none;
         }
 
-        [data-slot="loader-ground"] {
+        .loader-star {
           position: absolute;
-          left: 50%;
-          bottom: 6%;
-          width: 74%;
-          height: 24%;
-          transform: translateX(-50%);
+          display: block;
           border-radius: 999px;
-          background:
-            radial-gradient(
-              ellipse at center,
-              var(--loader-ambient) 0%,
-              transparent 72%
-            ),
-            radial-gradient(
-              ellipse at 50% 42%,
-              var(--loader-ambient-brass) 0%,
-              transparent 58%
-            );
-          filter: blur(10px);
-          opacity: 0.88;
+          background: var(--loader-gold);
+          opacity: 0;
+          animation: loader-twinkle var(--star-duration) ease-in-out infinite
+            var(--star-delay);
         }
 
-        [data-slot="loader-tile"] {
-          width: var(--loader-card-width);
-          height: calc(var(--loader-card-height) + var(--loader-depth));
-          transform:
-            translate3d(
-              calc(-50% + var(--tile-x)),
-              calc(-50% + var(--tile-y)),
-              0
-            )
-            rotate(var(--tile-rotate))
-            scale(var(--tile-scale));
-          opacity: 0.92;
-          transform-origin: center center;
-          will-change: transform, filter;
-          animation: loader-tile-float var(--loader-duration)
-            cubic-bezier(0.22, 1, 0.36, 1) infinite;
-        }
-
-        [data-slot="loader-tile-shell"] {
+        .loader-content {
           position: relative;
-          width: var(--loader-card-width);
-          height: calc(var(--loader-card-height) + var(--loader-depth));
-          filter: drop-shadow(var(--loader-shadow-rest));
+          z-index: 10;
+          display: flex;
+          min-height: 844px;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 0 36px;
+          text-align: center;
         }
 
-        [data-slot="loader-tile-face"],
-        [data-slot="loader-tile-rim"],
-        [data-slot="loader-tile-gloss"],
-        [data-slot="loader-tile-reflection"],
-        [data-slot="loader-tile-core"] {
-          border-radius: var(--loader-card-radius);
+        .loader-orb-wrap {
+          position: relative;
+          width: 160px;
+          height: 160px;
+          margin-bottom: 48px;
         }
 
-        [data-slot="loader-tile-face"] {
-          height: var(--loader-card-height);
-          border: 1px solid var(--loader-border);
-          background:
-            linear-gradient(
-              180deg,
-              var(--loader-face-top) 0%,
-              var(--loader-face-mid) 54%,
-              var(--loader-face-bottom) 100%
-            );
-          box-shadow:
-            inset 0 1px 0 color-mix(in oklch, var(--loader-highlight) 86%, transparent),
-            inset 0 -1px 0 color-mix(in oklch, var(--loader-edge-shadow) 44%, transparent),
-            inset 0 -10px 16px color-mix(in oklch, var(--loader-shade) 55%, transparent),
-            inset 0 10px 14px color-mix(in oklch, var(--loader-highlight) 58%, transparent);
-          overflow: hidden;
+        .loader-ring {
+          position: absolute;
+          inset: 0;
+          border: 1px solid transparent;
+          border-radius: 50%;
         }
 
-        [data-slot="loader-tile-face"]::before {
+        .loader-ring--outer {
+          border-color: rgba(201, 168, 76, 0.2);
+          animation: loader-spin-cw 12s linear infinite;
+        }
+
+        .loader-ring--mid {
+          inset: 14px;
+          border-color: rgba(201, 168, 76, 0.15);
+          border-style: dashed;
+          animation: loader-spin-ccw 8s linear infinite;
+        }
+
+        .loader-ring--inner {
+          inset: 30px;
+          border-color: rgba(201, 168, 76, 0.25);
+          animation: loader-spin-cw 5s linear infinite;
+        }
+
+        .loader-ring--outer::before,
+        .loader-ring--outer::after,
+        .loader-ring--mid::before {
           content: "";
           position: absolute;
-          left: 10%;
-          right: 12%;
-          top: 9%;
-          height: var(--loader-gloss-height);
-          border-radius: calc(var(--loader-card-radius) * 0.74);
-          background:
-            linear-gradient(
-              180deg,
-              color-mix(in oklch, var(--loader-highlight) 94%, transparent) 0%,
-              color-mix(in oklch, var(--loader-highlight) 34%, transparent) 58%,
-              transparent 100%
-            );
-          opacity: 0.92;
-          transform: translateY(-3%);
+          width: 4px;
+          height: 4px;
+          top: 50%;
+          left: -2px;
+          border-radius: 50%;
+          background: var(--loader-gold);
+          transform: translateY(-50%);
+          box-shadow: 0 0 6px var(--loader-gold);
         }
 
-        [data-slot="loader-tile-face"]::after {
-          content: "";
+        .loader-ring--outer::after {
+          left: auto;
+          right: -2px;
+          opacity: 0.5;
+        }
+
+        .loader-ring--mid::before {
+          top: -1.5px;
+          left: 50%;
+          width: 3px;
+          height: 3px;
+          transform: translateX(-50%);
+        }
+
+        .loader-orb-glow {
           position: absolute;
-          inset: 16% 15%;
-          border-radius: calc(var(--loader-card-radius) * 0.66);
-          background:
-            linear-gradient(
-              180deg,
-              color-mix(in oklch, var(--loader-inner-line) 68%, transparent) 0%,
-              color-mix(in oklch, var(--loader-inner-line) 12%, transparent) 100%
-            );
-          mask:
-            linear-gradient(180deg, #000 0 0) top / 68% 10% no-repeat,
-            linear-gradient(180deg, #000 0 0) center / 54% 8% no-repeat,
-            linear-gradient(180deg, #000 0 0) bottom 28% center / 60% 8% no-repeat;
-          opacity: 0.62;
+          inset: 0;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(201, 168, 76, 0.12) 0%,
+            transparent 70%
+          );
+          animation: loader-glow-pulse 3s ease-in-out infinite;
         }
 
-        [data-slot="loader-tile-rim"] {
-          height: var(--loader-card-height);
-          box-shadow:
-            inset 0 0 0 1px color-mix(in oklch, var(--loader-border) 74%, transparent),
-            inset 0 0 0 2px color-mix(in oklch, var(--loader-brass-rim) 42%, transparent);
-          opacity: 0.62;
+        .loader-orb-center {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
-        [data-slot="loader-tile-gloss"] {
-          height: var(--loader-card-height);
-          background:
-            radial-gradient(
-              circle at 24% 18%,
-              color-mix(in oklch, var(--loader-highlight) 88%, transparent) 0%,
-              transparent 36%
-            ),
-            radial-gradient(
-              circle at 78% 84%,
-              color-mix(in oklch, var(--loader-shade) 44%, transparent) 0%,
-              transparent 42%
-            );
-          mix-blend-mode: screen;
-          opacity: 0.8;
+        .loader-orb-glyph {
+          color: var(--loader-paper);
+          font-family: var(--font-loader-title), serif;
+          font-size: 36px;
+          filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.5));
+          animation: loader-breathe 3s ease-in-out infinite;
         }
 
-        [data-slot="loader-tile-edge"] {
-          left: var(--loader-edge-inset);
-          right: var(--loader-edge-inset);
-          height: var(--loader-depth);
-          border-bottom-left-radius: calc(var(--loader-card-radius) * 0.84);
-          border-bottom-right-radius: calc(var(--loader-card-radius) * 0.84);
-          background:
-            linear-gradient(
-              180deg,
-              color-mix(in oklch, var(--loader-edge) 92%, var(--loader-face-bottom) 8%) 0%,
-              color-mix(in oklch, var(--loader-edge-shadow) 56%, var(--loader-edge) 44%) 100%
-            );
-          box-shadow:
-            inset 0 1px 0 color-mix(in oklch, var(--loader-highlight) 28%, transparent),
-            0 6px 10px color-mix(in oklch, var(--loader-edge-shadow) 18%, transparent);
-          transform: translateY(8%);
-          opacity: 0.92;
+        .loader-title {
+          margin-bottom: 12px;
+          color: var(--loader-paper);
+          font-family: var(--font-loader-title), serif;
+          font-size: 22px;
+          font-weight: 700;
+          line-height: 1.4;
+          animation: loader-fade-in 0.8s ease forwards 0.3s;
         }
 
-        [data-slot="loader-tile-reflection"] {
-          height: var(--loader-card-height);
-          background:
-            linear-gradient(
-              118deg,
-              transparent 0%,
-              color-mix(in oklch, var(--loader-highlight) 32%, transparent) 36%,
-              transparent 58%
-            );
-          opacity: 0.46;
+        .loader-copy-block {
+          min-height: 40px;
+          margin-bottom: 40px;
         }
 
-        [data-slot="loader-tile-core"] {
-          height: var(--loader-card-height);
-          box-shadow:
-            inset 0 0 0 1px color-mix(in oklch, var(--loader-inner-line) 18%, transparent),
-            inset 0 -18px 18px color-mix(in oklch, var(--loader-shade) 20%, transparent),
-            inset 0 12px 12px color-mix(in oklch, var(--loader-highlight) 18%, transparent);
-          opacity: 0.66;
-        }
-
-        @keyframes loader-tile-float {
-          0%,
-          100% {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y)),
-                0
-              )
-              rotate(var(--tile-rotate))
-              scale(var(--tile-scale));
-          }
-
-          18%,
-          34% {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y) + var(--loader-lift)),
-                0
-              )
-              rotate(var(--tile-active-rotate))
-              scale(calc(var(--tile-scale) + 0.035));
-          }
-
-          48% {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y) + calc(var(--loader-lift) * 0.42)),
-                0
-              )
-              rotate(calc((var(--tile-rotate) + var(--tile-active-rotate)) / 2))
-              scale(calc(var(--tile-scale) + 0.018));
-          }
-
-          70% {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y)),
-                0
-              )
-              rotate(var(--tile-rotate))
-              scale(calc(var(--tile-scale) + 0.008));
-          }
-        }
-
-        [data-slot="loader-tile"] [data-slot="loader-tile-shell"] {
-          transition:
-            filter 240ms cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 240ms cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        [data-slot="loader-tile"][data-static-depth="1"]
-          [data-slot="loader-tile-face"],
-        [data-slot="loader-tile"][data-static-depth="3"]
-          [data-slot="loader-tile-face"] {
-          background:
-            linear-gradient(
-              180deg,
-              color-mix(in oklch, var(--loader-face-top) 88%, var(--color-bg) 12%) 0%,
-              color-mix(in oklch, var(--loader-face-mid) 88%, var(--loader-face-top) 12%) 52%,
-              color-mix(in oklch, var(--loader-face-bottom) 92%, var(--loader-face-mid) 8%) 100%
-            );
-        }
-
-        [data-slot="loader-tile"][data-static-depth="0"]
-          [data-slot="loader-tile-shell"],
-        [data-slot="loader-tile"][data-static-depth="3"]
-          [data-slot="loader-tile-shell"] {
-          opacity: 0.92;
-        }
-
-        [data-slot="loader-tile"][data-static-depth="1"]
-          [data-slot="loader-tile-shell"] {
-          opacity: 0.86;
-        }
-
-        [data-slot="loader-tile"][data-static-depth="2"]
-          [data-slot="loader-tile-shell"] {
+        .loader-step-message {
+          min-height: 22px;
+          color: var(--loader-paper-dim);
+          font-family: var(--font-loader-body), serif;
+          font-size: 13px;
+          font-weight: 300;
+          line-height: 1.7;
           opacity: 1;
+          transition: opacity 0.3s ease;
+          animation: loader-fade-in 0.8s ease forwards 0.5s;
         }
 
-        [data-slot="loader-tile"][data-static-depth="0"] {
-          animation-name: loader-tile-float, loader-tile-light;
-          animation-duration: var(--loader-duration), var(--loader-duration);
-          animation-timing-function:
-            cubic-bezier(0.22, 1, 0.36, 1),
-            cubic-bezier(0.22, 1, 0.36, 1);
-          animation-iteration-count: infinite, infinite;
+        .loader-step-message.is-fading {
+          opacity: 0;
         }
 
-        [data-slot="loader-tile"][data-static-depth="1"],
-        [data-slot="loader-tile"][data-static-depth="2"],
-        [data-slot="loader-tile"][data-static-depth="3"] {
-          animation-name: loader-tile-float;
+        .loader-delayed-message {
+          margin-top: 8px;
+          color: rgba(245, 240, 232, 0.36);
+          font-family: var(--font-loader-mono), monospace;
+          font-size: 10px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          animation: loader-fade-in 0.35s ease forwards;
         }
 
-        @keyframes loader-tile-light {
+        .loader-progress-wrap {
+          width: 100%;
+          animation: loader-fade-in 0.8s ease forwards 0.6s;
+        }
+
+        .loader-progress-track {
+          position: relative;
+          height: 2px;
+          margin-bottom: 10px;
+          overflow: visible;
+          border-radius: 2px;
+          background: rgba(201, 168, 76, 0.1);
+        }
+
+        .loader-progress-fill {
+          position: relative;
+          height: 100%;
+          border-radius: 2px;
+          background: linear-gradient(
+            90deg,
+            var(--loader-gold-dim),
+            var(--loader-gold)
+          );
+          transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .loader-progress-fill::after {
+          content: "";
+          position: absolute;
+          top: 50%;
+          right: -3px;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--loader-gold);
+          transform: translateY(-50%);
+          box-shadow: 0 0 8px var(--loader-gold);
+        }
+
+        .loader-progress-label {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .loader-progress-step-text,
+        .loader-progress-pct {
+          color: rgba(201, 168, 76, 0.5);
+          font-family: var(--font-loader-mono), monospace;
+          font-size: 10px;
+          letter-spacing: 0.1em;
+        }
+
+        .loader-progress-pct {
+          color: rgba(201, 168, 76, 0.4);
+          letter-spacing: 0.05em;
+        }
+
+        .loader-hint {
+          position: absolute;
+          right: 0;
+          bottom: 52px;
+          left: 0;
+          z-index: 10;
+          color: var(--loader-paper-faint);
+          text-align: center;
+          font-family: var(--font-loader-mono), monospace;
+          font-size: 10px;
+          letter-spacing: 0.1em;
+          animation: loader-fade-in 1s ease forwards 1.2s;
+        }
+
+        @keyframes loader-spin-cw {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes loader-spin-ccw {
+          to {
+            transform: rotate(-360deg);
+          }
+        }
+
+        @keyframes loader-breathe {
           0%,
           100% {
-            filter: none;
+            transform: scale(0.92);
+            opacity: 0.7;
           }
 
-          18%,
-          34% {
-            filter: drop-shadow(var(--loader-shadow-active));
-          }
-
-          48% {
-            filter: drop-shadow(
-              0 22px 30px color-mix(in oklch, var(--color-text) 10%, transparent)
-            );
+          50% {
+            transform: scale(1.05);
+            opacity: 1;
           }
         }
 
-        [data-slot="loader-tile"][data-static-depth="1"]
-          [data-slot="loader-tile-shell"],
-        [data-slot="loader-tile"][data-static-depth="2"]
-          [data-slot="loader-tile-shell"],
-        [data-slot="loader-tile"][data-static-depth="3"]
-          [data-slot="loader-tile-shell"] {
-          animation: loader-shell-light var(--loader-duration)
-            cubic-bezier(0.22, 1, 0.36, 1) infinite;
-          animation-delay: inherit;
-        }
-
-        @keyframes loader-shell-light {
+        @keyframes loader-glow-pulse {
           0%,
           100% {
-            filter: drop-shadow(var(--loader-shadow-rest));
+            transform: scale(0.9);
+            opacity: 0.5;
           }
 
-          18%,
-          34% {
-            filter: drop-shadow(var(--loader-shadow-active));
-          }
-
-          52% {
-            filter: drop-shadow(
-              0 22px 30px color-mix(in oklch, var(--color-text) 10%, transparent)
-            );
+          50% {
+            transform: scale(1.15);
+            opacity: 1;
           }
         }
 
-        [data-slot="loader-tile"][data-static-depth="1"]
-          [data-slot="loader-tile-rim"],
-        [data-slot="loader-tile"][data-static-depth="2"]
-          [data-slot="loader-tile-rim"] {
-          opacity: 0.78;
+        @keyframes loader-twinkle {
+          0%,
+          100% {
+            opacity: 0;
+            transform: scale(0.5);
+          }
+
+          50% {
+            opacity: var(--star-opacity);
+            transform: scale(1);
+          }
         }
 
-        [data-slot="loader-tile"][data-static-depth="2"]
-          [data-slot="loader-tile-gloss"] {
-          opacity: 0.92;
+        @keyframes loader-fade-in {
+          from {
+            opacity: 0;
+          }
+
+          to {
+            opacity: 1;
+          }
+        }
+
+        @media (max-width: 430px) {
+          .loader-phone-frame {
+            width: 100%;
+            min-height: 100dvh;
+            margin: 0;
+            border-radius: 0;
+          }
+
+          .loader-content {
+            min-height: 100dvh;
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          [data-slot="loader-tile"],
-          [data-slot="loader-tile-shell"] {
+          .loader-star,
+          .loader-ring--outer,
+          .loader-ring--mid,
+          .loader-ring--inner,
+          .loader-orb-glow,
+          .loader-orb-glyph {
             animation: none !important;
           }
 
-          [data-slot="loader-stage"] {
-            transform: translateY(0);
+          .loader-step-message,
+          .loader-progress-wrap,
+          .loader-title,
+          .loader-hint,
+          .loader-delayed-message {
+            animation: none !important;
+            opacity: 1 !important;
           }
 
-          [data-slot="loader-ground"] {
-            opacity: 0.72;
+          .loader-step-message {
+            transition: none;
           }
 
-          [data-slot="loader-tile"][data-static-depth="0"] {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y)),
-                0
-              )
-              rotate(var(--tile-rotate))
-              scale(calc(var(--tile-scale) - 0.02));
-          }
-
-          [data-slot="loader-tile"][data-static-depth="1"] {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y) + calc(var(--loader-lift) * 0.16)),
-                0
-              )
-              rotate(var(--tile-active-rotate))
-              scale(calc(var(--tile-scale) + 0.01));
-          }
-
-          [data-slot="loader-tile"][data-static-depth="2"] {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y) + calc(var(--loader-lift) * 0.28)),
-                0
-              )
-              rotate(var(--tile-active-rotate))
-              scale(calc(var(--tile-scale) + 0.025));
-          }
-
-          [data-slot="loader-tile"][data-static-depth="3"] {
-            transform:
-              translate3d(
-                calc(-50% + var(--tile-x)),
-                calc(-50% + var(--tile-y) + calc(var(--loader-lift) * 0.1)),
-                0
-              )
-              rotate(var(--tile-rotate))
-              scale(var(--tile-scale));
-          }
-
-          [data-slot="loader-tile-shell"] {
-            filter: drop-shadow(var(--loader-shadow-rest));
+          .loader-progress-fill {
+            transition: none;
           }
         }
       `}</style>
