@@ -146,8 +146,10 @@ export function SajuQuestionStepShell({
                       ) : null}
 
                       {primaryAction ? (
-                        <div className="w-full sm:w-auto sm:min-w-[15rem]">
-                          {primaryAction}
+                        <div className="fixed inset-x-0 bottom-0 z-30 bg-[linear-gradient(to_top,var(--background)_58%,transparent)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:static sm:z-auto sm:bg-transparent sm:px-0 sm:pb-0 sm:pt-0">
+                          <div className="mx-auto w-full max-w-3xl sm:mx-0 sm:max-w-none sm:w-auto sm:min-w-[15rem]">
+                            {primaryAction}
+                          </div>
                         </div>
                       ) : null}
                     </div>
@@ -158,14 +160,6 @@ export function SajuQuestionStepShell({
           </div>
         </div>
       </section>
-
-      {primaryAction ? (
-        <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
-          <div className="mx-auto w-full max-w-3xl">
-            {primaryAction}
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }

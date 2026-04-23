@@ -184,7 +184,11 @@ export function SajuQuestionResult() {
     useSajuQuestionCopy(generatedQuestion);
 
   useEffect(() => {
-    if (generatedQuestion || generationStatus === "loading") {
+    if (
+      generatedQuestion ||
+      generationStatus === "loading" ||
+      generationStatus === "error"
+    ) {
       return;
     }
 
@@ -235,7 +239,7 @@ export function SajuQuestionResult() {
     );
   }
 
-  if (!generatedQuestion) {
+  if (!generatedQuestion && generationStatus !== "error") {
     return null;
   }
 
@@ -406,10 +410,12 @@ export function SajuQuestionResult() {
     <SajuQuestionStepShell
       currentStep="result"
       errorMessage={generationError}
-      primaryAction={primaryAction}
+      primaryAction={generatedQuestion ? primaryAction : undefined}
       secondaryActions={secondaryActions}
     >
-      <GeneratedQuestionPreview generatedQuestion={generatedQuestion} />
+      {generatedQuestion ? (
+        <GeneratedQuestionPreview generatedQuestion={generatedQuestion} />
+      ) : null}
     </SajuQuestionStepShell>
   );
 }

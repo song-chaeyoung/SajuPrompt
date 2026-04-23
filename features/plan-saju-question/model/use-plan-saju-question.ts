@@ -48,12 +48,14 @@ function waitForMinimumDuration(durationMs: number) {
   });
 }
 
-function getPlannerForm() {
+// Event handler only: reads a one-off Zustand snapshot without subscribing.
+function getPlannerFormSnapshot() {
   return useSajuQuestionPlannerStore.getState().form;
 }
 
-function hasValidGenerationInput() {
-  return hasCoreRequiredFields(getPlannerForm());
+// Event handler only: validates against the latest store snapshot.
+function hasValidGenerationInputSnapshot() {
+  return hasCoreRequiredFields(getPlannerFormSnapshot());
 }
 
 export function useSajuQuestionModeState() {
@@ -100,14 +102,13 @@ export function useSajuQuestionGenerationState() {
     (state) => state.generationError,
   );
 
-  const isGenerating = generationStatus === "loading";
+  const isWaitingForResult = generationStatus === "loading";
 
   return {
     generatedQuestion,
     generationStatus,
     generationError,
-    isGenerating,
-    isWaitingForResult: isGenerating,
+    isWaitingForResult,
   };
 }
 
@@ -126,7 +127,7 @@ export function useSajuQuestionGenerationActions() {
   );
 
   const handlePrepareGeneration = useCallback(() => {
-    if (hasValidGenerationInput()) {
+    if (hasValidGenerationInputSnapshot()) {
       clearGenerationError();
       return true;
     }
@@ -142,17 +143,11 @@ export function useSajuQuestionGenerationActions() {
 
   const handleGenerateQuestion = useCallback(
     async (options: GenerateQuestionOptions = {}) => {
-      const form = getPlannerForm();
-
-      if (!hasCoreRequiredFields(form)) {
-        clearGenerationError();
-        showErrorToast(REQUIRED_FIELDS_MESSAGE, {
-          id: "saju-required-fields",
-          title: REQUIRED_FIELDS_TITLE,
-        });
+      if (!handlePrepareGeneration()) {
         return false;
       }
 
+      const form = getPlannerFormSnapshot();
       const minDurationPromise = waitForMinimumDuration(
         Math.max(0, options.minDurationMs ?? 0),
       );
@@ -202,7 +197,7 @@ export function useSajuQuestionGenerationActions() {
       }
     },
     [
-      clearGenerationError,
+      handlePrepareGeneration,
       setGenerationError,
       setGenerationSuccess,
       startGeneration,
