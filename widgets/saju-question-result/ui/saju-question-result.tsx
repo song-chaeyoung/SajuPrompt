@@ -1,6 +1,12 @@
 "use client";
 
-import { Check, Copy, RotateCcw, TriangleAlert } from "lucide-react";
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  RotateCcw,
+  TriangleAlert,
+} from "lucide-react";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
@@ -34,6 +40,27 @@ type SummaryChip = {
   key: string;
   label: string;
 };
+
+const AI_LINK_TARGETS = [
+  {
+    key: "chatgpt",
+    label: "ChatGPT",
+    href: "https://chatgpt.com/",
+    shouldPrefillQuestion: true,
+  },
+  {
+    key: "gemini",
+    label: "Gemini",
+    href: "https://gemini.google.com/app",
+    shouldPrefillQuestion: false,
+  },
+  {
+    key: "claude",
+    label: "Claude",
+    href: "https://claude.ai/new",
+    shouldPrefillQuestion: false,
+  },
+] as const;
 
 const RESULT_STEP_BADGE_CLASSNAME =
   "inline-flex items-center gap-2 rounded-full border border-primary/20 bg-[color-mix(in_oklch,var(--primary)_7%,var(--background)_93%)] px-3 py-1.5 text-[0.8125rem] font-semibold tracking-[0.04em] text-[color:color-mix(in_oklch,var(--foreground)_82%,var(--primary)_18%)] dark:border-primary/28 dark:bg-[color-mix(in_oklch,var(--primary)_14%,var(--background)_86%)] dark:text-[color:color-mix(in_oklch,var(--foreground)_88%,var(--primary)_12%)]";
@@ -159,12 +186,61 @@ function ResultHeroSection({
   children: ReactNode;
 }) {
   return (
-    <section className="pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:pb-10 sm:pt-[calc(env(safe-area-inset-top)+2.5rem)]">
+    <section className="pb-[calc(8.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+0.5rem)] sm:pb-10 sm:pt-[calc(env(safe-area-inset-top)+2.5rem)]">
       <div className="relative mx-auto w-full max-w-4xl">
         <ResultHeroBackdrop ornamentClassName="pointer-events-none absolute right-[-2rem] top-8 h-60 w-60 sm:right-[-1rem] sm:top-[-0.5rem] sm:h-80 sm:w-80" />
         {children}
       </div>
     </section>
+  );
+}
+
+function buildAiLinkHref(
+  target: (typeof AI_LINK_TARGETS)[number],
+  generatedQuestion: string,
+) {
+  if (!target.shouldPrefillQuestion || !generatedQuestion) {
+    return target.href;
+  }
+
+  return `${target.href}?q=${encodeURIComponent(generatedQuestion)}`;
+}
+
+function AiOpenLinks({
+  generatedQuestion,
+  className,
+}: {
+  generatedQuestion: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "grid grid-cols-[repeat(3,minmax(0,1fr))] gap-2",
+        className,
+      )}
+    >
+      {AI_LINK_TARGETS.map((target) => (
+        <Button
+          key={target.key}
+          asChild
+          size="sm"
+          variant="secondary"
+          data-icon="inline-end"
+          className="w-full min-w-0 [&_span]:min-w-0 [&_span]:truncate"
+        >
+          <a
+            href={buildAiLinkHref(target, generatedQuestion)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${target.label} 새 창에서 열기`}
+          >
+            <span>{target.label}</span>
+            <ExternalLink className="size-3.5" aria-hidden />
+          </a>
+        </Button>
+      ))}
+    </div>
   );
 }
 
@@ -379,7 +455,7 @@ export function SajuQuestionResult() {
               </div>
 
               <div
-                className="hero-enter hidden items-center justify-between gap-3 sm:flex"
+                className="hero-enter hidden gap-3 sm:flex sm:flex-col lg:flex-row lg:items-center lg:justify-between"
                 style={{ animationDelay: "350ms" }}
               >
                 <Button
@@ -388,19 +464,25 @@ export function SajuQuestionResult() {
                   variant="outline"
                   data-icon="inline-start"
                   onClick={handleRegenerate}
-                  className="h-11 rounded-[1rem] px-4"
+                  className="h-11 rounded-[1rem] px-4 sm:self-start lg:self-auto"
                 >
                   <RotateCcw className="size-4" aria-hidden />
                   다시 생성
                 </Button>
 
-                <div className="w-full max-w-[16rem]">{buildCopyButton()}</div>
+                <div className="grid w-full gap-2 sm:grid-cols-[minmax(0,1fr)_16rem] lg:max-w-[42rem]">
+                  <AiOpenLinks generatedQuestion={generatedQuestion} />
+                  <div>{buildCopyButton()}</div>
+                </div>
               </div>
           </div>
         </ResultHeroSection>
 
-        <div className="fixed inset-x-0 bottom-0 z-30 bg-[linear-gradient(to_top,var(--background)_58%,transparent)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
-          <div className="mx-auto w-full max-w-4xl">{buildCopyButton()}</div>
+        <div className="fixed inset-x-0 bottom-0 z-30 bg-[linear-gradient(to_top,var(--background)_72%,transparent)] px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
+          <div className="mx-auto flex w-full max-w-4xl flex-col gap-2">
+            {buildCopyButton()}
+            <AiOpenLinks generatedQuestion={generatedQuestion} />
+          </div>
         </div>
       </>
     );
