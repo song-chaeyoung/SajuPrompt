@@ -155,7 +155,10 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
 
           <div className="loader-copy-block">
             <p
-              className={cn("loader-step-message", isMessageFading && "is-fading")}
+              className={cn(
+                "loader-step-message",
+                isMessageFading && "is-fading",
+              )}
             >
               {stepMessage}
             </p>
@@ -169,12 +172,14 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
               <div className="loader-progress-fill" style={progressStyle} />
             </div>
             <div className="loader-progress-label">
-              <span className="loader-progress-step-text">{activeStep.label}</span>
+              <span className="loader-progress-step-text">
+                {activeStep.label}
+              </span>
               <span className="loader-progress-pct">{activeStep.pct}%</span>
             </div>
           </div>
 
-          <p className="loader-hint">브라우저에서만 동작 · 서버 전송 없음</p>
+          <p className="loader-hint">브라우저에서만 동작 · 저장 및 추적 불가</p>
         </div>
       </div>
 
@@ -198,7 +203,8 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           );
           box-shadow:
             0 24px 54px color-mix(in oklch, var(--primary) 10%, transparent),
-            inset 0 1px 0 color-mix(in oklch, var(--background) 86%, transparent);
+            inset 0 1px 0
+              color-mix(in oklch, var(--background) 86%, transparent);
         }
 
         .loader-shell::before {
@@ -219,7 +225,8 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           position: absolute;
           inset: 0;
           border-radius: inherit;
-          border: 1px solid color-mix(in oklch, var(--background) 40%, transparent);
+          border: 1px solid
+            color-mix(in oklch, var(--background) 40%, transparent);
           pointer-events: none;
         }
 
@@ -286,7 +293,8 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           border-radius: 50%;
           background: var(--hero-dust);
           transform: translateY(-50%);
-          box-shadow: 0 0 10px color-mix(in oklch, var(--hero-dust) 72%, transparent);
+          box-shadow: 0 0 10px
+            color-mix(in oklch, var(--hero-dust) 72%, transparent);
         }
 
         .loader-ring--outer::after {
@@ -332,7 +340,8 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
             ),
             color-mix(in oklch, var(--background) 84%, var(--card) 16%);
           box-shadow:
-            inset 0 1px 0 color-mix(in oklch, var(--background) 90%, transparent),
+            inset 0 1px 0
+              color-mix(in oklch, var(--background) 90%, transparent),
             0 18px 30px color-mix(in oklch, var(--primary) 8%, transparent);
         }
 
@@ -364,7 +373,11 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
 
         .loader-step-message {
           min-height: 22px;
-          color: color-mix(in oklch, var(--foreground) 70%, var(--muted-foreground) 30%);
+          color: color-mix(
+            in oklch,
+            var(--foreground) 70%,
+            var(--muted-foreground) 30%
+          );
           font-family: var(--app-font-sans), sans-serif;
           font-size: 0.95rem;
           font-weight: 400;
@@ -424,7 +437,8 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
           border-radius: 50%;
           background: var(--hero-dust);
           transform: translateY(-50%);
-          box-shadow: 0 0 10px color-mix(in oklch, var(--hero-dust) 74%, transparent);
+          box-shadow: 0 0 10px
+            color-mix(in oklch, var(--hero-dust) 74%, transparent);
         }
 
         .loader-progress-label {
@@ -443,7 +457,11 @@ export function CardSequenceLoader({ className }: CardSequenceLoaderProps) {
         }
 
         .loader-progress-pct {
-          color: color-mix(in oklch, var(--muted-foreground) 84%, var(--primary) 16%);
+          color: color-mix(
+            in oklch,
+            var(--muted-foreground) 84%,
+            var(--primary) 16%
+          );
           letter-spacing: 0.05em;
         }
 
