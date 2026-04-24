@@ -16,6 +16,13 @@ export function SajuQuestionMode() {
   const { mode, handleModeSelect } = useSajuQuestionModeState();
   const handleResetPlanner = useSajuQuestionResetAction();
 
+  const handleSelectAndNext = (
+    nextMode: Parameters<typeof handleModeSelect>[0],
+  ) => {
+    handleModeSelect(nextMode);
+    router.push(FORM_STEP_PATHS.saju, { scroll: true });
+  };
+
   const handleNext = () => {
     router.push(FORM_STEP_PATHS.saju, { scroll: true });
   };
@@ -63,7 +70,7 @@ export function SajuQuestionMode() {
 
         <AnalysisModeSelector
           activeMode={mode}
-          onSelect={handleModeSelect}
+          onSelect={handleSelectAndNext}
         />
       </div>
     </SajuQuestionStepShell>
