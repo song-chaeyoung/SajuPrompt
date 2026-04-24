@@ -15,10 +15,33 @@ const gowunBatang = Gowun_Batang({
   preload: false,
 });
 
+const PRIVACY_NOTE =
+  "입력하신 정보는 질문문 생성에만 사용되며, 저장되거나 다른 용도로 사용되지 않습니다";
+
+function PrivacyNoteText() {
+  const breakIndex = PRIVACY_NOTE.indexOf(",");
+
+  if (breakIndex === -1) {
+    return PRIVACY_NOTE;
+  }
+
+  const leadingText = PRIVACY_NOTE.slice(0, breakIndex + 1);
+  const trailingText = PRIVACY_NOTE.slice(breakIndex + 1).trimStart();
+
+  return (
+    <>
+      {leadingText}
+      <br className="sm:hidden" />
+      <span className="hidden sm:inline"> </span>
+      {trailingText}
+    </>
+  );
+}
+
 export function SajuQuestionIntro() {
   return (
     <>
-      <section className="pb-[calc(4.75rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1.25rem)] sm:pb-12 sm:pt-[calc(env(safe-area-inset-top)+5.25rem)]">
+      <section className="pb-[calc(8.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1.25rem)] sm:pb-12 sm:pt-[calc(env(safe-area-inset-top)+5.25rem)]">
         <div className="relative mx-auto w-full max-w-4xl">
           <div className="relative overflow-hidden rounded-[2.25rem] border border-border/70 bg-[color-mix(in_oklch,var(--card)_96%,var(--background)_4%)] px-5 py-5 shadow-[0_26px_70px_color-mix(in_oklch,var(--primary)_8%,transparent)] dark:border-border/90 sm:px-8 sm:py-7 md:px-10 md:py-8">
             <div
@@ -104,10 +127,15 @@ export function SajuQuestionIntro() {
                   </Link>
                 </Button>
 
-                <p className="type-body-sm max-w-[24rem] text-muted-foreground">
-                  질문문을 생성한 뒤 복사해서 ChatGPT, Gemini, Claude에 바로
-                  붙여 넣을 수 있습니다.
-                </p>
+                <div className="max-w-[25rem] space-y-1.5">
+                  <p className="type-body-sm text-muted-foreground">
+                    질문문을 생성한 뒤 복사해서 ChatGPT, Gemini, Claude에 바로
+                    붙여 넣을 수 있습니다.
+                  </p>
+                  <p className="type-caption text-[color:color-mix(in_oklch,var(--foreground)_58%,var(--muted-foreground)_42%)]">
+                    <PrivacyNoteText />
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -144,7 +172,10 @@ export function SajuQuestionIntro() {
       </section>
 
       <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
-        <div className="mx-auto w-full max-w-4xl">
+        <div className="mx-auto w-full max-w-4xl rounded-[1.5rem] border border-border/70 bg-[color-mix(in_oklch,var(--card)_94%,var(--background)_6%)] p-3 shadow-[0_22px_50px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-[10px]">
+          <p className="mb-2 px-2 text-center type-caption text-[color:color-mix(in_oklch,var(--foreground)_58%,var(--muted-foreground)_42%)] ">
+            <PrivacyNoteText />
+          </p>
           <Button asChild size="lg" className="w-full">
             <Link href={FORM_STEP_PATHS.mode} scroll={true}>
               AI 사주 질문 만들기
