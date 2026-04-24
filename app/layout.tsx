@@ -19,9 +19,9 @@ function resolveMetadataBase() {
 }
 
 const socialImage = {
-  url: "/logo.png",
-  width: 1254,
-  height: 1254,
+  url: "/metaimage.png",
+  width: 1731,
+  height: 909,
   alt: "사주질문지 공유 이미지",
 };
 
