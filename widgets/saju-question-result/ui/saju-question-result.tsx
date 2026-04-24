@@ -192,12 +192,12 @@ export function SajuQuestionResult() {
       return;
     }
 
-    router.replace(FORM_STEP_PATHS.saju, { scroll: false });
+    router.replace(FORM_STEP_PATHS.saju, { scroll: true });
   }, [generatedQuestion, generationStatus, router]);
 
   const handleReset = () => {
     handleResetPlanner();
-    router.push("/", { scroll: false });
+    router.push("/", { scroll: true });
   };
 
   const handleRegenerate = async () => {

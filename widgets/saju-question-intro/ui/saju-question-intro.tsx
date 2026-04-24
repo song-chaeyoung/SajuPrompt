@@ -99,7 +99,7 @@ export function SajuQuestionIntro() {
 
               <div className="hidden items-center gap-4 sm:flex">
                 <Button asChild size="lg" className="min-w-[15rem]">
-                  <Link href={FORM_STEP_PATHS.mode} scroll={false}>
+                  <Link href={FORM_STEP_PATHS.mode} scroll={true}>
                     AI 사주 질문 만들기
                   </Link>
                 </Button>
@@ -146,7 +146,7 @@ export function SajuQuestionIntro() {
       <div className="fixed inset-x-0 bottom-0 z-30 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] pt-4 sm:hidden">
         <div className="mx-auto w-full max-w-4xl">
           <Button asChild size="lg" className="w-full">
-            <Link href={FORM_STEP_PATHS.mode} scroll={false}>
+            <Link href={FORM_STEP_PATHS.mode} scroll={true}>
               AI 사주 질문 만들기
             </Link>
           </Button>

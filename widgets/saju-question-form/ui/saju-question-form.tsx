@@ -36,12 +36,12 @@ export function SajuQuestionForm() {
     void handleGenerateQuestion({
       minDurationMs: GENERATION_MIN_DURATION_MS,
     });
-    router.push(FORM_STEP_PATHS.result, { scroll: false });
+    router.push(FORM_STEP_PATHS.result, { scroll: true });
   };
 
   const handleReset = () => {
     handleResetPlanner();
-    router.push("/", { scroll: false });
+    router.push("/", { scroll: true });
   };
 
   const primaryActionLabel = isTransitioningToResult

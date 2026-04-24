@@ -17,12 +17,12 @@ export function SajuQuestionMode() {
   const handleResetPlanner = useSajuQuestionResetAction();
 
   const handleNext = () => {
-    router.push(FORM_STEP_PATHS.saju, { scroll: false });
+    router.push(FORM_STEP_PATHS.saju, { scroll: true });
   };
 
   const handleReset = () => {
     handleResetPlanner();
-    router.push("/", { scroll: false });
+    router.push("/", { scroll: true });
   };
 
   const primaryAction = (
