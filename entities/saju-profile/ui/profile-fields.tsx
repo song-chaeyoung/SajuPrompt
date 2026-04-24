@@ -175,7 +175,9 @@ export function ProfileFields({
     });
   };
 
-  const handleCalendarTypeChange = (calendarType: BirthProfile["calendarType"]) => {
+  const handleCalendarTypeChange = (
+    calendarType: BirthProfile["calendarType"],
+  ) => {
     onChange({
       calendarType,
       isLeapMonth: calendarType === "lunar" ? profile.isLeapMonth : null,
@@ -206,8 +208,8 @@ export function ProfileFields({
             </h3>
             <p className="type-body-sm max-w-[36rem] text-muted-foreground">
               이름, 성별, 생년월일을 먼저 입력해 주세요. 출생지는 대한민국
-              광역자치단체 기준으로 선택하고, 음력이라면 윤달 여부도 함께
-              정해 주세요.
+              광역자치단체 기준으로 선택하고, 음력이라면 윤달 여부도 함께 정해
+              주세요.
             </p>
           </div>
         </div>
@@ -245,13 +247,13 @@ export function ProfileFields({
               onValueChange={handleBirthPlaceChange}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="대한민국 광역자치단체를 선택해 주세요" />
+                <SelectValue placeholder="출생지를 선택해 주세요" />
               </SelectTrigger>
               <SelectContent>{BIRTH_PLACE_OPTION_ITEMS}</SelectContent>
             </Select>
             <p className="type-body-sm text-muted-foreground">
-              출생 시간을 입력한 경우에는 시간 보정을 위해 출생지를 함께
-              선택해 주세요.
+              출생 시간을 입력한 경우에는 시간 보정을 위해 출생지를 함께 선택해
+              주세요.
             </p>
           </div>
 
@@ -321,9 +323,9 @@ export function ProfileFields({
               </p>
             </div>
             <p className="type-body-sm max-w-[34rem] text-muted-foreground">
-              출생 시간은 시주와 시간 보정에 직접 연결됩니다. 시간을 알면
-              시각과 출생지를 함께 입력해 주시고, 모르면 시간 없이도 먼저
-              진행할 수 있습니다.
+              출생 시간은 시주와 시간 보정에 직접 연결됩니다. 시간을 알면 시각과
+              출생지를 함께 입력해 주시고, 모르면 시간 없이도 먼저 진행할 수
+              있습니다.
             </p>
           </div>
 
@@ -429,8 +431,8 @@ export function ProfileFields({
 
           {hasKnownBirthTime && !profile.birthPlaceCode ? (
             <p className="type-body-sm text-muted-foreground">
-              출생 시간을 입력한 경우에는 시간 보정을 위해 출생지도 함께
-              선택해 주세요.
+              출생 시간을 입력한 경우에는 시간 보정을 위해 출생지도 함께 선택해
+              주세요.
             </p>
           ) : null}
         </div>
