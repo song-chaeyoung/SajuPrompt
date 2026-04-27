@@ -34,6 +34,29 @@ const PROMPT_STEPS = [
   },
 ];
 
+const FAQ_ITEMS = [
+  {
+    question: "ChatGPT 사주 질문은 생년월일만 있어도 되나요?",
+    answer:
+      "생년월일만으로도 간단한 흐름 질문은 가능하지만, 출생 시간과 양력/음력 기준이 빠지면 사주 구조가 달라질 수 있습니다. 정확도를 높이려면 출생 시간, 달력 기준, 출생 지역까지 함께 적는 편이 좋습니다.",
+  },
+  {
+    question: "AI 사주 질문 프롬프트와 사주 풀이 도우미는 무엇이 다른가요?",
+    answer:
+      "이 도구는 사주 풀이를 단정적으로 대신 제공하기보다 ChatGPT, Gemini, Claude가 답하기 쉬운 질문문을 정리합니다. 사용자의 고민 맥락과 원하는 답변 형식을 프롬프트로 바꾸는 데 초점을 둡니다.",
+  },
+  {
+    question: "연애운, 직업운, 궁합 질문은 한 번에 물어봐도 되나요?",
+    answer:
+      "한 번에 여러 주제를 묻기보다 연애운, 직업운, 궁합처럼 주제를 나눠 묻는 편이 답변이 선명합니다. 먼저 가장 중요한 고민 하나를 정하고, 추가 질문은 별도 프롬프트로 이어가는 것이 좋습니다.",
+  },
+  {
+    question: "사주 답변을 그대로 믿어도 되나요?",
+    answer:
+      "사주와 운세 해석은 참고용으로 보는 편이 안전합니다. 중요한 결정은 현실적인 조건, 전문가 조언, 본인의 판단을 함께 놓고 검토해야 하며, AI 답변에는 가능성과 주의점을 함께 요청하는 것이 좋습니다.",
+  },
+];
+
 const EXAMPLE_PROMPT = `아래 정보를 바탕으로 사주를 참고해 지금의 고민을 해석해 주세요.
 
 - 생년월일: 1994년 5월 12일
@@ -195,6 +218,50 @@ export default function ChatGptSajuPromptGuidePage() {
               </Link>
             </Button>
           </div>
+        </section>
+
+        <section className="mt-10 border-t border-border/70 pt-8">
+          <div className="max-w-2xl space-y-3">
+            <p className="type-caption font-semibold tracking-[0.08em] text-primary/80">
+              FAQ
+            </p>
+            <h2 className="type-title-md font-semibold text-foreground">
+              ChatGPT 사주 질문을 만들 때 자주 묻는 질문
+            </h2>
+            <p className="type-body text-muted-foreground">
+              사주 질문 프롬프트는 입력 정보와 질문 목적이 분명할수록
+              유용합니다. 아래 기준을 참고하면 AI 사주 질문을 더 안전하고
+              구체적으로 정리할 수 있습니다.
+            </p>
+          </div>
+
+          <dl className="mt-6 grid gap-4">
+            {FAQ_ITEMS.map((item) => (
+              <div
+                key={item.question}
+                className="rounded-[1.25rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_76%,var(--card)_24%)] p-5"
+              >
+                <dt className="type-title-sm font-semibold text-foreground">
+                  {item.question}
+                </dt>
+                <dd className="mt-2 type-body-sm text-muted-foreground">
+                  {item.answer}
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <p className="mt-4 type-body-sm text-muted-foreground">
+            생년월일, 출생 시간, 고민 내용처럼 개인 정보가 포함될 수 있는
+            입력은{" "}
+            <Link
+              href={PRIVACY_PATH}
+              className="font-semibold text-foreground underline-offset-4 hover:underline"
+            >
+              개인정보 처리 안내
+            </Link>
+            에서 사용 범위를 확인한 뒤 입력해 주세요.
+          </p>
         </section>
 
         <footer className="mt-8 flex flex-wrap items-center gap-3 border-t border-border/70 pt-5 type-body-sm text-muted-foreground">

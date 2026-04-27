@@ -92,8 +92,10 @@
 - `SITE_URL`이 없으면 `VERCEL_PROJECT_PRODUCTION_URL`, 마지막으로 `http://localhost:3000`을 사용합니다.
 - 1차 sitemap에는 홈(`/`), 첫 공개 가이드(`/guide/chatgpt-saju-prompt`), 개인정보 처리 안내(`/privacy`)를 포함합니다.
 - `/mode`, `/saju`, `/result`는 전역 title/description을 상속하고 `noindex, follow`만 별도로 처리합니다.
-- `robots.txt`에서는 모든 경로 크롤링을 허용하고 sitemap URL만 명시합니다.
+- `robots.txt`에서는 모든 경로 크롤링을 허용하고 sitemap URL을 명시합니다.
+- AEO 검색 노출을 위해 OpenAI 검색 관련 user-agent인 `OAI-SearchBot`, `ChatGPT-User`도 명시적으로 허용합니다.
 - 첫 공개 가이드 페이지는 "ChatGPT 사주 질문 프롬프트 작성법"으로 시작합니다.
+- 첫 공개 가이드 페이지에는 사용자가 읽을 수 있는 FAQ 본문을 먼저 추가하고, FAQ 구조화 데이터는 아직 적용하지 않습니다.
 - 개인정보 처리 안내 페이지는 입력값 사용 범위, OpenAI API 전달, DB 저장 없음, 브라우저 상태 보관 방식을 설명합니다.
 - 구조화 데이터는 1차 범위에서 제외합니다.
 
