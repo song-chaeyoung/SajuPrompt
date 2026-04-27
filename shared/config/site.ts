@@ -1,7 +1,7 @@
 export const SITE_NAME = "사주질문지";
 
 export const SITE_DESCRIPTION =
-  "사주 정보를 바탕으로 ChatGPT, Gemini, Claude에 바로 붙여 넣을 수 있는 맞춤형 질문문을 자동 생성합니다.";
+  "생년월일과 고민 맥락을 바탕으로 ChatGPT, Gemini, Claude에 붙여 넣을 AI 사주 질문 프롬프트를 자동 생성합니다.";
 
 export const DEFAULT_SITE_URL = "http://localhost:3000";
 
