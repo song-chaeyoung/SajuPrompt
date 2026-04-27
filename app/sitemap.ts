@@ -7,5 +7,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: getAbsoluteUrl("/"),
     },
+    {
+      url: getAbsoluteUrl("/guide/chatgpt-saju-prompt"),
+    },
+    {
+      url: getAbsoluteUrl("/privacy"),
+    },
   ];
 }
