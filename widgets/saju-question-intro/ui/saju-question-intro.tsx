@@ -1,7 +1,10 @@
 import { Gowun_Batang } from "next/font/google";
 import Link from "next/link";
+import { BookOpenText } from "lucide-react";
 
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
+import { GUIDE_INDEX_PATH } from "@/shared/config/guides";
+import { PRIVACY_PATH } from "@/shared/config/routes";
 import { Button } from "@/shared/ui/button";
 import { HeroOrbitOrnament } from "@/shared/ui/hero-orbit-ornament";
 import {
@@ -41,7 +44,7 @@ function PrivacyNoteText() {
 export function SajuQuestionIntro() {
   return (
     <>
-      <section className="pb-[calc(8.5rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1.25rem)] sm:pb-12 sm:pt-[calc(env(safe-area-inset-top)+5.25rem)]">
+      <section className="pb-[calc(11rem+env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+1.25rem)] sm:pb-12 sm:pt-[calc(env(safe-area-inset-top)+5.25rem)]">
         <div className="relative mx-auto w-full max-w-4xl">
           <div className="relative overflow-hidden rounded-[2.25rem] border border-border/70 bg-[color-mix(in_oklch,var(--card)_96%,var(--background)_4%)] px-5 py-5 shadow-[0_26px_70px_color-mix(in_oklch,var(--primary)_8%,transparent)] dark:border-border/90 sm:px-8 sm:py-7 md:px-10 md:py-8">
             <div
@@ -96,9 +99,16 @@ export function SajuQuestionIntro() {
                     className="hero-enter type-body max-w-[33rem] text-[color:color-mix(in_oklch,var(--foreground)_72%,var(--muted-foreground)_28%)] sm:text-[1.0625rem]"
                     style={{ animationDelay: "200ms" }}
                   >
-                    생년월일과 지금의 고민을 정리하면, 바로 복사해 ChatGPT,
-                    Gemini, Claude에 붙여 넣을 질문문으로 차분하게 다듬어
-                    드립니다.
+                    생년월일과 지금의 고민을 정리하면, ChatGPT, Gemini,
+                    Claude에 붙여 넣을 AI 사주 질문 프롬프트로 차분하게
+                    다듬어 드립니다.
+                  </p>
+                  <p
+                    className="hero-enter type-body-sm max-w-[33rem] text-muted-foreground"
+                    style={{ animationDelay: "240ms" }}
+                  >
+                    사주 풀이를 대신하지 않고, AI에게 더 정확히 물어볼 질문을
+                    준비하는 도우미입니다.
                   </p>
                 </div>
               </div>
@@ -121,11 +131,24 @@ export function SajuQuestionIntro() {
               </ul>
 
               <div className="hidden items-center gap-4 sm:flex">
-                <Button asChild size="lg" className="min-w-[15rem]">
-                  <Link href={FORM_STEP_PATHS.mode} scroll={true}>
-                    AI 사주 질문 만들기
-                  </Link>
-                </Button>
+                <div className="flex flex-col gap-2 sm:min-w-[15rem]">
+                  <Button asChild size="lg">
+                    <Link href={FORM_STEP_PATHS.mode} scroll={true}>
+                      AI 사주 질문 만들기
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="secondary"
+                    data-icon="inline-start"
+                  >
+                    <Link href={GUIDE_INDEX_PATH}>
+                      <BookOpenText className="size-3.5" aria-hidden />
+                      사주 질문 가이드 보기
+                    </Link>
+                  </Button>
+                </div>
 
                 <div className="max-w-[25rem] space-y-1.5">
                   <p className="type-body-sm text-muted-foreground">
@@ -134,6 +157,13 @@ export function SajuQuestionIntro() {
                   </p>
                   <p className="type-caption text-[color:color-mix(in_oklch,var(--foreground)_58%,var(--muted-foreground)_42%)]">
                     <PrivacyNoteText />
+                    {" "}
+                    <Link
+                      href={PRIVACY_PATH}
+                      className="font-semibold text-primary underline-offset-4 hover:underline"
+                    >
+                      자세히 보기
+                    </Link>
                   </p>
                 </div>
               </div>
@@ -175,12 +205,33 @@ export function SajuQuestionIntro() {
         <div className="mx-auto w-full max-w-4xl rounded-[1.5rem] border border-border/70 bg-[color-mix(in_oklch,var(--card)_94%,var(--background)_6%)] p-3 shadow-[0_22px_50px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-[10px]">
           <p className="mb-2 px-2 text-center type-caption text-[color:color-mix(in_oklch,var(--foreground)_58%,var(--muted-foreground)_42%)] ">
             <PrivacyNoteText />
-          </p>
-          <Button asChild size="lg" className="w-full">
-            <Link href={FORM_STEP_PATHS.mode} scroll={true}>
-              AI 사주 질문 만들기
+            {" "}
+            <Link
+              href={PRIVACY_PATH}
+              className="font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              자세히 보기
             </Link>
-          </Button>
+          </p>
+          <div className="flex flex-col gap-2">
+            <Button asChild size="lg" className="w-full">
+              <Link href={FORM_STEP_PATHS.mode} scroll={true}>
+                AI 사주 질문 만들기
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="sm"
+              variant="ghost"
+              data-icon="inline-start"
+              className="w-full"
+            >
+              <Link href={GUIDE_INDEX_PATH}>
+                <BookOpenText className="size-3.5" aria-hidden />
+                사주 질문 가이드 보기
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </>
