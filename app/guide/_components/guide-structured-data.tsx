@@ -6,7 +6,7 @@ import {
   GUIDE_PAGES,
   type GuidePage,
 } from "@/shared/config/guides";
-import { getAbsoluteUrl, SITE_NAME } from "@/shared/config/site";
+import { getAbsoluteUrl, SITE_NAME, SOCIAL_IMAGE } from "@/shared/config/site";
 import { JsonLd } from "@/shared/ui/json-ld";
 
 export function GuideIndexStructuredData() {
@@ -60,10 +60,17 @@ export function GuideIndexStructuredData() {
 
 type GuideArticleStructuredDataProps = {
   guide: GuidePage;
+  faqItems?: readonly GuideFaqItem[];
+};
+
+type GuideFaqItem = {
+  question: string;
+  answer: string;
 };
 
 export function GuideArticleStructuredData({
   guide,
+  faqItems = [],
 }: GuideArticleStructuredDataProps) {
   const structuredData = {
     "@context": "https://schema.org",
@@ -96,6 +103,7 @@ export function GuideArticleStructuredData({
         headline: guide.title,
         description: guide.description,
         url: getAbsoluteUrl(guide.path),
+        image: getAbsoluteUrl(SOCIAL_IMAGE.url),
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": getAbsoluteUrl(guide.path),
@@ -114,6 +122,21 @@ export function GuideArticleStructuredData({
           url: getAbsoluteUrl("/"),
         },
       },
+      ...(faqItems.length > 0
+        ? [
+            {
+              "@type": "FAQPage",
+              mainEntity: faqItems.map((item) => ({
+                "@type": "Question",
+                name: item.question,
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: item.answer,
+                },
+              })),
+            },
+          ]
+        : []),
     ],
   };
 

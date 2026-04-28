@@ -9,7 +9,7 @@ import {
   GUIDE_INDEX_PATH,
   LOVE_SAJU_PROMPT_GUIDE,
 } from "@/shared/config/guides";
-import { SITE_NAME } from "@/shared/config/site";
+import { SITE_NAME, SOCIAL_IMAGE } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
 
 const GUIDE = LOVE_SAJU_PROMPT_GUIDE;
@@ -53,6 +53,29 @@ const EXAMPLE_PROMPT = `아래 정보를 바탕으로 연애운과 관계 흐름
 
 사주 해석은 참고로만 보고 싶습니다. 단정하지 말고 가능성과 주의점을 균형 있게 설명해 주세요.`;
 
+const FAQ_ITEMS = [
+  {
+    question: "상대의 출생 시간을 몰라도 연애운 질문을 만들 수 있나요?",
+    answer:
+      "가능합니다. 상대 출생 시간을 모르면 모른다고 적고, 대신 현재 관계 상태와 반복되는 갈등, 알고 싶은 질문을 구체적으로 적는 편이 좋습니다.",
+  },
+  {
+    question: "연애운과 궁합을 한 번에 물어봐도 되나요?",
+    answer:
+      "한 번에 묻기보다는 먼저 현재 관계의 흐름을 묻고, 그다음 궁합이나 결혼 가능성처럼 세부 주제로 나누면 답변이 더 선명해집니다.",
+  },
+  {
+    question: "재회 고민은 어떻게 적어야 하나요?",
+    answer:
+      "이별 시점, 연락 빈도, 갈등 원인, 본인이 원하는 결론을 함께 적어야 합니다. 단순히 재회 가능성만 묻기보다 주의할 행동과 기다릴 신호를 같이 요청하는 것이 좋습니다.",
+  },
+  {
+    question: "AI 답변을 그대로 믿어도 되나요?",
+    answer:
+      "사주와 AI 답변은 참고 자료로 보는 것이 안전합니다. 중요한 관계 결정은 실제 대화, 상대의 행동, 본인의 기준을 함께 놓고 판단해야 합니다.",
+  },
+];
+
 export const metadata: Metadata = {
   title: GUIDE.title,
   description: GUIDE.description,
@@ -64,13 +87,14 @@ export const metadata: Metadata = {
     description: GUIDE.description,
     url: GUIDE.path,
     type: "article",
+    images: [SOCIAL_IMAGE],
   },
 };
 
 export default function LoveSajuPromptGuidePage() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 md:px-8 md:py-12">
-      <GuideArticleStructuredData guide={GUIDE} />
+      <GuideArticleStructuredData guide={GUIDE} faqItems={FAQ_ITEMS} />
       <GuideBreadcrumb currentTitle={GUIDE.title} />
 
       <article className="mx-auto w-full max-w-4xl">
@@ -207,6 +231,37 @@ export default function LoveSajuPromptGuidePage() {
               </Link>
             </Button>
           </div>
+        </section>
+
+        <section className="mt-10 border-t border-border/70 pt-8">
+          <div className="max-w-2xl space-y-3">
+            <p className="type-caption font-semibold tracking-[0.08em] text-primary/80">
+              FAQ
+            </p>
+            <h2 className="type-title-md font-semibold text-foreground">
+              연애운 사주 질문을 만들 때 자주 묻는 질문
+            </h2>
+            <p className="type-body text-muted-foreground">
+              관계 질문은 상대 정보보다 현재 상황과 궁금한 초점이 중요합니다.
+              아래 기준을 참고해 한 번에 하나의 질문으로 좁혀 보세요.
+            </p>
+          </div>
+
+          <dl className="mt-6 grid gap-4">
+            {FAQ_ITEMS.map((item) => (
+              <div
+                key={item.question}
+                className="rounded-[1.25rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_76%,var(--card)_24%)] p-5"
+              >
+                <dt className="type-title-sm font-semibold text-foreground">
+                  {item.question}
+                </dt>
+                <dd className="mt-2 type-body-sm text-muted-foreground">
+                  {item.answer}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </section>
       </article>
     </main>

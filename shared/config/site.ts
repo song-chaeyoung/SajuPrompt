@@ -1,7 +1,14 @@
 export const SITE_NAME = "사주질문지";
 
 export const SITE_DESCRIPTION =
-  "생년월일과 고민 맥락을 바탕으로 ChatGPT, Gemini, Claude에 붙여 넣을 AI 사주 질문 프롬프트를 자동 생성합니다.";
+  "생년월일, 출생 시간, 고민 맥락을 정리해 ChatGPT, Gemini, Claude에 바로 붙여 넣을 수 있는 AI 사주 질문 프롬프트를 자동 생성합니다.";
+
+export const SOCIAL_IMAGE = {
+  url: "/metaimage.png",
+  width: 1731,
+  height: 909,
+  alt: "사주질문지 공유 이미지",
+} as const;
 
 const LOCAL_SITE_URL = "http://localhost:3000";
 

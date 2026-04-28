@@ -6,18 +6,31 @@ import { ThemeToaster } from "@/features/toggle-theme/ui/theme-toaster";
 import { ThemeToggle } from "@/features/toggle-theme/ui/theme-toggle";
 import {
   getSiteUrl,
+  SOCIAL_IMAGE,
   SITE_DESCRIPTION,
   SITE_NAME,
 } from "@/shared/config/site";
 
 import "./globals.css";
 
-const socialImage = {
-  url: "/metaimage.png",
-  width: 1731,
-  height: 909,
-  alt: "사주질문지 공유 이미지",
-};
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+const naverSiteVerification = process.env.NAVER_SITE_VERIFICATION?.trim();
+
+const verification =
+  googleSiteVerification || naverSiteVerification
+    ? {
+        ...(googleSiteVerification
+          ? { google: googleSiteVerification }
+          : {}),
+        ...(naverSiteVerification
+          ? {
+              other: {
+                "naver-site-verification": naverSiteVerification,
+              },
+            }
+          : {}),
+      }
+    : undefined;
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -27,6 +40,7 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  ...(verification ? { verification } : {}),
   keywords: [
     "사주질문지",
     "사주 질문 생성",
@@ -50,14 +64,14 @@ export const metadata: Metadata = {
     url: "/",
     locale: "ko_KR",
     siteName: SITE_NAME,
-    images: [socialImage],
+    images: [SOCIAL_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description:
       "ChatGPT, Gemini, Claude에 붙여 넣을 AI 사주 질문 프롬프트를 자동으로 만들어 드립니다.",
-    images: [socialImage],
+    images: [SOCIAL_IMAGE],
   },
 };
 
