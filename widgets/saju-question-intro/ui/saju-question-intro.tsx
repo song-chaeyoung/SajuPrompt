@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BookOpenText } from "lucide-react";
 
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
+import { GUIDE_INDEX_PATH } from "@/shared/config/guides";
 import { Button } from "@/shared/ui/button";
 import { HeroOrbitOrnament } from "@/shared/ui/hero-orbit-ornament";
 import {
@@ -18,7 +19,6 @@ const gowunBatang = Gowun_Batang({
 
 const PRIVACY_NOTE =
   "입력하신 정보는 질문문 생성에만 사용되며, 저장되거나 다른 용도로 사용되지 않습니다";
-const CHATGPT_SAJU_PROMPT_GUIDE_PATH = "/guide/chatgpt-saju-prompt";
 const PRIVACY_PATH = "/privacy";
 
 function PrivacyNoteText() {
@@ -143,9 +143,9 @@ export function SajuQuestionIntro() {
                     variant="secondary"
                     data-icon="inline-start"
                   >
-                    <Link href={CHATGPT_SAJU_PROMPT_GUIDE_PATH}>
+                    <Link href={GUIDE_INDEX_PATH}>
                       <BookOpenText className="size-3.5" aria-hidden />
-                      ChatGPT 사주 프롬프트 보기
+                      사주 질문 가이드 보기
                     </Link>
                   </Button>
                 </div>
@@ -226,9 +226,9 @@ export function SajuQuestionIntro() {
               data-icon="inline-start"
               className="w-full"
             >
-              <Link href={CHATGPT_SAJU_PROMPT_GUIDE_PATH}>
+              <Link href={GUIDE_INDEX_PATH}>
                 <BookOpenText className="size-3.5" aria-hidden />
-                ChatGPT 사주 프롬프트 보기
+                사주 질문 가이드 보기
               </Link>
             </Button>
           </div>
