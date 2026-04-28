@@ -28,10 +28,10 @@ export function GuideBreadcrumb({ currentTitle }: GuideBreadcrumbProps) {
             가이드
           </Link>
           <span aria-hidden>/</span>
-          <span>{currentTitle}</span>
+          <span aria-current="page">{currentTitle}</span>
         </>
       ) : (
-        <span>{GUIDE_INDEX_TITLE}</span>
+        <span aria-current="page">{GUIDE_INDEX_TITLE}</span>
       )}
     </nav>
   );

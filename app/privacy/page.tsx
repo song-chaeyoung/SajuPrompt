@@ -3,9 +3,8 @@ import Link from "next/link";
 import { ArrowRight, Database, RefreshCw, ShieldCheck } from "lucide-react";
 
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
+import { PRIVACY_PATH } from "@/shared/config/routes";
 import { Button } from "@/shared/ui/button";
-
-const PRIVACY_PATH = "/privacy";
 
 const PRIVACY_POINTS = [
   {
@@ -103,6 +102,9 @@ export default function PrivacyPage() {
                 요청으로 전달됩니다. 서버는 사주 구조를 계산한 뒤 OpenAI
                 API에 질문문 생성을 요청합니다. 현재 코드 기준으로 이 과정에서
                 입력값이나 생성 결과를 별도 데이터베이스에 저장하지 않습니다.
+                다만 외부 AI 제공자는 자체 정책에 따라 입력값이나 생성 결과를
+                로그 또는 보관할 수 있으므로 해당 제공자의 이용약관과 개인정보
+                처리방침을 확인해 주세요.
               </p>
             </div>
 

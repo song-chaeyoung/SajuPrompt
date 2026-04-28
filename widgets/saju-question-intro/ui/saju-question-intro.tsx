@@ -4,6 +4,7 @@ import { BookOpenText } from "lucide-react";
 
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import { GUIDE_INDEX_PATH } from "@/shared/config/guides";
+import { PRIVACY_PATH } from "@/shared/config/routes";
 import { Button } from "@/shared/ui/button";
 import { HeroOrbitOrnament } from "@/shared/ui/hero-orbit-ornament";
 import {
@@ -19,7 +20,6 @@ const gowunBatang = Gowun_Batang({
 
 const PRIVACY_NOTE =
   "입력하신 정보는 질문문 생성에만 사용되며, 저장되거나 다른 용도로 사용되지 않습니다";
-const PRIVACY_PATH = "/privacy";
 
 function PrivacyNoteText() {
   const breakIndex = PRIVACY_NOTE.indexOf(",");

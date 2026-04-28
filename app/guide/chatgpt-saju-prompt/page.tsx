@@ -9,11 +9,11 @@ import {
   CHATGPT_SAJU_PROMPT_GUIDE,
   GUIDE_INDEX_PATH,
 } from "@/shared/config/guides";
+import { PRIVACY_PATH } from "@/shared/config/routes";
 import { SITE_NAME } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
 
 const GUIDE = CHATGPT_SAJU_PROMPT_GUIDE;
-const PRIVACY_PATH = "/privacy";
 
 const REQUIRED_DETAILS = [
   "생년월일과 출생 시간",
