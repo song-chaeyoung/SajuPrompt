@@ -3,9 +3,16 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, ClipboardList, Sparkles } from "lucide-react";
 
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
+import { getAbsoluteUrl, SITE_NAME } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
 
 const GUIDE_PATH = "/guide/chatgpt-saju-prompt";
+const GUIDE_TITLE = "ChatGPT 사주 질문 프롬프트 작성법";
+const GUIDE_DESCRIPTION =
+  "ChatGPT 사주 질문을 더 정확하게 만들기 위한 정보, 질문 구조, 예시 프롬프트를 정리했습니다.";
+const GUIDE_DISPLAY_DATE = "2026년 4월 27일";
+const GUIDE_PUBLISHED_DATE = "2026-04-27T00:00:00+09:00";
+const GUIDE_MODIFIED_DATE = "2026-04-27T00:00:00+09:00";
 const PRIVACY_PATH = "/privacy";
 
 const REQUIRED_DETAILS = [
@@ -69,14 +76,13 @@ const EXAMPLE_PROMPT = `아래 정보를 바탕으로 사주를 참고해 지금
 단정적으로 말하기보다 가능성과 주의점을 균형 있게 설명해 주세요.`;
 
 export const metadata: Metadata = {
-  title: "ChatGPT 사주 질문 프롬프트 작성법",
-  description:
-    "ChatGPT 사주 질문을 더 정확하게 만들기 위한 정보, 질문 구조, 예시 프롬프트를 정리했습니다.",
+  title: GUIDE_TITLE,
+  description: GUIDE_DESCRIPTION,
   alternates: {
     canonical: GUIDE_PATH,
   },
   openGraph: {
-    title: "ChatGPT 사주 질문 프롬프트 작성법",
+    title: GUIDE_TITLE,
     description:
       "생년월일, 출생 시간, 고민 맥락을 정리해 AI가 답하기 쉬운 사주 질문 프롬프트를 만드는 방법입니다.",
     url: GUIDE_PATH,
@@ -84,10 +90,76 @@ export const metadata: Metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "홈",
+          item: getAbsoluteUrl("/"),
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: GUIDE_TITLE,
+          item: getAbsoluteUrl(GUIDE_PATH),
+        },
+      ],
+    },
+    {
+      "@type": "Article",
+      headline: GUIDE_TITLE,
+      description: GUIDE_DESCRIPTION,
+      url: getAbsoluteUrl(GUIDE_PATH),
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": getAbsoluteUrl(GUIDE_PATH),
+      },
+      datePublished: GUIDE_PUBLISHED_DATE,
+      dateModified: GUIDE_MODIFIED_DATE,
+      inLanguage: "ko-KR",
+      author: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        url: getAbsoluteUrl("/"),
+      },
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        url: getAbsoluteUrl("/"),
+      },
+    },
+  ],
+};
+
 export default function ChatGptSajuPromptGuidePage() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 md:px-8 md:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+        }}
+      />
       <article className="mx-auto w-full max-w-4xl">
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-6 flex flex-wrap items-center gap-2 type-body-sm text-muted-foreground"
+        >
+          <Link
+            href="/"
+            className="font-semibold text-foreground underline-offset-4 hover:underline"
+          >
+            홈
+          </Link>
+          <span aria-hidden>/</span>
+          <span>{GUIDE_TITLE}</span>
+        </nav>
+
         <header className="grid gap-8 pb-10 md:grid-cols-[minmax(0,1fr)_18rem] md:items-end md:pb-14">
           <div className="space-y-5">
             <div className="inline-flex items-center gap-3">
@@ -108,6 +180,10 @@ export default function ChatGptSajuPromptGuidePage() {
                 정리됩니다.
               </p>
             </div>
+
+            <p className="type-body-sm text-muted-foreground">
+              {SITE_NAME} · 최종 업데이트 {GUIDE_DISPLAY_DATE}
+            </p>
 
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button asChild size="lg" data-icon="inline-end">
