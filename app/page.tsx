@@ -6,7 +6,7 @@ import { SoftwareApplicationStructuredData } from "@/shared/ui/software-applicat
 export const metadata: Metadata = {
   title: "AI 사주 질문 도우미",
   description:
-    "생년월일, 출생 시간, 고민 맥락을 입력하면 ChatGPT, Gemini, Claude에 붙여 넣을 AI 사주 질문 프롬프트를 단계별로 정리합니다.",
+    "생년월일, 출생 시간, 고민을 입력하면 ChatGPT, Gemini, Claude에 붙여 넣을 AI 사주 질문 프롬프트를 단계별로 정리합니다.",
   alternates: {
     canonical: "/",
   },
