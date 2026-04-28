@@ -1,7 +1,7 @@
 export const GUIDE_INDEX_PATH = "/guide";
 export const GUIDE_INDEX_TITLE = "AI 사주 질문 가이드";
 export const GUIDE_INDEX_DESCRIPTION =
-  "ChatGPT, Gemini, Claude에 사주를 더 정확하게 물어보기 위한 질문 구조와 예시 프롬프트를 모았습니다.";
+  "ChatGPT, Gemini, Claude에 사주를 더 정확하게 물어보기 위한 질문 구조, 상황별 예시, 바로 복사해 쓸 프롬프트 작성법을 모았습니다.";
 export const GUIDE_INDEX_MODIFIED_AT = "2026-04-28T00:00:00+09:00";
 
 export const CHATGPT_SAJU_PROMPT_GUIDE = {
@@ -9,7 +9,7 @@ export const CHATGPT_SAJU_PROMPT_GUIDE = {
   title: "ChatGPT 사주 질문 프롬프트 작성법",
   shortTitle: "ChatGPT 사주 질문",
   description:
-    "ChatGPT 사주 질문을 더 정확하게 만들기 위한 정보, 질문 구조, 예시 프롬프트를 정리했습니다.",
+    "ChatGPT 사주 질문을 더 정확하게 만들기 위해 필요한 생년월일, 출생 시간, 고민 맥락, 답변 형식과 예시 프롬프트를 한 번에 정리했습니다.",
   excerpt:
     "생년월일, 출생 시간, 고민 맥락을 한 번에 정리해 AI가 답하기 쉬운 사주 질문을 만드는 기본 가이드입니다.",
   primaryKeyword: "ChatGPT 사주 질문",
@@ -25,7 +25,7 @@ export const LOVE_SAJU_PROMPT_GUIDE = {
   title: "연애운 사주 질문 프롬프트 예시",
   shortTitle: "연애운 질문 예시",
   description:
-    "ChatGPT에 연애운과 관계 고민을 물어볼 때 필요한 정보, 질문 구조, 예시 프롬프트를 정리했습니다.",
+    "ChatGPT에 연애운과 관계 고민을 물어볼 때 필요한 관계 상태, 상대 정보, 질문 초점, 답변 방식과 예시 프롬프트를 한 번에 정리했습니다.",
   excerpt:
     "썸, 재회, 장기 연애, 결혼 고민처럼 관계 상황을 구체적으로 적어 연애운 답변을 더 실용적으로 받는 방법입니다.",
   primaryKeyword: "연애운 사주 질문",
@@ -41,7 +41,7 @@ export const CAREER_SAJU_PROMPT_GUIDE = {
   title: "직업운 사주 질문 프롬프트 예시",
   shortTitle: "직업운 질문 예시",
   description:
-    "이직, 커리어 전환, 사업 고민을 ChatGPT에 물어볼 때 필요한 사주 질문 프롬프트 예시를 정리했습니다.",
+    "이직, 커리어 전환, 사업 고민을 ChatGPT에 물어볼 때 현실 조건과 사주 흐름을 함께 검토할 수 있는 질문 프롬프트 예시와 작성 기준입니다.",
   excerpt:
     "이직 시기, 직무 선택, 사업 준비처럼 현실 조건과 사주 흐름을 함께 검토할 수 있는 직업운 질문 구조입니다.",
   primaryKeyword: "직업운 사주 질문",

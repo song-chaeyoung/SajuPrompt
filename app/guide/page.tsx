@@ -11,6 +11,7 @@ import {
   GUIDE_INDEX_TITLE,
   GUIDE_PAGES,
 } from "@/shared/config/guides";
+import { SOCIAL_IMAGE } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export const metadata: Metadata = {
     description: GUIDE_INDEX_DESCRIPTION,
     url: GUIDE_INDEX_PATH,
     type: "website",
+    images: [SOCIAL_IMAGE],
   },
 };
 

@@ -9,7 +9,7 @@ import {
   CAREER_SAJU_PROMPT_GUIDE,
   GUIDE_INDEX_PATH,
 } from "@/shared/config/guides";
-import { SITE_NAME } from "@/shared/config/site";
+import { SITE_NAME, SOCIAL_IMAGE } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
 
 const GUIDE = CAREER_SAJU_PROMPT_GUIDE;
@@ -53,6 +53,29 @@ const EXAMPLE_PROMPT = `아래 정보를 바탕으로 직업운과 커리어 선
 
 사주 해석은 참고로만 보고 싶습니다. 결정은 현실 조건과 함께 판단할 수 있게 균형 있게 설명해 주세요.`;
 
+const FAQ_ITEMS = [
+  {
+    question: "이직 시기만 물어봐도 충분한가요?",
+    answer:
+      "시기만 묻기보다 현재 직무, 선택지, 준비 기간, 연봉이나 생활 조건을 함께 적는 편이 좋습니다. 그래야 답변이 현실적인 비교로 이어집니다.",
+  },
+  {
+    question: "사업운 질문은 어떤 정보를 넣어야 하나요?",
+    answer:
+      "업종, 준비 단계, 자본 상황, 같이 일할 사람, 가장 걱정되는 리스크를 함께 적어 주세요. 단순한 성공 가능성보다 준비 순서와 주의점을 묻는 것이 유용합니다.",
+  },
+  {
+    question: "직업운과 재물운을 같이 물어봐도 되나요?",
+    answer:
+      "같이 물을 수 있지만 질문의 중심을 하나로 정해야 합니다. 예를 들어 이직으로 수입이 바뀌는 문제처럼 직업 선택과 돈의 영향이 연결될 때 함께 묻는 방식이 좋습니다.",
+  },
+  {
+    question: "AI 답변을 커리어 결정에 바로 적용해도 되나요?",
+    answer:
+      "AI 사주 답변은 참고 자료입니다. 실제 결정은 계약 조건, 시장 상황, 건강, 가족 여건, 전문가 조언과 함께 검토하는 것이 안전합니다.",
+  },
+];
+
 export const metadata: Metadata = {
   title: GUIDE.title,
   description: GUIDE.description,
@@ -64,13 +87,14 @@ export const metadata: Metadata = {
     description: GUIDE.description,
     url: GUIDE.path,
     type: "article",
+    images: [SOCIAL_IMAGE],
   },
 };
 
 export default function CareerSajuPromptGuidePage() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 md:px-8 md:py-12">
-      <GuideArticleStructuredData guide={GUIDE} />
+      <GuideArticleStructuredData guide={GUIDE} faqItems={FAQ_ITEMS} />
       <GuideBreadcrumb currentTitle={GUIDE.title} />
 
       <article className="mx-auto w-full max-w-4xl">
@@ -207,6 +231,37 @@ export default function CareerSajuPromptGuidePage() {
               </Link>
             </Button>
           </div>
+        </section>
+
+        <section className="mt-10 border-t border-border/70 pt-8">
+          <div className="max-w-2xl space-y-3">
+            <p className="type-caption font-semibold tracking-[0.08em] text-primary/80">
+              FAQ
+            </p>
+            <h2 className="type-title-md font-semibold text-foreground">
+              직업운 사주 질문을 만들 때 자주 묻는 질문
+            </h2>
+            <p className="type-body text-muted-foreground">
+              커리어 질문은 실제 선택지와 제약을 함께 적을수록 답변이
+              구체적입니다. 아래 기준으로 질문 범위를 좁혀 보세요.
+            </p>
+          </div>
+
+          <dl className="mt-6 grid gap-4">
+            {FAQ_ITEMS.map((item) => (
+              <div
+                key={item.question}
+                className="rounded-[1.25rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_76%,var(--card)_24%)] p-5"
+              >
+                <dt className="type-title-sm font-semibold text-foreground">
+                  {item.question}
+                </dt>
+                <dd className="mt-2 type-body-sm text-muted-foreground">
+                  {item.answer}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </section>
       </article>
     </main>

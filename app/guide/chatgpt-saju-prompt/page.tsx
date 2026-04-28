@@ -10,7 +10,7 @@ import {
   GUIDE_INDEX_PATH,
 } from "@/shared/config/guides";
 import { PRIVACY_PATH } from "@/shared/config/routes";
-import { SITE_NAME } from "@/shared/config/site";
+import { SITE_NAME, SOCIAL_IMAGE } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
 
 const GUIDE = CHATGPT_SAJU_PROMPT_GUIDE;
@@ -83,17 +83,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: GUIDE.title,
-    description:
-      "생년월일, 출생 시간, 고민 맥락을 정리해 AI가 답하기 쉬운 사주 질문 프롬프트를 만드는 방법입니다.",
+    description: GUIDE.description,
     url: GUIDE.path,
     type: "article",
+    images: [SOCIAL_IMAGE],
   },
 };
 
 export default function ChatGptSajuPromptGuidePage() {
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-8 sm:px-6 md:px-8 md:py-12">
-      <GuideArticleStructuredData guide={GUIDE} />
+      <GuideArticleStructuredData guide={GUIDE} faqItems={FAQ_ITEMS} />
       <GuideBreadcrumb currentTitle={GUIDE.title} />
 
       <article className="mx-auto w-full max-w-4xl">

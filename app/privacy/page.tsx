@@ -30,7 +30,7 @@ const PRIVACY_POINTS = [
 export const metadata: Metadata = {
   title: "개인정보 처리 안내",
   description:
-    "사주질문지에서 생년월일, 출생 시간, 고민 맥락을 질문문 생성에 어떻게 사용하는지 안내합니다.",
+    "사주질문지에서 생년월일, 출생 시간, 출생지, 고민 맥락을 AI 사주 질문문 생성에 어떻게 사용하고 저장하지 않는지, 초기화 기준까지 안내합니다.",
   alternates: {
     canonical: PRIVACY_PATH,
   },
