@@ -50,11 +50,8 @@ function DialogOverlay({
 function DialogContent({
   className,
   children,
-  showCloseButton = true,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content> & {
-  showCloseButton?: boolean
-}) {
+}: React.ComponentProps<typeof DialogPrimitive.Content>) {
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -67,21 +64,35 @@ function DialogContent({
         {...props}
       >
         {children}
-        {showCloseButton && (
-          <DialogPrimitive.Close data-slot="dialog-close" asChild>
-            <Button
-              variant="ghost"
-              className="absolute top-2 right-2"
-              size="icon-sm"
-            >
-              <XIcon
-              />
-              <span className="sr-only">Close</span>
-            </Button>
-          </DialogPrimitive.Close>
-        )}
       </DialogPrimitive.Content>
     </DialogPortal>
+  )
+}
+
+type DialogCloseIconButtonProps = Omit<
+  React.ComponentProps<typeof Button>,
+  "asChild" | "children"
+> & {
+  label?: string
+}
+
+function DialogCloseIconButton({
+  className,
+  label = "Close",
+  ...props
+}: DialogCloseIconButtonProps) {
+  return (
+    <DialogPrimitive.Close data-slot="dialog-close-icon-button" asChild>
+      <Button
+        variant="ghost"
+        className={cn("absolute top-2 right-2", className)}
+        size="icon-sm"
+        {...props}
+      >
+        <XIcon />
+        <span className="sr-only">{label}</span>
+      </Button>
+    </DialogPrimitive.Close>
   )
 }
 
@@ -97,12 +108,9 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 function DialogFooter({
   className,
-  showCloseButton = false,
   children,
   ...props
-}: React.ComponentProps<"div"> & {
-  showCloseButton?: boolean
-}) {
+}: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-footer"
@@ -113,12 +121,25 @@ function DialogFooter({
       {...props}
     >
       {children}
-      {showCloseButton && (
-        <DialogPrimitive.Close asChild>
-          <Button variant="outline">Close</Button>
-        </DialogPrimitive.Close>
-      )}
     </div>
+  )
+}
+
+type DialogFooterCloseButtonProps = Omit<
+  React.ComponentProps<typeof Button>,
+  "asChild"
+>
+
+function DialogFooterCloseButton({
+  children = "Close",
+  ...props
+}: DialogFooterCloseButtonProps) {
+  return (
+    <DialogPrimitive.Close data-slot="dialog-footer-close-button" asChild>
+      <Button variant="outline" {...props}>
+        {children}
+      </Button>
+    </DialogPrimitive.Close>
   )
 }
 
@@ -157,9 +178,11 @@ function DialogDescription({
 export {
   Dialog,
   DialogClose,
+  DialogCloseIconButton,
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogFooterCloseButton,
   DialogHeader,
   DialogOverlay,
   DialogPortal,
