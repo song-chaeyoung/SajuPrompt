@@ -5,7 +5,11 @@ import { useCallback, useEffect, useState } from "react";
 import { useSajuQuestionPlannerStore } from "@/features/plan-saju-question/model/saju-question-planner.store";
 import { hasCoreRequiredFields } from "@/shared/lib/saju-question-form/validation";
 import { showErrorToast, showSuccessToast } from "@/shared/lib/toast";
-import type { AnalysisMode } from "@/shared/types/saju-question-form";
+import type {
+  AnalysisMode,
+  BirthProfile,
+  GoalInfo,
+} from "@/shared/types/saju-question-form";
 
 type GenerationResponse = {
   question?: string;
@@ -53,6 +57,22 @@ function getPlannerFormSnapshot() {
   return useSajuQuestionPlannerStore.getState().form;
 }
 
+function getPlannerActionsSnapshot() {
+  const state = useSajuQuestionPlannerStore.getState();
+
+  return {
+    clearGenerationError: state.clearGenerationError,
+    reset: state.reset,
+    setGenerationError: state.setGenerationError,
+    setGenerationSuccess: state.setGenerationSuccess,
+    setMode: state.setMode,
+    startGeneration: state.startGeneration,
+    updateGoal: state.updateGoal,
+    updateMe: state.updateMe,
+    updatePartner: state.updatePartner,
+  };
+}
+
 // Event handler only: validates against the latest store snapshot.
 function hasValidGenerationInputSnapshot() {
   return hasCoreRequiredFields(getPlannerFormSnapshot());
@@ -60,13 +80,13 @@ function hasValidGenerationInputSnapshot() {
 
 export function useSajuQuestionModeState() {
   const mode = useSajuQuestionPlannerStore((state) => state.form.mode);
-  const setMode = useSajuQuestionPlannerStore((state) => state.setMode);
 
   const handleModeSelect = useCallback(
     (nextMode: AnalysisMode) => {
+      const { setMode } = getPlannerActionsSnapshot();
       setMode(nextMode);
     },
-    [setMode],
+    [],
   );
 
   return {
@@ -77,11 +97,18 @@ export function useSajuQuestionModeState() {
 
 export function useSajuQuestionFormState() {
   const form = useSajuQuestionPlannerStore((state) => state.form);
-  const updateMe = useSajuQuestionPlannerStore((state) => state.updateMe);
-  const updatePartner = useSajuQuestionPlannerStore(
-    (state) => state.updatePartner,
-  );
-  const updateGoal = useSajuQuestionPlannerStore((state) => state.updateGoal);
+  const updateMe = useCallback((patch: Partial<BirthProfile>) => {
+    const { updateMe: applyMePatch } = getPlannerActionsSnapshot();
+    applyMePatch(patch);
+  }, []);
+  const updatePartner = useCallback((patch: Partial<BirthProfile>) => {
+    const { updatePartner: applyPartnerPatch } = getPlannerActionsSnapshot();
+    applyPartnerPatch(patch);
+  }, []);
+  const updateGoal = useCallback((patch: Partial<GoalInfo>) => {
+    const { updateGoal: applyGoalPatch } = getPlannerActionsSnapshot();
+    applyGoalPatch(patch);
+  }, []);
 
   return {
     form,
@@ -113,20 +140,9 @@ export function useSajuQuestionGenerationState() {
 }
 
 export function useSajuQuestionGenerationActions() {
-  const startGeneration = useSajuQuestionPlannerStore(
-    (state) => state.startGeneration,
-  );
-  const setGenerationSuccess = useSajuQuestionPlannerStore(
-    (state) => state.setGenerationSuccess,
-  );
-  const setGenerationError = useSajuQuestionPlannerStore(
-    (state) => state.setGenerationError,
-  );
-  const clearGenerationError = useSajuQuestionPlannerStore(
-    (state) => state.clearGenerationError,
-  );
-
   const handlePrepareGeneration = useCallback(() => {
+    const { clearGenerationError } = getPlannerActionsSnapshot();
+
     if (hasValidGenerationInputSnapshot()) {
       clearGenerationError();
       return true;
@@ -139,7 +155,7 @@ export function useSajuQuestionGenerationActions() {
     });
 
     return false;
-  }, [clearGenerationError]);
+  }, []);
 
   const handleGenerateQuestion = useCallback(
     async (options: GenerateQuestionOptions = {}) => {
@@ -151,6 +167,8 @@ export function useSajuQuestionGenerationActions() {
       const minDurationPromise = waitForMinimumDuration(
         Math.max(0, options.minDurationMs ?? 0),
       );
+      const { setGenerationError, setGenerationSuccess, startGeneration } =
+        getPlannerActionsSnapshot();
 
       startGeneration();
 
@@ -196,12 +214,7 @@ export function useSajuQuestionGenerationActions() {
         return false;
       }
     },
-    [
-      handlePrepareGeneration,
-      setGenerationError,
-      setGenerationSuccess,
-      startGeneration,
-    ],
+    [handlePrepareGeneration],
   );
 
   return {
@@ -211,11 +224,10 @@ export function useSajuQuestionGenerationActions() {
 }
 
 export function useSajuQuestionResetAction() {
-  const reset = useSajuQuestionPlannerStore((state) => state.reset);
-
   return useCallback(() => {
+    const { reset } = getPlannerActionsSnapshot();
     reset();
-  }, [reset]);
+  }, []);
 }
 
 export function useSajuQuestionCopy(generatedQuestion: string) {
