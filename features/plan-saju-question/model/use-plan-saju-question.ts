@@ -98,16 +98,16 @@ export function useSajuQuestionModeState() {
 export function useSajuQuestionFormState() {
   const form = useSajuQuestionPlannerStore((state) => state.form);
   const updateMe = useCallback((patch: Partial<BirthProfile>) => {
-    const { updateMe } = getPlannerActionsSnapshot();
-    updateMe(patch);
+    const { updateMe: applyMePatch } = getPlannerActionsSnapshot();
+    applyMePatch(patch);
   }, []);
   const updatePartner = useCallback((patch: Partial<BirthProfile>) => {
-    const { updatePartner } = getPlannerActionsSnapshot();
-    updatePartner(patch);
+    const { updatePartner: applyPartnerPatch } = getPlannerActionsSnapshot();
+    applyPartnerPatch(patch);
   }, []);
   const updateGoal = useCallback((patch: Partial<GoalInfo>) => {
-    const { updateGoal } = getPlannerActionsSnapshot();
-    updateGoal(patch);
+    const { updateGoal: applyGoalPatch } = getPlannerActionsSnapshot();
+    applyGoalPatch(patch);
   }, []);
 
   return {

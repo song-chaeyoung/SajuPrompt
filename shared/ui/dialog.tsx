@@ -89,7 +89,7 @@ function DialogCloseIconButton({
         size="icon-sm"
         {...props}
       >
-        <XIcon />
+        <XIcon aria-hidden="true" focusable="false" />
         <span className="sr-only">{label}</span>
       </Button>
     </DialogPrimitive.Close>
