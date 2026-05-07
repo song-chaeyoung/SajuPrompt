@@ -41,15 +41,47 @@ export const CHATGPT_SAJU_PROMPT_GUIDE = {
   title: "ChatGPT 사주 질문 프롬프트 작성법",
   shortTitle: "ChatGPT 사주 질문",
   description:
-    "ChatGPT 사주 질문을 더 정확하게 만들기 위해 필요한 생년월일, 출생 시간, 고민 맥락, 답변 형식과 예시 프롬프트를 한 번에 정리했습니다.",
+    "ChatGPT 사주 질문을 더 정확하게 만들기 위해 필요한 생년월일, 출생 시간, 고민 맥락, 답변 형식과 챗GPT 사주 프롬프트 모음을 한 번에 정리했습니다.",
   excerpt:
-    "생년월일, 출생 시간, 고민 맥락을 한 번에 정리해 AI가 답하기 쉬운 사주 질문을 만드는 기본 가이드입니다.",
+    "생년월일, 출생 시간, 고민 맥락을 한 번에 정리해 AI가 답하기 쉬운 사주 질문과 챗GPT 사주 프롬프트 모음을 만드는 기본 가이드입니다.",
   primaryKeyword: "ChatGPT 사주 질문",
   intent: "처음 AI 사주 질문을 만드는 사용자를 위한 기본 구조",
   publishedAt: "2026-04-27T00:00:00+09:00",
   modifiedAt: "2026-05-07T00:00:00+09:00",
   displayDate: "2026년 5월 7일",
-  tags: ["기본 구조", "ChatGPT", "프롬프트"],
+  tags: ["기본 구조", "프롬프트 모음", "ChatGPT"],
+} as const;
+
+export const UNKNOWN_BIRTH_TIME_SAJU_QUESTION_GUIDE = {
+  path: "/guide/unknown-birth-time-saju-question",
+  title: "출생시간 모를 때 사주 질문",
+  shortTitle: "출생시간 미상 질문",
+  description:
+    "출생시간 모를 때 사주 질문을 어떻게 써야 하는지, 모른다고 명시하는 법과 생년월일만 있을 때 바로 쓸 수 있는 AI 질문 예시를 정리했습니다.",
+  excerpt:
+    "출생시간을 모를 때 추측하지 않고 AI에게 가능한 흐름과 주의점 중심으로 물어보는 질문 구조입니다.",
+  primaryKeyword: "출생시간 모를 때 사주 질문",
+  intent: "출생시간을 모르는 상태에서 AI 사주 질문을 안전하게 만들려는 사용자",
+  publishedAt: "2026-05-07T00:00:00+09:00",
+  modifiedAt: "2026-05-07T00:00:00+09:00",
+  displayDate: "2026년 5월 7일",
+  tags: ["출생시간 미상", "질문 예시", "AI 사주"],
+} as const;
+
+export const COMPATIBILITY_SAJU_QUESTION_EXAMPLES_GUIDE = {
+  path: "/guide/compatibility-saju-question-examples",
+  title: "궁합 사주 질문 예시",
+  shortTitle: "궁합 질문 예시",
+  description:
+    "궁합 사주 질문 예시를 썸, 연애, 재회, 결혼 고민별로 나누고 상대 출생시간을 모를 때 AI에게 어떻게 물어볼지 정리했습니다.",
+  excerpt:
+    "두 사람의 정보와 현재 관계 맥락을 함께 적어 궁합의 장점, 갈등 지점, 대화 조언을 묻는 질문 예시입니다.",
+  primaryKeyword: "궁합 사주 질문 예시",
+  intent: "궁합을 AI에게 구체적으로 묻고 관계 조언까지 받고 싶은 사용자",
+  publishedAt: "2026-05-07T00:00:00+09:00",
+  modifiedAt: "2026-05-07T00:00:00+09:00",
+  displayDate: "2026년 5월 7일",
+  tags: ["궁합", "관계 조언", "질문 예시"],
 } as const;
 
 export const LOVE_SAJU_PROMPT_GUIDE = {
@@ -87,6 +119,8 @@ export const CAREER_SAJU_PROMPT_GUIDE = {
 export const GUIDE_PAGES = [
   CHATGPT_SAJU_HOW_TO_GUIDE,
   AI_SAJU_QUESTION_LIST_GUIDE,
+  UNKNOWN_BIRTH_TIME_SAJU_QUESTION_GUIDE,
+  COMPATIBILITY_SAJU_QUESTION_EXAMPLES_GUIDE,
   CHATGPT_SAJU_PROMPT_GUIDE,
   LOVE_SAJU_PROMPT_GUIDE,
   CAREER_SAJU_PROMPT_GUIDE,

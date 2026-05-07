@@ -9,14 +9,26 @@ import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import {
   AI_SAJU_QUESTION_LIST_GUIDE,
   CHATGPT_SAJU_HOW_TO_GUIDE,
+  COMPATIBILITY_SAJU_QUESTION_EXAMPLES_GUIDE,
   GUIDE_INDEX_PATH,
+  UNKNOWN_BIRTH_TIME_SAJU_QUESTION_GUIDE,
 } from "@/shared/config/guides";
 import { SITE_NAME, SOCIAL_IMAGE } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
 
 const GUIDE = AI_SAJU_QUESTION_LIST_GUIDE;
 
-const QUESTION_GROUPS = [
+type QuestionGroup = {
+  title: string;
+  description: string;
+  prompts: string[];
+  relatedGuide?: {
+    href: string;
+    label: string;
+  };
+};
+
+const QUESTION_GROUPS: QuestionGroup[] = [
   {
     title: "기본 사주 질문",
     description:
@@ -46,6 +58,10 @@ const QUESTION_GROUPS = [
       "상대의 출생 시간은 모릅니다. 가능한 범위에서 관계 흐름과 서로 보완할 수 있는 부분을 중심으로 설명해 주세요.",
       "결혼을 고민하는 관계입니다. 궁합을 참고하되 생활 방식, 돈 관리, 감정 표현에서 확인해야 할 현실 조건도 함께 알려주세요.",
     ],
+    relatedGuide: {
+      href: COMPATIBILITY_SAJU_QUESTION_EXAMPLES_GUIDE.path,
+      label: "궁합 사주 질문 예시 더 보기",
+    },
   },
   {
     title: "직업운과 이직운 사주 질문",
@@ -76,6 +92,10 @@ const QUESTION_GROUPS = [
       "시간 정보가 없어서 사주 해석이 달라질 수 있다는 점을 전제로, 단정하지 말고 여러 가능성을 나눠 알려주세요.",
       "정확한 사주 풀이보다 현재 고민을 정리하는 참고 자료로 보고 싶습니다. 현실적으로 확인할 행동과 선택지를 함께 알려주세요.",
     ],
+    relatedGuide: {
+      href: UNKNOWN_BIRTH_TIME_SAJU_QUESTION_GUIDE.path,
+      label: "출생시간 모를 때 사주 질문 더 보기",
+    },
   },
 ];
 
@@ -242,6 +262,16 @@ export default function AiSajuQuestionListGuidePage() {
                   </li>
                 ))}
               </ol>
+
+              {group.relatedGuide ? (
+                <Link
+                  href={group.relatedGuide.href}
+                  className="mt-5 inline-flex items-center gap-2 type-body-sm font-semibold text-foreground underline-offset-4 hover:underline"
+                >
+                  {group.relatedGuide.label}
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              ) : null}
             </section>
           ))}
         </section>

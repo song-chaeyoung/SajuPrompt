@@ -7,6 +7,7 @@ import { RelatedGuideLinks } from "@/app/guide/_components/related-guide-links";
 import { GuideArticleStructuredData } from "@/app/guide/_components/guide-structured-data";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import {
+  AI_SAJU_QUESTION_LIST_GUIDE,
   CHATGPT_SAJU_HOW_TO_GUIDE,
   CHATGPT_SAJU_PROMPT_GUIDE,
   GUIDE_INDEX_PATH,
@@ -201,7 +202,7 @@ export default function ChatGptSajuPromptGuidePage() {
         <section className="mt-8 grid gap-5 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start">
           <div className="space-y-4">
             <h2 className="type-title-md font-semibold text-foreground">
-              질문을 더 좋게 만드는 기준
+              챗GPT 사주 프롬프트 모음은 질문 구조를 나눠 쓰는 것이 핵심입니다
             </h2>
             <div className="space-y-3 type-body text-muted-foreground">
               <p>
@@ -209,6 +210,18 @@ export default function ChatGptSajuPromptGuidePage() {
                 들어 “올해 운세 봐줘”보다 “이직을 준비 중인데 직업운과
                 조심할 시기를 알려줘”처럼 목적을 좁히면 답변이 더 실용적으로
                 정리됩니다.
+              </p>
+              <p>
+                챗GPT 사주 프롬프트 모음을 만들 때도 기본 사주, 연애운,
+                궁합, 직업운, 재물운처럼 주제를 나눠 두는 편이 좋습니다.
+                바로 복사할 문장을 더 보고 싶다면{" "}
+                <Link
+                  href={AI_SAJU_QUESTION_LIST_GUIDE.path}
+                  className="font-semibold text-foreground underline-offset-4 hover:underline"
+                >
+                  AI 사주 질문 리스트
+                </Link>
+                에서 상황별 예시를 확인할 수 있습니다.
               </p>
               <p>
                 사주 해석은 절대적인 결론이 아니라 참고 자료로 다루는 편이
