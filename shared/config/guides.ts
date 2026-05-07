@@ -2,7 +2,23 @@ export const GUIDE_INDEX_PATH = "/guide";
 export const GUIDE_INDEX_TITLE = "AI 사주 질문 가이드";
 export const GUIDE_INDEX_DESCRIPTION =
   "ChatGPT, Gemini, Claude에 사주를 더 정확하게 물어보기 위한 질문 구조, 상황별 예시, 바로 복사해 쓸 프롬프트 작성법을 모았습니다.";
-export const GUIDE_INDEX_MODIFIED_AT = "2026-04-28T00:00:00+09:00";
+export const GUIDE_INDEX_MODIFIED_AT = "2026-05-07T00:00:00+09:00";
+
+export const CHATGPT_SAJU_HOW_TO_GUIDE = {
+  path: "/guide/chatgpt-saju-how-to",
+  title: "챗지피티로 사주 보는 법",
+  shortTitle: "챗지피티 사주 보는 법",
+  description:
+    "챗지피티로 사주보는 법을 처음 찾는 분을 위해 생년월일, 출생 시간, 양력/음력 기준, 고민 맥락과 바로 복사할 질문 예시를 정리했습니다.",
+  excerpt:
+    "ChatGPT에 사주를 물어보기 전에 준비할 정보와 질문 순서를 정리해, 처음 쓰는 사람도 바로 따라 할 수 있는 기본 가이드입니다.",
+  primaryKeyword: "챗지피티로 사주 보는 법",
+  intent: "ChatGPT로 사주 질문을 처음 해보려는 사용자를 위한 절차형 가이드",
+  publishedAt: "2026-05-07T00:00:00+09:00",
+  modifiedAt: "2026-05-07T00:00:00+09:00",
+  displayDate: "2026년 5월 7일",
+  tags: ["챗지피티", "보는 법", "입문"],
+} as const;
 
 export const CHATGPT_SAJU_PROMPT_GUIDE = {
   path: "/guide/chatgpt-saju-prompt",
@@ -15,8 +31,8 @@ export const CHATGPT_SAJU_PROMPT_GUIDE = {
   primaryKeyword: "ChatGPT 사주 질문",
   intent: "처음 AI 사주 질문을 만드는 사용자를 위한 기본 구조",
   publishedAt: "2026-04-27T00:00:00+09:00",
-  modifiedAt: "2026-04-28T00:00:00+09:00",
-  displayDate: "2026년 4월 28일",
+  modifiedAt: "2026-05-07T00:00:00+09:00",
+  displayDate: "2026년 5월 7일",
   tags: ["기본 구조", "ChatGPT", "프롬프트"],
 } as const;
 
@@ -53,6 +69,7 @@ export const CAREER_SAJU_PROMPT_GUIDE = {
 } as const;
 
 export const GUIDE_PAGES = [
+  CHATGPT_SAJU_HOW_TO_GUIDE,
   CHATGPT_SAJU_PROMPT_GUIDE,
   LOVE_SAJU_PROMPT_GUIDE,
   CAREER_SAJU_PROMPT_GUIDE,

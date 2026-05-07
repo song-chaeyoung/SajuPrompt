@@ -6,6 +6,7 @@ import { GuideBreadcrumb } from "@/app/guide/_components/guide-breadcrumb";
 import { GuideArticleStructuredData } from "@/app/guide/_components/guide-structured-data";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import {
+  CHATGPT_SAJU_HOW_TO_GUIDE,
   CHATGPT_SAJU_PROMPT_GUIDE,
   GUIDE_INDEX_PATH,
 } from "@/shared/config/guides";
@@ -213,6 +214,17 @@ export default function ChatGptSajuPromptGuidePage() {
                 안전합니다. 질문문에도 단정 대신 가능성, 주의점, 실행 조언을
                 균형 있게 요청하는 문장을 넣는 것이 좋습니다.
               </p>
+              <p>
+                처음 ChatGPT에 사주를 물어보는 단계라면{" "}
+                <Link
+                  href={CHATGPT_SAJU_HOW_TO_GUIDE.path}
+                  className="font-semibold text-foreground underline-offset-4 hover:underline"
+                >
+                  챗지피티로 사주 보는 법
+                </Link>
+                을 먼저 확인한 뒤, 이 글의 프롬프트 구조로 질문을 더 구체화해
+                보세요.
+              </p>
             </div>
           </div>
 
@@ -290,6 +302,13 @@ export default function ChatGptSajuPromptGuidePage() {
             className="font-semibold text-foreground underline-offset-4 hover:underline"
           >
             가이드
+          </Link>
+          <span aria-hidden>·</span>
+          <Link
+            href={CHATGPT_SAJU_HOW_TO_GUIDE.path}
+            className="font-semibold text-foreground underline-offset-4 hover:underline"
+          >
+            챗지피티로 사주 보는 법
           </Link>
           <span aria-hidden>·</span>
           <Link
