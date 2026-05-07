@@ -20,6 +20,22 @@ export const CHATGPT_SAJU_HOW_TO_GUIDE = {
   tags: ["챗지피티", "보는 법", "입문"],
 } as const;
 
+export const AI_SAJU_QUESTION_LIST_GUIDE = {
+  path: "/guide/ai-saju-question-list",
+  title: "AI 사주 질문 리스트",
+  shortTitle: "AI 사주 질문 리스트",
+  description:
+    "ChatGPT, Gemini, Claude에 바로 붙여 넣기 좋은 AI 사주 질문 리스트를 기본 사주, 연애운, 궁합, 직업운, 재물운 상황별로 정리했습니다.",
+  excerpt:
+    "사주를 AI에게 물어볼 때 바로 활용할 수 있는 상황별 질문 예시와 질문을 더 정확하게 만드는 기준을 모았습니다.",
+  primaryKeyword: "AI 사주 질문 리스트",
+  intent: "AI 사주 질문 예시를 한 번에 훑고 바로 복사해 쓰려는 사용자",
+  publishedAt: "2026-05-07T00:00:00+09:00",
+  modifiedAt: "2026-05-07T00:00:00+09:00",
+  displayDate: "2026년 5월 7일",
+  tags: ["질문 리스트", "예시 모음", "AI 사주"],
+} as const;
+
 export const CHATGPT_SAJU_PROMPT_GUIDE = {
   path: "/guide/chatgpt-saju-prompt",
   title: "ChatGPT 사주 질문 프롬프트 작성법",
@@ -70,6 +86,7 @@ export const CAREER_SAJU_PROMPT_GUIDE = {
 
 export const GUIDE_PAGES = [
   CHATGPT_SAJU_HOW_TO_GUIDE,
+  AI_SAJU_QUESTION_LIST_GUIDE,
   CHATGPT_SAJU_PROMPT_GUIDE,
   LOVE_SAJU_PROMPT_GUIDE,
   CAREER_SAJU_PROMPT_GUIDE,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, CheckCircle2, Sparkles } from "lucide-react";
 
 import { GuideBreadcrumb } from "@/app/guide/_components/guide-breadcrumb";
+import { RelatedGuideLinks } from "@/app/guide/_components/related-guide-links";
 import { GuideArticleStructuredData } from "@/app/guide/_components/guide-structured-data";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import {
@@ -232,6 +233,8 @@ export default function CareerSajuPromptGuidePage() {
             </Button>
           </div>
         </section>
+
+        <RelatedGuideLinks currentPath={GUIDE.path} />
 
         <section className="mt-10 border-t border-border/70 pt-8">
           <div className="max-w-2xl space-y-3">
