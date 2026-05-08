@@ -9,7 +9,9 @@ import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import {
   CHATGPT_SAJU_HOW_TO_GUIDE,
   CHATGPT_SAJU_PROMPT_GUIDE,
+  COMPATIBILITY_SAJU_QUESTION_EXAMPLES_GUIDE,
   GUIDE_INDEX_PATH,
+  UNKNOWN_BIRTH_TIME_SAJU_QUESTION_GUIDE,
 } from "@/shared/config/guides";
 import { SITE_NAME, SOCIAL_IMAGE } from "@/shared/config/site";
 import { Button } from "@/shared/ui/button";
@@ -281,6 +283,14 @@ export default function ChatGptSajuHowToGuidePage() {
                 예를 들어 “출생 시간은 모르지만 생년월일은 양력 1994년 5월
                 12일입니다. 올해 직업운을 참고하고 싶으니 가능한 경향과
                 현실적으로 확인할 점을 나눠 주세요.”처럼 적으면 됩니다.
+                더 자세한 예시는{" "}
+                <Link
+                  href={UNKNOWN_BIRTH_TIME_SAJU_QUESTION_GUIDE.path}
+                  className="font-semibold text-foreground underline-offset-4 hover:underline"
+                >
+                  출생시간 모를 때 사주 질문
+                </Link>
+                에서 확인할 수 있습니다.
               </p>
             </div>
           </div>
@@ -376,14 +386,22 @@ export default function ChatGptSajuHowToGuidePage() {
             <p className="type-body-sm text-muted-foreground">
               질문문을 더 길고 정확하게 다듬고 싶다면 ChatGPT 사주 질문
               프롬프트 작성법에서 정보 순서와 답변 형식을 더 자세히 확인할 수
-              있습니다.
+              있습니다. 궁합만 따로 묻고 싶다면 궁합 사주 질문 예시도 함께
+              참고해 보세요.
             </p>
-            <Button asChild className="mt-4 w-full" data-icon="inline-end">
-              <Link href={CHATGPT_SAJU_PROMPT_GUIDE.path}>
-                프롬프트 작성법 보기
-                <ArrowRight className="size-4" aria-hidden />
-              </Link>
-            </Button>
+            <div className="mt-4 grid gap-2">
+              <Button asChild className="w-full" data-icon="inline-end">
+                <Link href={CHATGPT_SAJU_PROMPT_GUIDE.path}>
+                  프롬프트 작성법 보기
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              </Button>
+              <Button asChild className="w-full" variant="secondary">
+                <Link href={COMPATIBILITY_SAJU_QUESTION_EXAMPLES_GUIDE.path}>
+                  궁합 질문 예시 보기
+                </Link>
+              </Button>
+            </div>
           </div>
         </section>
 
