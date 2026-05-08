@@ -40,6 +40,9 @@ export const metadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  other: {
+    "google-adsense-account": "ca-pub-1178453465353818",
+  },
   ...(verification ? { verification } : {}),
   keywords: [
     "사주질문지",
