@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test tests/agent-readiness.test.mjs tests/adsense-metadata.test.mjs tests/seo-guides.test.mjs tests/site-name-structured-data.test.mjs",
+    "test": "node --test tests/agent-readiness.test.mjs tests/adsense-metadata.test.mjs tests/seo-guides.test.mjs tests/site-name-structured-data.test.mjs tests/lighthouse-performance-contract.test.mjs",
     "lint": "eslint"
   },
   "dependencies": {

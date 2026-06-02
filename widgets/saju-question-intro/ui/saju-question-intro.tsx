@@ -13,9 +13,9 @@ import {
 } from "@/widgets/saju-question-intro/config/intro-content";
 
 const gowunBatang = Gowun_Batang({
+  subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
-  preload: false,
 });
 
 const PRIVACY_NOTE =
@@ -89,8 +89,7 @@ export function SajuQuestionIntro() {
 
                 <div className="space-y-3.5">
                   <h1
-                    className={`${gowunBatang.className} hero-enter max-w-[11em] text-[clamp(2.45rem,2.05rem+2vw,4.4rem)] font-bold leading-[1.18] tracking-[-0.02em] text-foreground [text-wrap:balance] [word-break:keep-all]`}
-                    style={{ animationDelay: "120ms" }}
+                    className={`${gowunBatang.className} max-w-[11em] text-[clamp(2.45rem,2.05rem+2vw,4.4rem)] font-bold leading-[1.18] tracking-[-0.02em] text-foreground [text-wrap:balance] [word-break:keep-all]`}
                   >
                     사주를 더 잘 보고, AI에게 바로 물을 질문을 만듭니다
                   </h1>
