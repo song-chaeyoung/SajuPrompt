@@ -48,3 +48,16 @@ const relatedGuideLinks = readFileSync(
 );
 assert.match(relatedGuideLinks, /GUIDE_PAGES/);
 assert.match(relatedGuideLinks, /guide\.path !== currentPath/);
+
+const aiQuestionListPage = readFileSync(
+  join(root, "app", "guide", "ai-saju-question-list", "page.tsx"),
+  "utf8",
+);
+assert.match(guidesConfig, /modifiedAt: "2026-06-02T00:00:00\+09:00"/);
+assert.match(guidesConfig, /displayDate: "2026년 6월 2일"/);
+assert.match(aiQuestionListPage, /챗지피티 사주 질문 리스트를 상황별로 골라 쓰세요/);
+assert.match(aiQuestionListPage, /QUICK ANSWER/);
+assert.match(aiQuestionListPage, /SUMMARY TABLE/);
+assert.match(aiQuestionListPage, /상황별 챗지피티 사주 질문 요약/);
+assert.match(aiQuestionListPage, /추천 질문 초점/);
+assert.match(aiQuestionListPage, /챗지피티 사주 질문 리스트는 어떻게 써야 하나요\?/);

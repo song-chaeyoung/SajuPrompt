@@ -31,8 +31,8 @@ export const AI_SAJU_QUESTION_LIST_GUIDE = {
   primaryKeyword: "AI 사주 질문 리스트",
   intent: "AI 사주 질문 예시를 한 번에 훑고 바로 복사해 쓰려는 사용자",
   publishedAt: "2026-05-07T00:00:00+09:00",
-  modifiedAt: "2026-05-07T00:00:00+09:00",
-  displayDate: "2026년 5월 7일",
+  modifiedAt: "2026-06-02T00:00:00+09:00",
+  displayDate: "2026년 6월 2일",
   tags: ["질문 리스트", "예시 모음", "AI 사주"],
 } as const;
 

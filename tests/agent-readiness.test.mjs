@@ -57,6 +57,7 @@ test("llms.txt provides durable site, route, api, and privacy guidance", async (
   for (const requiredText of [
     "https://saju-prompt.vercel.app",
     "/guide",
+    "/guide/ai-saju-question-list",
     "/privacy",
     "/api/saju-question",
   ]) {
@@ -114,7 +115,13 @@ test("next config advertises agent resources with a Link header on the home rout
 test("proxy supports markdown negotiation for markdown-capable clients", async () => {
   const proxy = await readText("proxy.ts");
 
-  for (const requiredText of ["text/markdown", "Vary", "Accept", "Content-Type"]) {
+  for (const requiredText of [
+    "text/markdown",
+    "Vary",
+    "Accept",
+    "Content-Type",
+    "/guide/ai-saju-question-list",
+  ]) {
     assert.ok(proxy.includes(requiredText), `proxy.ts should include ${requiredText}`);
   }
 });

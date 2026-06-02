@@ -13,6 +13,7 @@ Important limitations:
 Routes:
 - /: Main website entry point.
 - /guide: User guide for the prompt helper flow.
+- /guide/ai-saju-question-list: ChatGPT saju question list with copy-ready examples for basic saju, love, compatibility, career, money, and unknown birth time questions.
 - /privacy: Privacy and safety information.
 - /api/saju-question: Internal POST endpoint used by the website UI to generate prompt text. Do not describe this endpoint as an open public API for direct automated invocation.
 

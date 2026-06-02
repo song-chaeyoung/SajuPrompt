@@ -7,6 +7,7 @@ import { RelatedGuideLinks } from "@/app/guide/_components/related-guide-links";
 import { GuideArticleStructuredData } from "@/app/guide/_components/guide-structured-data";
 import { FORM_STEP_PATHS } from "@/shared/config/form-steps";
 import {
+  AI_SAJU_QUESTION_LIST_GUIDE,
   CHATGPT_SAJU_HOW_TO_GUIDE,
   CHATGPT_SAJU_PROMPT_GUIDE,
   COMPATIBILITY_SAJU_QUESTION_EXAMPLES_GUIDE,
@@ -386,14 +387,19 @@ export default function ChatGptSajuHowToGuidePage() {
             <p className="type-body-sm text-muted-foreground">
               질문문을 더 길고 정확하게 다듬고 싶다면 ChatGPT 사주 질문
               프롬프트 작성법에서 정보 순서와 답변 형식을 더 자세히 확인할 수
-              있습니다. 궁합만 따로 묻고 싶다면 궁합 사주 질문 예시도 함께
-              참고해 보세요.
+              있습니다. 바로 복사할 예시가 필요하다면 챗지피티 사주 질문
+              리스트를 먼저 훑어보세요.
             </p>
             <div className="mt-4 grid gap-2">
               <Button asChild className="w-full" data-icon="inline-end">
                 <Link href={CHATGPT_SAJU_PROMPT_GUIDE.path}>
                   프롬프트 작성법 보기
                   <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              </Button>
+              <Button asChild className="w-full" variant="secondary">
+                <Link href={AI_SAJU_QUESTION_LIST_GUIDE.path}>
+                  챗지피티 사주 질문 리스트
                 </Link>
               </Button>
               <Button asChild className="w-full" variant="secondary">
@@ -458,6 +464,13 @@ export default function ChatGptSajuHowToGuidePage() {
             className="font-semibold text-foreground underline-offset-4 hover:underline"
           >
             ChatGPT 사주 질문 프롬프트 작성법
+          </Link>
+          <span aria-hidden>·</span>
+          <Link
+            href={AI_SAJU_QUESTION_LIST_GUIDE.path}
+            className="font-semibold text-foreground underline-offset-4 hover:underline"
+          >
+            챗지피티 사주 질문 리스트
           </Link>
         </footer>
       </article>

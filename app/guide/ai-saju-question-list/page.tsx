@@ -117,7 +117,63 @@ const QUALITY_CHECKS = [
   },
 ];
 
+const ANSWER_SUMMARY = [
+  {
+    title: "핵심 정보",
+    description:
+      "생년월일, 출생 시간, 양력/음력, 출생지, 현재 고민을 한 번에 적으면 챗지피티가 질문 전제를 더 분명하게 이해합니다.",
+  },
+  {
+    title: "질문 범위",
+    description:
+      "연애운, 궁합, 직업운, 재물운처럼 한 주제씩 나눠 묻는 편이 답변이 덜 흩어지고 실용적인 조언을 받기 쉽습니다.",
+  },
+  {
+    title: "답변 요청",
+    description:
+      "전체 흐름, 조심할 점, 지금 할 수 있는 행동처럼 원하는 답변 형식을 함께 적어야 바로 활용하기 좋습니다.",
+  },
+];
+
+const QUESTION_SUMMARY_ROWS = [
+  {
+    situation: "기본 사주",
+    focus: "올해 흐름, 성향의 강점, 조심할 점",
+    caution: "생년월일과 출생 시간을 먼저 적고 단정 표현을 피하게 합니다.",
+  },
+  {
+    situation: "연애운",
+    focus: "현재 관계 상태, 대화 방식, 먼저 할 수 있는 행동",
+    caution: "상대 정보보다 지금의 관계 장면과 궁금한 상황을 구체적으로 씁니다.",
+  },
+  {
+    situation: "궁합",
+    focus: "두 사람의 장점, 갈등 지점, 대화할 때 조심할 점",
+    caution: "좋고 나쁨만 묻지 말고 현재 관계 맥락을 함께 적습니다.",
+  },
+  {
+    situation: "직업운과 이직운",
+    focus: "선택지 비교, 리스크, 준비 순서",
+    caution: "현실 조건과 준비 기간을 함께 적어 실행 조언을 요청합니다.",
+  },
+  {
+    situation: "재물운",
+    focus: "지출 습관, 무리한 판단, 관리 방법",
+    caution: "수입 예측보다 점검할 조건과 피해야 할 결정을 묻습니다.",
+  },
+  {
+    situation: "출생 시간 미상",
+    focus: "가능한 흐름, 주의점, 현실적으로 확인할 행동",
+    caution: "출생 시간을 모른다고 밝히고 확정적인 풀이를 피하게 합니다.",
+  },
+];
+
 const FAQ_ITEMS = [
+  {
+    question: "챗지피티 사주 질문 리스트는 어떻게 써야 하나요?",
+    answer:
+      "먼저 생년월일, 출생 시간, 양력/음력, 현재 고민을 적고 아래 질문 예시 중 현재 상황에 가장 가까운 문장을 골라 본인 말로 바꾸는 편이 좋습니다. 질문에는 원하는 답변 형식까지 함께 넣어야 챗지피티 답변이 더 구체적으로 정리됩니다.",
+  },
   {
     question: "AI 사주 질문 리스트는 그대로 복사해 써도 되나요?",
     answer:
@@ -127,6 +183,11 @@ const FAQ_ITEMS = [
     question: "ChatGPT, Gemini, Claude에 같은 질문을 써도 되나요?",
     answer:
       "가능합니다. 다만 각 AI의 답변 방식이 다르므로 같은 질문을 쓰더라도 답변을 참고용으로 비교하고, 중요한 결정은 현실 조건과 함께 판단해야 합니다.",
+  },
+  {
+    question: "챗지피티에 사주를 물어볼 때 가장 중요한 정보는 무엇인가요?",
+    answer:
+      "생년월일, 출생 시간, 양력/음력 기준, 출생지, 현재 고민이 가장 중요합니다. 출생 시간을 모른다면 모른다고 명확히 적고, 확정적인 풀이보다 가능한 흐름과 주의점 중심으로 설명해 달라고 요청하는 것이 안전합니다.",
   },
   {
     question: "사주 질문은 몇 개까지 한 번에 넣는 것이 좋나요?",
@@ -173,13 +234,13 @@ export default function AiSajuQuestionListGuidePage() {
 
             <div className="space-y-4">
               <h1 className="max-w-[12em] text-[clamp(2.2rem,1.75rem+2.1vw,4.1rem)] font-semibold tracking-[-0.035em] text-foreground [text-wrap:balance] [word-break:keep-all]">
-                AI 사주 질문 리스트를 상황별로 골라 쓰세요
+                챗지피티 사주 질문 리스트를 상황별로 골라 쓰세요
               </h1>
               <p className="type-body max-w-[42rem] text-[color:color-mix(in_oklch,var(--foreground)_72%,var(--muted-foreground)_28%)] sm:text-[1.0625rem]">
-                AI 사주 질문 리스트를 찾는다면 먼저 궁금한 주제를 하나로
-                좁히는 것이 좋습니다. 아래 예시는 ChatGPT, Gemini, Claude에
-                바로 붙여 넣기 좋도록 기본 사주, 연애운, 궁합, 직업운,
-                재물운, 출생 시간 미상 상황으로 나눠 정리했습니다.
+                챗지피티 사주 질문 리스트를 찾는다면 먼저 궁금한 주제를
+                하나로 좁히는 것이 좋습니다. 아래 예시는 ChatGPT, Gemini,
+                Claude에 바로 붙여 넣기 좋도록 기본 사주, 연애운, 궁합,
+                직업운, 재물운, 출생 시간 미상 상황으로 나눠 정리했습니다.
               </p>
             </div>
 
@@ -222,6 +283,90 @@ export default function AiSajuQuestionListGuidePage() {
             </ul>
           </aside>
         </header>
+
+        <section className="mb-8 rounded-[1.5rem] border border-primary/16 bg-[color-mix(in_oklch,var(--primary)_5%,var(--background)_95%)] p-5 sm:p-6">
+          <div className="max-w-2xl space-y-3">
+            <p className="type-caption font-semibold tracking-[0.08em] text-primary/80">
+              QUICK ANSWER
+            </p>
+            <h2 className="type-title-md font-semibold text-foreground">
+              챗지피티 사주 질문은 정보, 주제, 답변 형식을 함께 적어야 좋습니다
+            </h2>
+            <p className="type-body text-muted-foreground">
+              생년월일만 넣는 질문보다 출생 시간, 달력 기준, 현재 고민,
+              원하는 답변 형식을 함께 적은 질문이 더 선명합니다. 아래
+              리스트에서 상황에 맞는 예시를 고른 뒤 본인 정보와 고민으로
+              바꿔 쓰세요.
+            </p>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {ANSWER_SUMMARY.map((item) => (
+              <section
+                key={item.title}
+                className="rounded-[1.15rem] border border-border/70 bg-[color-mix(in_oklch,var(--background)_78%,var(--card)_22%)] p-4"
+              >
+                <h3 className="type-title-sm font-semibold text-foreground">
+                  {item.title}
+                </h3>
+                <p className="mt-2 type-body-sm text-muted-foreground">
+                  {item.description}
+                </p>
+              </section>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-8 overflow-hidden rounded-[1.5rem] border border-border/75 bg-[color-mix(in_oklch,var(--background)_78%,var(--card)_22%)]">
+          <div className="border-b border-border/70 p-5 sm:p-6">
+            <p className="type-caption font-semibold tracking-[0.08em] text-primary/80">
+              SUMMARY TABLE
+            </p>
+            <h2 className="mt-2 type-title-md font-semibold text-foreground">
+              상황별 챗지피티 사주 질문 요약
+            </h2>
+            <p className="mt-2 type-body-sm text-muted-foreground">
+              어떤 질문을 골라야 할지 빠르게 비교하고 싶다면 상황, 질문 초점,
+              주의점을 먼저 확인하세요.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[44rem] border-collapse text-left type-body-sm">
+              <thead className="bg-[color-mix(in_oklch,var(--primary)_5%,var(--background)_95%)] text-foreground">
+                <tr>
+                  <th scope="col" className="w-[10rem] px-5 py-3 font-semibold">
+                    상황
+                  </th>
+                  <th scope="col" className="px-5 py-3 font-semibold">
+                    추천 질문 초점
+                  </th>
+                  <th scope="col" className="px-5 py-3 font-semibold">
+                    주의점
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {QUESTION_SUMMARY_ROWS.map((row) => (
+                  <tr key={row.situation} className="border-t border-border/70">
+                    <th
+                      scope="row"
+                      className="px-5 py-4 align-top font-semibold text-foreground"
+                    >
+                      {row.situation}
+                    </th>
+                    <td className="px-5 py-4 align-top text-muted-foreground">
+                      {row.focus}
+                    </td>
+                    <td className="px-5 py-4 align-top text-muted-foreground">
+                      {row.caution}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <section className="grid gap-4">
           {QUESTION_GROUPS.map((group, index) => (
@@ -321,7 +466,7 @@ export default function AiSajuQuestionListGuidePage() {
               FAQ
             </p>
             <h2 className="type-title-md font-semibold text-foreground">
-              AI 사주 질문 리스트를 쓸 때 자주 묻는 질문
+              챗지피티 사주 질문 리스트를 쓸 때 자주 묻는 질문
             </h2>
             <p className="type-body text-muted-foreground">
               질문 리스트는 시작점입니다. 내 정보와 고민을 더할수록 답변도

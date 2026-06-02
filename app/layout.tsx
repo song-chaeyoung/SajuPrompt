@@ -50,6 +50,7 @@ export const metadata: Metadata = {
     "ChatGPT 사주 질문",
     "ChatGPT 사주 프롬프트",
     "챗지피티 사주",
+    "챗지피티 사주 질문 리스트",
     "AI 사주 질문",
     "AI 사주 질문 도우미",
     "사주 풀이 도우미",

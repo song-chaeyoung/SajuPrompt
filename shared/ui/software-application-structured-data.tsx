@@ -17,7 +17,11 @@ export function SoftwareApplicationStructuredData() {
         "@type": "WebSite",
         "@id": websiteId,
         name: SITE_NAME,
-        alternateName: ["사주 질문지", "AI 사주 질문 도우미"],
+        alternateName: [
+          "사주 질문지",
+          "AI 사주 질문 도우미",
+          "챗지피티 사주 질문 리스트",
+        ],
         url: siteUrl,
         inLanguage: "ko-KR",
         publisher: {

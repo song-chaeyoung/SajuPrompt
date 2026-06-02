@@ -6,6 +6,7 @@ Saju Prompt is available at https://saju-prompt.vercel.app.
 
 Useful routes:
 - /guide
+- /guide/ai-saju-question-list
 - /privacy
 - /api/saju-question
 
