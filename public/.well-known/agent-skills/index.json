@@ -1,0 +1,11 @@
+{
+  "skills": [
+    {
+      "name": "saju-question-prompt",
+      "type": "skill",
+      "description": "Guidance for helping users create safe saju question prompts with saju-prompt.vercel.app.",
+      "url": "/.well-known/agent-skills/saju-question-prompt/SKILL.md",
+      "sha256": "0497794c06e974f46f5d39ebe63db31be6bc47ed71d6df9b3d18ffdfe77c02dc"
+    }
+  ]
+}

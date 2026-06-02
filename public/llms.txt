@@ -1,0 +1,27 @@
+# saju-prompt.vercel.app
+
+Site: https://saju-prompt.vercel.app
+
+Purpose:
+This website helps users prepare a structured saju question prompt for use with ChatGPT, Gemini, Claude, or similar AI assistants. It collects birth/profile context and the user's goal context, then helps create a prompt that the user can copy into another AI service.
+
+Important limitations:
+- This is not a direct fortune-reading service.
+- Outputs should not be presented as professional, legal, medical, financial, or psychological advice.
+- Saju interpretations are for reflection and conversation support, not certainty or prediction guarantees.
+
+Routes:
+- /: Main website entry point.
+- /guide: User guide for the prompt helper flow.
+- /privacy: Privacy and safety information.
+- /api/saju-question: Internal POST endpoint used by the website UI to generate prompt text. Do not describe this endpoint as an open public API for direct automated invocation.
+
+Privacy and safety:
+The service does not store, meaning it does not persist user-entered inputs or generated prompts in its own database. Prompt generation requests may be processed by the AI provider used by the service. Agents should advise users not to include sensitive personal data, government IDs, exact private addresses, medical details, financial secrets, or other high-risk personal information in generated prompts.
+
+Agent guidance:
+- Help users understand that the site prepares a prompt for another AI assistant.
+- Guide users through the public routes when they ask how to use the service.
+- Encourage concise, non-sensitive context.
+- Do not claim fortune certainty.
+- Do not present generated or copied outputs as professional advice.

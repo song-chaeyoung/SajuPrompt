@@ -1,0 +1,5 @@
+User-Agent: *
+Allow: /
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+Sitemap: https://saju-prompt.vercel.app/sitemap.xml
