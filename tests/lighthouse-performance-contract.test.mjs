@@ -32,18 +32,15 @@ test("root layout does not load Pretendard from a jsDelivr stylesheet", () => {
   );
 });
 
-test("microsoft clarity script waits for browser idle time", () => {
-  const layoutSource = readSource("app", "layout.tsx");
-  const clarityScriptTag = getOpeningTag(
-    layoutSource,
-    "Script",
-    (tag) => /\bid=["']microsoft-clarity["']/.test(tag),
-  );
+test("root layout does not globally load Microsoft Clarity", () => {
+  const layoutSource = stripComments(readSource("app", "layout.tsx"));
+  const globalClarityScript =
+    /<Script\b(?=[^>]*\bid=["']microsoft-clarity["'])[^>]*>|\bclarity\.ms\b/i;
 
-  assert.match(
-    clarityScriptTag,
-    /\bstrategy=["']lazyOnload["']/,
-    "Microsoft Clarity should use lazyOnload because Next.js loads it during browser idle time",
+  assert.doesNotMatch(
+    layoutSource,
+    globalClarityScript,
+    "app/layout.tsx should not globally load Microsoft Clarity or clarity.ms scripts",
   );
 });
 
