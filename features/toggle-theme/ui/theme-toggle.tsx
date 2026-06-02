@@ -1,58 +1,30 @@
-"use client";
-
-import { useSyncExternalStore } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
 
 import {
-  THEME_STORAGE_KEY,
-  type ThemePreference,
+  getThemeToggleScript,
+  THEME_TOGGLE_ID,
 } from "@/features/toggle-theme/config/theme";
-import {
-  applyTheme,
-  getAppliedTheme,
-  subscribeToThemeChange,
-} from "@/features/toggle-theme/lib/theme-store";
-import { Button } from "@/shared/ui/button";
 
 export function ThemeToggle() {
-  const theme = useSyncExternalStore<ThemePreference>(
-    subscribeToThemeChange,
-    getAppliedTheme,
-    () => "light",
-  );
-
-  const handleToggle = () => {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-
-    applyTheme(nextTheme);
-
-    try {
-      window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-    } catch {
-      // Ignore storage failures and keep the in-memory theme.
-    }
-  };
-
-  const buttonTitle =
-    theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환";
+  const themeToggleScript = getThemeToggleScript();
 
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-40">
       <div className="mx-auto flex w-full max-w-5xl justify-end px-4 pt-[calc(env(safe-area-inset-top)+1rem)] sm:px-6 md:px-8 md:pt-[calc(env(safe-area-inset-top)+1.25rem)]">
-        <Button
+        <button
+          id={THEME_TOGGLE_ID}
           type="button"
-          variant="outline"
-          size="icon-sm"
-          aria-label={buttonTitle}
-          aria-pressed={theme === "dark"}
-          title={buttonTitle}
-          onClick={handleToggle}
-          className="pointer-events-auto rounded-full border-border/70 bg-[color-mix(in_oklch,var(--background)_80%,transparent)] text-foreground shadow-[0_16px_32px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-md supports-[backdrop-filter]:bg-[color-mix(in_oklch,var(--background)_68%,transparent)]"
+          aria-label="다크 모드로 전환"
+          aria-pressed="false"
+          title="다크 모드로 전환"
+          className="pointer-events-auto inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border/70 bg-[color-mix(in_oklch,var(--background)_80%,transparent)] text-foreground shadow-[0_16px_32px_color-mix(in_oklch,var(--foreground)_10%,transparent)] backdrop-blur-md transition-colors outline-none select-none hover:bg-secondary focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px supports-[backdrop-filter]:bg-[color-mix(in_oklch,var(--background)_68%,transparent)] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
         >
-          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-          <span className="sr-only">{buttonTitle}</span>
-        </Button>
+          <MoonIcon className="dark:hidden" aria-hidden />
+          <SunIcon className="hidden dark:block" aria-hidden />
+          <span className="sr-only">테마 전환</span>
+        </button>
       </div>
+      <script dangerouslySetInnerHTML={{ __html: themeToggleScript }} />
     </div>
   );
 }

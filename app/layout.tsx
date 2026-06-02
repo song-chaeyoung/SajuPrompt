@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { getThemeInitializationScript } from "@/features/toggle-theme/config/theme";
-import { ThemeToaster } from "@/features/toggle-theme/ui/theme-toaster";
 import { ThemeToggle } from "@/features/toggle-theme/ui/theme-toggle";
 import {
   getSiteUrl,
@@ -94,7 +93,6 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ThemeToggle />
         {children}
-        <ThemeToaster />
       </body>
     </html>
   );

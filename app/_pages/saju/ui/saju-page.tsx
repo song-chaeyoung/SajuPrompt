@@ -1,9 +1,13 @@
+import { ThemeToaster } from "@/features/toggle-theme/ui/theme-toaster";
 import { SajuQuestionForm } from "@/widgets/saju-question-form/ui/saju-question-form";
 
 export function SajuPage() {
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 md:px-8 md:py-8">
-      <SajuQuestionForm />
-    </main>
+    <>
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 py-6 sm:px-6 md:px-8 md:py-8">
+        <SajuQuestionForm />
+      </main>
+      <ThemeToaster />
+    </>
   );
 }

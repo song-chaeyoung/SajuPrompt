@@ -44,7 +44,45 @@ test("root layout does not globally load Microsoft Clarity", () => {
   );
 });
 
-test("intro Gowun Batang heading font is eligible for preload", () => {
+test("root layout does not globally load the toast runtime", () => {
+  const layoutSource = stripComments(readSource("app", "layout.tsx"));
+
+  assert.doesNotMatch(
+    layoutSource,
+    /ThemeToaster|theme-toaster|sonner/i,
+    "app/layout.tsx should not load toast runtime on every page",
+  );
+});
+
+test("toast runtime is scoped to interactive planner pages", () => {
+  const sajuPageSource = readSource("app", "_pages", "saju", "ui", "saju-page.tsx");
+  const resultPageSource = readSource(
+    "app",
+    "_pages",
+    "result",
+    "ui",
+    "result-page.tsx",
+  );
+
+  for (const source of [sajuPageSource, resultPageSource]) {
+    assert.match(source, /ThemeToaster/);
+    assert.match(source, /features\/toggle-theme\/ui\/theme-toaster/);
+  }
+});
+
+test("theme toggle avoids shared button dependencies in the global client bundle", () => {
+  const themeToggleSource = stripComments(
+    readSource("features", "toggle-theme", "ui", "theme-toggle.tsx"),
+  );
+
+  assert.doesNotMatch(
+    themeToggleSource,
+    /["']use client["']|useSyncExternalStore|useState|useEffect|onClick\s*=|@\/shared\/ui\/button|<Button\b|from "radix-ui"|class-variance-authority|tailwind-merge/,
+    "ThemeToggle should avoid React client and shared Button dependencies because it is loaded globally",
+  );
+});
+
+test("intro Gowun Batang heading font avoids preload fan-out", () => {
   const introSource = readSource(
     "widgets",
     "saju-question-intro",
@@ -54,10 +92,15 @@ test("intro Gowun Batang heading font is eligible for preload", () => {
   const gowunBatangInit = introSource.match(/Gowun_Batang\s*\(\s*{([\s\S]*?)}\s*\)/);
 
   assert.ok(gowunBatangInit, "Gowun_Batang font options should exist");
-  assert.doesNotMatch(
+  assert.match(
     gowunBatangInit[1],
     /\bpreload\s*:\s*false\b/,
-    "The intro H1 font should either preload or omit preload:false",
+    "The Korean intro H1 font should not preload every generated unicode-range file",
+  );
+  assert.match(
+    gowunBatangInit[1],
+    /\bweight\s*:\s*["']700["']/,
+    "The intro H1 uses font-bold, so Gowun Batang should only ship the 700 weight",
   );
 });
 

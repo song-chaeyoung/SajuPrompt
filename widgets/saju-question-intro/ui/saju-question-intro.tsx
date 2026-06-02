@@ -14,8 +14,9 @@ import {
 
 const gowunBatang = Gowun_Batang({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: "700",
   display: "swap",
+  preload: false,
 });
 
 const PRIVACY_NOTE =
